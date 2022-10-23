@@ -60,6 +60,9 @@ public class Car implements Serializable {
     @JoinColumn(nullable = false)
     private Outlet outlet;
     
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private Model model;
     
     @OneToOne(mappedBy = "car")
     private TransitDriverRecord transitDriverRecord;
@@ -67,7 +70,6 @@ public class Car implements Serializable {
     @OneToOne(mappedBy = "car")
     private Customer customer;
     
-
     public Long getCarId() {
         return carId;
     }
