@@ -6,10 +6,15 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -21,31 +26,59 @@ public class Customer implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long CustomerId;
 
-    public Long getId() {
-        return id;
+    @Column(nullable = false, length = 32, unique = true)
+    private String MobilePhoneNo;
+    
+    @Column(nullable = false, length = 32, unique = true)
+    private String email;
+    
+    @Column(nullable = false, length = 32, unique = true)
+    private String passportNo;
+    
+    @Column(nullable = false, length = 32)
+    private String password;
+    
+    @Column(nullable = false, length = 32)
+    private String CreditCardDetails;
+    
+    @Column(nullable = false)
+    private boolean paid;
+    
+    @OneToOne
+    private Car car;
+    
+    //Not very sure about this
+    @ManyToMany
+    @JoinTable(name = "customer_Outlet")
+    private List<Outlet> outlets;
+    
+    
+    
+    public Long getCustomerId() {
+        return CustomerId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCustomerId(Long CustomerId) {
+        this.CustomerId = CustomerId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (CustomerId != null ? CustomerId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the CustomerId fields are not set
         if (!(object instanceof Customer)) {
             return false;
         }
         Customer other = (Customer) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.CustomerId == null && other.CustomerId != null) || (this.CustomerId != null && !this.CustomerId.equals(other.CustomerId))) {
             return false;
         }
         return true;
@@ -53,7 +86,119 @@ public class Customer implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Customer[ id=" + id + " ]";
+        return "entity.Customer[ id=" + CustomerId + " ]";
+    }
+
+    /**
+     * @return the MobilePhoneNo
+     */
+    public String getMobilePhoneNo() {
+        return MobilePhoneNo;
+    }
+
+    /**
+     * @param MobilePhoneNo the MobilePhoneNo to set
+     */
+    public void setMobilePhoneNo(String MobilePhoneNo) {
+        this.MobilePhoneNo = MobilePhoneNo;
+    }
+
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @return the passportNo
+     */
+    public String getPassportNo() {
+        return passportNo;
+    }
+
+    /**
+     * @param passportNo the passportNo to set
+     */
+    public void setPassportNo(String passportNo) {
+        this.passportNo = passportNo;
+    }
+
+    /**
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @return the CreditCardDetails
+     */
+    public String getCreditCardDetails() {
+        return CreditCardDetails;
+    }
+
+    /**
+     * @param CreditCardDetails the CreditCardDetails to set
+     */
+    public void setCreditCardDetails(String CreditCardDetails) {
+        this.CreditCardDetails = CreditCardDetails;
+    }
+
+    /**
+     * @return the paid
+     */
+    public boolean isPaid() {
+        return paid;
+    }
+
+    /**
+     * @param paid the paid to set
+     */
+    public void setPaid(boolean paid) {
+        this.paid = paid;
+    }
+
+    /**
+     * @return the car
+     */
+    public Car getCar() {
+        return car;
+    }
+
+    /**
+     * @param car the car to set
+     */
+    public void setCar(Car car) {
+        this.car = car;
+    }
+
+    /**
+     * @return the outlets
+     */
+    public List<Outlet> getOutlets() {
+        return outlets;
+    }
+
+    /**
+     * @param outlets the outlets to set
+     */
+    public void setOutlets(List<Outlet> outlets) {
+        this.outlets = outlets;
     }
     
 }

@@ -43,6 +43,10 @@ public class Outlet implements Serializable {
     
     @OneToMany(mappedBy="outlet")
     private List<Employee> employees = new ArrayList<>();
+    
+    //Not very sure about this
+    @ManyToMany(mappedBy = "outlets")
+    private List<Customer> customers;
 
     public Outlet() {
     }
@@ -155,6 +159,20 @@ public class Outlet implements Serializable {
      */
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
+    }
+
+    /**
+     * @return the customers
+     */
+    public List<Customer> getCustomers() {
+        return customers;
+    }
+
+    /**
+     * @param customers the customers to set
+     */
+    public void setCustomers(List<Customer> customers) {
+        this.customers = customers;
     }
     
 }
