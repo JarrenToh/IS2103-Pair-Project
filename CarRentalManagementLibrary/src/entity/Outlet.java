@@ -44,8 +44,8 @@ public class Outlet implements Serializable {
     @OneToMany(mappedBy="outlet")
     private List<Employee> employees = new ArrayList<>();
     
-    //Not very sure about this
-    @ManyToMany(mappedBy = "outlets")
+    //Changed
+    @OneToMany(mappedBy = "outlet")
     private List<Customer> customers;
 
     public Outlet() {

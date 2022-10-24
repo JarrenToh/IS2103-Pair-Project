@@ -69,6 +69,25 @@ public class Car implements Serializable {
     
     @OneToOne(mappedBy = "car")
     private Customer customer;
+
+    public Car() {
+    }
+
+    public Car(String licensePlateNumber, String colour, CarStatusEnum status, LocationEnum location, boolean enabled, Date rentalStartDate, Date rentalEndDate, Outlet outlet, Model model, TransitDriverRecord transitDriverRecord, Customer customer) {
+        this.licensePlateNumber = licensePlateNumber;
+        this.colour = colour;
+        this.status = status;
+        this.location = location;
+        this.enabled = enabled;
+        this.rentalStartDate = rentalStartDate;
+        this.rentalEndDate = rentalEndDate;
+        this.outlet = outlet;
+        this.model = model;
+        this.transitDriverRecord = transitDriverRecord;
+        this.customer = customer;
+    }
+    
+    
     
     public Long getCarId() {
         return carId;

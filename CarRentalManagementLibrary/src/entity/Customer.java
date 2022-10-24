@@ -12,8 +12,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 /**
@@ -30,31 +32,43 @@ public class Customer implements Serializable {
 
     @Column(nullable = false, length = 32, unique = true)
     private String MobilePhoneNo;
-    
+
     @Column(nullable = false, length = 32, unique = true)
     private String email;
-    
+
     @Column(nullable = false, length = 32, unique = true)
     private String passportNo;
-    
+
     @Column(nullable = false, length = 32)
     private String password;
-    
+
     @Column(nullable = false, length = 32)
     private String CreditCardDetails;
-    
+
     @Column(nullable = false)
     private boolean paid;
-    
+
     @OneToOne
     private Car car;
-    
-    //Not very sure about this
-    @ManyToMany
-    @JoinTable(name = "customer_Outlet")
-    private List<Outlet> outlets;
-    
-    
+
+    //Changed the cardinality of the assciation
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private Outlet outlet;
+
+    public Customer() {
+    }
+
+    public Customer(String MobilePhoneNo, String email, String passportNo, String password, String CreditCardDetails, boolean paid, Car car, Outlet outlet) {
+        this.MobilePhoneNo = MobilePhoneNo;
+        this.email = email;
+        this.passportNo = passportNo;
+        this.password = password;
+        this.CreditCardDetails = CreditCardDetails;
+        this.paid = paid;
+        this.car = car;
+        this.outlet = outlet;
+    }
     
     public Long getCustomerId() {
         return CustomerId;
@@ -188,17 +202,17 @@ public class Customer implements Serializable {
     }
 
     /**
-     * @return the outlets
+     * @return the outlet
      */
-    public List<Outlet> getOutlets() {
-        return outlets;
+    public Outlet getOutlet() {
+        return outlet;
     }
 
     /**
-     * @param outlets the outlets to set
+     * @param outlet the outlet to set
      */
-    public void setOutlets(List<Outlet> outlets) {
-        this.outlets = outlets;
+    public void setOutlet(Outlet outlet) {
+        this.outlet = outlet;
     }
-    
+
 }
