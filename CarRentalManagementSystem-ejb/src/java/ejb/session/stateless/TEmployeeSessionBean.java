@@ -5,7 +5,8 @@
  */
 package ejb.session.stateless;
 
-import entity.TransitDriverRecord;
+import entity.Employee;
+import entity.Outlet;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,19 +16,25 @@ import javax.persistence.PersistenceContext;
  * @author wjahoward
  */
 @Stateless
-public class TransitDriverRecordSessionBean implements TransitDriverRecordSessionBeanRemote, TransitDriverRecordSessionBeanLocal {
+public class TEmployeeSessionBean implements TEmployeeSessionBeanRemote, TEmployeeSessionBeanLocal {
 
     @PersistenceContext(unitName = "CarRentalManagementSystem-ejbPU")
     private EntityManager em;
 
-    public TransitDriverRecordSessionBean() {
+    public TEmployeeSessionBean() {
         
     }
     
     @Override
-    public void createNewTransitDriverRecord(TransitDriverRecord newTransitDriverRecord) // throws EmployeeUsernameExistException, UnknownPersistenceException
+    public void createNewEmployee(Employee newEmployee, Long outletId) // throws EmployeeUsernameExistException, UnknownPersistenceException
     {
-        em.persist(newTransitDriverRecord);
+        Outlet outlet = em.find(Outlet.class, outletId);
+        
+        em.persist(newEmployee);
+        
+        newEmployee.setOutlet(outlet);
+        outlet.getEmployees().add(newEmployee);
+        
         em.flush();
     }
 }

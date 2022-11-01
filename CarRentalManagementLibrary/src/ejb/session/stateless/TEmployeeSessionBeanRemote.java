@@ -5,15 +5,14 @@
  */
 package ejb.session.stateless;
 
-import javax.ejb.Stateless;
+import entity.Employee;
+import javax.ejb.Remote;
 
 /**
  *
  * @author wjahoward
  */
-@Stateless
-public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal {
-
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+@Remote
+public interface TEmployeeSessionBeanRemote {
+    void createNewEmployee(Employee newEmployee, Long outletId);
 }

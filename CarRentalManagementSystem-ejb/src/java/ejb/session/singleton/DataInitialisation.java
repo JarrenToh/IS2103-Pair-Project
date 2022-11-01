@@ -6,6 +6,8 @@
 package ejb.session.singleton;
 
 import ejb.session.stateless.OutletSessionBeanLocal;
+import ejb.session.stateless.TEmployeeSessionBeanLocal;
+import entity.Employee;
 import entity.Outlet;
 import java.time.LocalTime;
 import javax.annotation.PostConstruct;
@@ -15,6 +17,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import util.enumeration.EmployeeAccessRightEnum;
 
 /**
  *
@@ -27,6 +30,9 @@ public class DataInitialisation {
 
     @EJB
     private OutletSessionBeanLocal outletSessionBean;
+    
+    @EJB
+    private TEmployeeSessionBeanLocal employeeSessionBean;
     
     
     @PersistenceContext(unitName = "CarRentalManagementSystem-ejbPU")
@@ -52,7 +58,10 @@ public class DataInitialisation {
         LocalTime endTimeOutletA = LocalTime.parse("18:00:00");
         
         Outlet o1 = new Outlet("A", startTimeOutletA, endTimeOutletA);
-        outletSessionBean.createNewOutlet(o1);
+        Long outletId = outletSessionBean.createNewOutlet(o1);
+        
+        Employee e1 = new Employee(EmployeeAccessRightEnum.EMPLOYEE, "e1", "password");
+        employeeSessionBean.createNewEmployee(e1, outletId);
     }
 
     

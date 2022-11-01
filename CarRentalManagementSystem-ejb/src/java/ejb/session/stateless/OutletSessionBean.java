@@ -25,10 +25,12 @@ public class OutletSessionBean implements OutletSessionBeanRemote, OutletSession
     }
     
     @Override
-    public void createNewOutlet(Outlet newOutlet) // throws EmployeeUsernameExistException, UnknownPersistenceException
+    public Long createNewOutlet(Outlet newOutlet) // throws EmployeeUsernameExistException, UnknownPersistenceException
     {
         em.persist(newOutlet);
         em.flush();
+        
+        return newOutlet.getOutletId();
     }
 
     

@@ -14,5 +14,5 @@ import javax.ejb.Local;
  */
 @Local
 public interface OutletSessionBeanLocal {
-    void createNewOutlet(Outlet newOutlet);
+     Long createNewOutlet(Outlet newOutlet);
 }

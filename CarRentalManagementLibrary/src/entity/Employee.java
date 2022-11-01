@@ -56,12 +56,11 @@ public class Employee implements Serializable {
         
     }
 
-    public Employee(EmployeeAccessRightEnum userRole, String userName, String password, Outlet outlet) {
+    public Employee(EmployeeAccessRightEnum userRole, String userName, String password) {
         this.userRole = userRole;
         this.userName = userName;
         this.password = password;
-        this.outlet = outlet;
-    }
+    }    
     
     public Long getEmployeeId() {
         return employeeId;

@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.Employee;
 import javax.ejb.Local;
 
 /**
@@ -12,6 +13,6 @@ import javax.ejb.Local;
  * @author wjahoward
  */
 @Local
-public interface CarSessionBeanLocal {
-    
+public interface TEmployeeSessionBeanLocal {
+    void createNewEmployee(Employee newEmployee, Long outletId);
 }
