@@ -5,7 +5,11 @@
  */
 package ejb.sesssion.singleton;
 
+import ejb.session.stateless.OutletSessionBeanLocal;
+import entity.Outlet;
+import java.time.LocalTime;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
@@ -21,9 +25,14 @@ import javax.persistence.PersistenceContext;
 @Startup
 public class DataInitialisation {
 
+    @EJB
+    private OutletSessionBeanLocal outletSessionBean;
+    
+    
     @PersistenceContext(unitName = "CarRentalManagementSystem-ejbPU")
     private EntityManager em;
-
+    
+    
     public DataInitialisation() {
     }
 
@@ -32,6 +41,18 @@ public class DataInitialisation {
 
     @PostConstruct
     public void postConstruct() {
+        if (em.find(Outlet.class, 1L) == null) {
+            initializeData();   
+        }
+    }
+    
+    private void initializeData()
+    {
+        LocalTime startTimeOutletA = LocalTime.parse("09:00:00");
+        LocalTime endTimeOutletA = LocalTime.parse("18:00:00");
+        
+        Outlet o1 = new Outlet("A", startTimeOutletA, endTimeOutletA);
+        outletSessionBean.createNewOutlet(o1);
     }
 
     
