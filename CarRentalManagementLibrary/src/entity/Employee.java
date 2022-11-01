@@ -43,7 +43,7 @@ public class Employee implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = true)
-    private DispatchStatusEnum dispatchStatus;
+    private DispatchStatusEnum dispatchStatus; // this value will be set only when the employee is assigned to a rented car to drive it back to the initial outlet
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
