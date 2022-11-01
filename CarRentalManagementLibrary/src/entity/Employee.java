@@ -42,7 +42,7 @@ public class Employee implements Serializable {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private DispatchStatusEnum dispatchStatus;
 
     @ManyToOne(optional = false)
@@ -52,6 +52,16 @@ public class Employee implements Serializable {
     @OneToOne(mappedBy = "employee")
     private TransitDriverRecord transitDriverRecord;
     
+    public Employee() {
+        
+    }
+
+    public Employee(EmployeeAccessRightEnum userRole, String userName, String password, Outlet outlet) {
+        this.userRole = userRole;
+        this.userName = userName;
+        this.password = password;
+        this.outlet = outlet;
+    }
     
     public Long getEmployeeId() {
         return employeeId;
