@@ -6,9 +6,11 @@
 package ejb.session.singleton;
 
 import ejb.session.stateless.OutletSessionBeanLocal;
+import ejb.session.stateless.PartnerSessionBeanLocal;
 import ejb.session.stateless.TEmployeeSessionBeanLocal;
 import entity.Employee;
 import entity.Outlet;
+import entity.Partner;
 import java.time.LocalTime;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -27,6 +29,9 @@ import util.enumeration.EmployeeAccessRightEnum;
 @LocalBean
 @Startup
 public class DataInitialisation {
+    
+    @EJB
+    private PartnerSessionBeanLocal partnerSessionBean;
 
     @EJB
     private OutletSessionBeanLocal outletSessionBean;
@@ -57,11 +62,14 @@ public class DataInitialisation {
         LocalTime startTimeOutletA = LocalTime.parse("09:00:00");
         LocalTime endTimeOutletA = LocalTime.parse("18:00:00");
         
-        Outlet o1 = new Outlet("A", startTimeOutletA, endTimeOutletA);
+        Outlet o1 = new Outlet("Outlet A", startTimeOutletA, endTimeOutletA);
         Long outletId = outletSessionBean.createNewOutlet(o1);
         
         Employee e1 = new Employee(EmployeeAccessRightEnum.EMPLOYEE, "e1", "password");
         employeeSessionBean.createNewEmployee(e1, outletId);
+        
+        Partner p1 = new Partner("Partner A");
+        partnerSessionBean.createNewPartner(p1);
     }
 
     
