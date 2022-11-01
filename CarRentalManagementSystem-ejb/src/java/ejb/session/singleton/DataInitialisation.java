@@ -5,9 +5,11 @@
  */
 package ejb.session.singleton;
 
+import ejb.session.stateless.CategorySessionBeanLocal;
 import ejb.session.stateless.OutletSessionBeanLocal;
 import ejb.session.stateless.PartnerSessionBeanLocal;
 import ejb.session.stateless.TEmployeeSessionBeanLocal;
+import entity.Category;
 import entity.Employee;
 import entity.Outlet;
 import entity.Partner;
@@ -29,6 +31,9 @@ import util.enumeration.EmployeeAccessRightEnum;
 @LocalBean
 @Startup
 public class DataInitialisation {
+    
+    @EJB
+    private CategorySessionBeanLocal categorySessionBean;
     
     @EJB
     private PartnerSessionBeanLocal partnerSessionBean;
@@ -70,6 +75,9 @@ public class DataInitialisation {
         
         Partner p1 = new Partner("Partner A");
         partnerSessionBean.createNewPartner(p1);
+        
+        Category c1 = new Category("Category A");
+        categorySessionBean.createNewCategory(c1);
     }
 
     

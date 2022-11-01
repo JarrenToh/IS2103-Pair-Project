@@ -5,7 +5,10 @@
  */
 package ejb.session.stateless;
 
+import entity.Category;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -14,6 +17,17 @@ import javax.ejb.Stateless;
 @Stateless
 public class CategorySessionBean implements CategorySessionBeanRemote, CategorySessionBeanLocal {
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @PersistenceContext(unitName = "CarRentalManagementSystem-ejbPU")
+    private EntityManager em;
+
+    public CategorySessionBean() {
+        
+    }
+    
+    @Override
+    public void createNewCategory(Category newCategory) // throws EmployeeUsernameExistException, UnknownPersistenceException
+    {
+        em.persist(newCategory);
+        em.flush();
+    }
 }
