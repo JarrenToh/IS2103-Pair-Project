@@ -35,7 +35,7 @@ public class Employee implements Serializable {
     @Column(nullable = false)
     private EmployeeAccessRightEnum userRole;
 
-    @Column(nullable = false, unique = true, length = 32)
+    @Column(nullable = false, length = 32) // TODO: remember to set unique = true later
     private String userName;
 
     @Column(nullable = false, length = 32)
