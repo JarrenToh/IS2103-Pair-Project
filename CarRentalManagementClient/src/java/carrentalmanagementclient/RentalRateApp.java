@@ -58,6 +58,10 @@ public class RentalRateApp {
                 {
                     viewAllRentalRates();
                 }
+                else if (response == 3) 
+                {
+                    viewSpecificRentalRate();
+                }
                 else if (response == 6) {
                     break;
                 }
@@ -130,11 +134,36 @@ public class RentalRateApp {
     }
     
     private void viewAllRentalRates() {
-        List<RentalRate> rentalRates = rentalRateModule.getRentalRateSessionBeanRemote().getRentalRates();
+        List<RentalRate> rentalRates = rentalRateModule.getRentalRateSessionBeanRemote().getRentalRatesWithCategories();
         System.out.println("\nCar Category ----- Validity Period");
         for (int i = 0; i < rentalRates.size(); i++) {
             RentalRate r = rentalRates.get(i);
             System.out.println(r.getCategory().getCategoryName() + " ----- " + r.getValidityPeriod());
         }
+    }
+    
+    private void viewSpecificRentalRate()
+    {
+        RentalRate rentalRate = new RentalRate();
+        Scanner scanner = new Scanner(System.in);
+        
+        while (true) {
+            List<RentalRate> rentalRates = rentalRateModule.getRentalRateSessionBeanRemote().getRentalRates();
+            for (int i = 0; i < rentalRates.size(); i++) {
+                RentalRate r = rentalRates.get(i);
+                System.out.println((i + 1) + ". " + r.getName());
+            }   
+            System.out.print("Select a rental rate (i.e. 1) > ");
+            int rentalRateNumber = scanner.nextInt();
+            
+            rentalRate = rentalRates.get(rentalRateNumber - 1);
+            break; // assume if is success
+        }
+        
+        System.out.println("\n-----Rental Rate Details -----");
+        System.out.println("ID: " + rentalRate.getId());
+        System.out.println("Name: " + rentalRate.getName());
+        System.out.println("Rare Per Day: $" + rentalRate.getRatePerDay());
+        System.out.println("Valid until: " + rentalRate.getValidityPeriod());
     }
 }

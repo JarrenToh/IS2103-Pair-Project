@@ -32,9 +32,22 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     }
     
     @Override
-    public List<RentalRate> getRentalRates() {
+    public List<RentalRate> getRentalRatesWithCategories() {
         Query query = em.createQuery("SELECT r FROM RentalRate r INNER JOIN r.category c ORDER BY c.categoryName, r.validityPeriod ASC");
         return query.getResultList();
+    }
+    
+    @Override
+    public List<RentalRate> getRentalRates() {
+        Query query = em.createQuery("SELECT r FROM RentalRate r");
+        return query.getResultList();
+    }
+    
+    @Override
+    public RentalRate getSpecificRental(long rentalRateId) {
+        Query query = em.createQuery("SELECT r FROM RentalRate r WHERE r.id = :inRentalRateId");
+        query.setParameter("inRentalRateId", rentalRateId);
+        return (RentalRate)query.getSingleResult();
     }
     
 }
