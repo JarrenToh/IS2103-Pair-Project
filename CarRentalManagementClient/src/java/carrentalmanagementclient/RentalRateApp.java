@@ -54,6 +54,10 @@ public class RentalRateApp {
                 {
                     createRentalRate();
                 }
+                if (response == 2) 
+                {
+                    viewAllRentalRates();
+                }
                 else if (response == 6) {
                     break;
                 }

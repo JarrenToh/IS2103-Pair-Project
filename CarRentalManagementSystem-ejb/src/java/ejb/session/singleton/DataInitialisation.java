@@ -78,6 +78,12 @@ public class DataInitialisation {
         
         Category c1 = new Category("Category A");
         categorySessionBean.createNewCategory(c1);
+        
+        Category c2 = new Category("Category B");
+        categorySessionBean.createNewCategory(c1);
+        
+        Category c3 = new Category("Category C");
+        categorySessionBean.createNewCategory(c1);
     }
 
     
