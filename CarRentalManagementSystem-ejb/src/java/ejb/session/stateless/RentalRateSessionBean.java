@@ -5,7 +5,11 @@
  */
 package ejb.session.stateless;
 
+import entity.Category;
+import entity.RentalRate;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -14,6 +18,15 @@ import javax.ejb.Stateless;
 @Stateless
 public class RentalRateSessionBean implements RentalRateSessionBeanRemote, RentalRateSessionBeanLocal {
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @PersistenceContext(unitName = "CarRentalManagementSystem-ejbPU")
+    private EntityManager em;
+
+    @Override
+    public long createRentalRate(RentalRate rr, Category c) {
+        em.persist(rr);
+        em.flush();
+        
+        return rr.getId();
+    }
+    
 }

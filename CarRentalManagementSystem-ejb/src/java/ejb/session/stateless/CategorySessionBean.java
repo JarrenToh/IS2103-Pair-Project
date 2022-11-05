@@ -6,9 +6,11 @@
 package ejb.session.stateless;
 
 import entity.Category;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -29,5 +31,11 @@ public class CategorySessionBean implements CategorySessionBeanRemote, CategoryS
     {
         em.persist(newCategory);
         em.flush();
+    }
+    
+    @Override
+    public List<Category> getCategories() {        
+        Query query = em.createQuery("SELECT c FROM Category c");
+        return query.getResultList();
     }
 }

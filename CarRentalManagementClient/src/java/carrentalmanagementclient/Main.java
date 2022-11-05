@@ -5,17 +5,26 @@
  */
 package carrentalmanagementclient;
 
+import ejb.session.stateless.CategorySessionBeanRemote;
+import ejb.session.stateless.RentalRateSessionBeanRemote;
+import javax.ejb.EJB;
+
 /**
  *
  * @author jarrentoh
  */
 public class Main {
+    
+    @EJB
+    private static CategorySessionBeanRemote categorySessionBeanRemote;
 
-    /**
-     * @param args the command line arguments
-     */
+    @EJB
+    private static RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
+    
     public static void main(String[] args) {
         // TODO code application logic here
+        MainApp mainApp = new MainApp(rentalRateSessionBeanRemote, categorySessionBeanRemote);
+        mainApp.run();
     }
     
 }
