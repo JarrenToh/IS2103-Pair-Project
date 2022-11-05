@@ -28,7 +28,7 @@ public class RentalRate implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable = false)
+    @Column(nullable = false) // TODO: include unique to be true
     private String name;
     
     @Column(nullable = false)
@@ -37,7 +37,7 @@ public class RentalRate implements Serializable {
     @Column(nullable = false)
     private Date validityPeriod;
     
-    @Column(nullable = false)
+    @Column(nullable = false) // if is being rented, the enabled will be true. by default, it is false
     private Boolean enabled;
     
     @ManyToOne(optional = false)

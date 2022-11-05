@@ -24,7 +24,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     private EntityManager em;
 
     @Override
-    public long createRentalRate(RentalRate rr, Category c) {
+    public long createRentalRate(RentalRate rr) {
         em.persist(rr);
         em.flush();
         
@@ -48,6 +48,12 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         Query query = em.createQuery("SELECT r FROM RentalRate r WHERE r.id = :inRentalRateId");
         query.setParameter("inRentalRateId", rentalRateId);
         return (RentalRate)query.getSingleResult();
+    }
+    
+    @Override
+    public long updateRentalRate(RentalRate rr) {
+        em.merge(rr);
+        return rr.getId();
     }
     
 }

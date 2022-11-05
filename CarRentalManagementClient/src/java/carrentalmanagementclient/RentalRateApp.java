@@ -1,8 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+TODO: Need to include try-catch for each scanner.next()
+*/
 package carrentalmanagementclient;
 
 import entity.Category;
@@ -12,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import util.regex.RentalRateRegex;
 
 /**
  *
@@ -61,6 +60,13 @@ public class RentalRateApp {
                 else if (response == 3) 
                 {
                     viewSpecificRentalRate();
+                }
+                else if (response == 4)
+                {
+                    updateRentalRate();
+                } else if (response == 5)
+                {
+                    
                 }
                 else if (response == 6) {
                     break;
@@ -120,19 +126,19 @@ public class RentalRateApp {
                 System.out.println("Error message occued: " + ex.getMessage());
             }
             
-            // TODO: not sure if need check. need check
-            boolean enabled = true;
+            boolean enabled = false;
             rr.setEnabled(enabled);
             
             rr.setCategory(c);
             
-            long id = rentalRateModule.getRentalRateSessionBeanRemote().createRentalRate(rr, c);
+            long id = rentalRateModule.getRentalRateSessionBeanRemote().createRentalRate(rr);
             System.out.println(String.format("\nYou have created rental rate with the id of %d", id));
-            // once successful
+            // TOOD: once successful, need to include validation as well
             break;
         }
     }
     
+    // TODO: Cater if there is no rental rate records
     private void viewAllRentalRates() {
         List<RentalRate> rentalRates = rentalRateModule.getRentalRateSessionBeanRemote().getRentalRatesWithCategories();
         System.out.println("\nCar Category ----- Validity Period");
@@ -153,7 +159,7 @@ public class RentalRateApp {
                 RentalRate r = rentalRates.get(i);
                 System.out.println((i + 1) + ". " + r.getName());
             }   
-            System.out.print("Select a rental rate (i.e. 1) > ");
+            System.out.print("Select a rental rate to view (i.e. 1) > ");
             int rentalRateNumber = scanner.nextInt();
             
             rentalRate = rentalRates.get(rentalRateNumber - 1);
@@ -163,7 +169,97 @@ public class RentalRateApp {
         System.out.println("\n-----Rental Rate Details -----");
         System.out.println("ID: " + rentalRate.getId());
         System.out.println("Name: " + rentalRate.getName());
-        System.out.println("Rare Per Day: $" + rentalRate.getRatePerDay());
+        System.out.println("Rate (Per Day): $" + rentalRate.getRatePerDay());
         System.out.println("Valid until: " + rentalRate.getValidityPeriod());
+    }
+    
+    private void updateRentalRate() {
+        Date validityPeriodDate = new Date();
+        RentalRate rr = new RentalRate();
+        Scanner scanner = new Scanner(System.in);
+        
+        while (true) {
+            List<RentalRate> rentalRates = rentalRateModule.getRentalRateSessionBeanRemote().getRentalRates();
+            for (int i = 0; i < rentalRates.size(); i++) {
+                RentalRate r = rentalRates.get(i);
+                System.out.println((i + 1) + ". " + r.getName());
+            }   
+            System.out.print("Select a rental rate to update (i.e. 1) > ");
+            String rentalRate = scanner.next();
+            if (rentalRate.matches(RentalRateRegex.NUMBER_REGEX)) {
+               int rentalRateNumber = Integer.parseInt(rentalRate);
+               rr = rentalRates.get(rentalRateNumber - 1);       
+            }
+         
+            break; // assume if is success
+        }
+        
+        while (true) {
+            System.out.println("\nNOTE: If you don't want to update a particular field, leave it blank unless otherwise stated!!");
+            List<Category> categories = rentalRateModule.getCategorySessionBeanRemote().getCategories();
+            System.out.println("\nList of Categories: ");
+                    
+            for (int i = 0; i < categories.size(); i++) {
+                System.out.println((i + 1) + ". " + categories.get(i).getCategoryName());
+            }
+        
+            System.out.print("\nCurrent category: " + rr.getCategory().getCategoryName());
+            System.out.print("\nUpdate the number (corresponding to the category) you want to update to i.e. 1 > ");
+            scanner.nextLine();
+            String categoryNumber = scanner.nextLine();
+            
+            if (categoryNumber.isEmpty()) {
+                
+            } else {
+                if (categoryNumber.matches(RentalRateRegex.NUMBER_REGEX)) {
+                    int categoryNumberInt = Integer.parseInt(categoryNumber);
+                    if (categoryNumberInt >= 1 && categoryNumberInt <= categories.size()) {
+                        rr.setCategory(categories.get(categoryNumberInt - 1));    
+                    }
+                }
+            }
+
+
+            System.out.print("\nUpdate the name of the rental rate > ");
+            String newName = scanner.nextLine();
+            if (newName.isEmpty()) {
+                
+            } else if (!newName.equals("")) {
+                rr.setName(newName);    
+            }
+            
+            System.out.print("\nUpdate the rate (per day) i.e. 24 hour period > ");
+            String newRatePerDay = scanner.nextLine();
+            if (newRatePerDay.isEmpty()) {
+                
+            } else {
+                if (newRatePerDay.matches(RentalRateRegex.DOUBLE_REGEX)) {
+                   BigDecimal newRatePerDayBD = new BigDecimal(newRatePerDay);
+                    if (newRatePerDayBD.compareTo(BigDecimal.ZERO) > 0) {
+                        rr.setRatePerDay(newRatePerDayBD);
+                    } 
+                }
+            }
+            
+            
+            System.out.print("\nUpdate the validity period of the rental rate (dd/mm/yyyy) > ");
+            String newValidityPeriod = scanner.nextLine();
+            if (newValidityPeriod.isEmpty()) {
+                
+            } else {
+                try
+                {
+                    SimpleDateFormat dateFor = new SimpleDateFormat("dd/MM/yyyy");
+                    validityPeriodDate = dateFor.parse(newValidityPeriod);
+                    rr.setValidityPeriod(validityPeriodDate);
+                } catch (java.text.ParseException ex) {
+                    System.out.println("Error message occued: " + ex.getMessage());
+                }    
+            }
+            
+            long id = rentalRateModule.getRentalRateSessionBeanRemote().updateRentalRate(rr);
+            System.out.println(String.format("\nYou have updated rental rate with the id of %d", id));
+            break; // TODO: assuming if is success, need to update with validation checks
+        }
     }
 }

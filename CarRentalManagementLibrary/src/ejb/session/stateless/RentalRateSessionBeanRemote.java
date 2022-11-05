@@ -16,8 +16,9 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface RentalRateSessionBeanRemote {
-    long createRentalRate(RentalRate rr, Category c);
+    long createRentalRate(RentalRate rr);
     List<RentalRate> getRentalRatesWithCategories();
     List<RentalRate> getRentalRates();
     RentalRate getSpecificRental(long rentalRateId);
+    long updateRentalRate(RentalRate rr);
 }
