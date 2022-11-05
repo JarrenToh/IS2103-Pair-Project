@@ -21,4 +21,5 @@ public interface RentalRateSessionBeanLocal {
     List<RentalRate> getRentalRates();
     RentalRate getSpecificRental(long rentalRateId);
     long updateRentalRate(RentalRate rr);
+    void deleteRentalRate(RentalRate rr);
 }

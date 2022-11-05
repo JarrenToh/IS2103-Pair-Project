@@ -66,7 +66,7 @@ public class RentalRateApp {
                     updateRentalRate();
                 } else if (response == 5)
                 {
-                    
+                    deleteRentalRate();
                 }
                 else if (response == 6) {
                     break;
@@ -260,6 +260,41 @@ public class RentalRateApp {
             long id = rentalRateModule.getRentalRateSessionBeanRemote().updateRentalRate(rr);
             System.out.println(String.format("\nYou have updated rental rate with the id of %d", id));
             break; // TODO: assuming if is success, need to update with validation checks
+        }
+    }
+    
+    private void deleteRentalRate()
+    {
+        RentalRate rr = new RentalRate();
+        Scanner scanner = new Scanner(System.in);
+        
+        while (true) {
+            List<RentalRate> rentalRates = rentalRateModule.getRentalRateSessionBeanRemote().getRentalRates();
+            for (int i = 0; i < rentalRates.size(); i++) {
+                RentalRate r = rentalRates.get(i);
+                System.out.println((i + 1) + ". " + r.getName());
+            }   
+            System.out.println("NOTE: The deletion of rental rate is irreversible!!");
+            System.out.print("Select a rental rate to delete (i.e. 1) > ");
+            String rentalRate = scanner.next();
+            if (rentalRate.matches(RentalRateRegex.NUMBER_REGEX)) {
+               int rentalRateNumber = Integer.parseInt(rentalRate);
+               rr = rentalRates.get(rentalRateNumber - 1);       
+            }
+            
+            // prompt user
+            while (true) {
+                System.out.print(String.format("Are you sure you want to delete rental rate of id %d (n for no, y for yes) > ", rr.getId()));
+                String response = scanner.next();
+                
+                if (response.equals("n")) {
+                    break;
+                } else if (response.equals("y")) {
+                    rentalRateModule.getRentalRateSessionBeanRemote().deleteRentalRate(rr);
+                    System.out.println("You have successfully deleted the rental rate");
+                    break;
+                }
+            }
         }
     }
 }

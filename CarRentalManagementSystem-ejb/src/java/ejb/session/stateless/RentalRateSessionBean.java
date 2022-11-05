@@ -56,4 +56,10 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         return rr.getId();
     }
     
+    @Override
+    public void deleteRentalRate(RentalRate rr) {
+        rr = em.merge(rr);
+        em.remove(rr);
+    }
+    
 }
