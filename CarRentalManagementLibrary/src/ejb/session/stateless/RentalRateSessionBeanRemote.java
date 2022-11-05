@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.Category;
 import entity.RentalRate;
+import java.util.List;
 import javax.ejb.Remote;
 
 /**
@@ -16,4 +17,5 @@ import javax.ejb.Remote;
 @Remote
 public interface RentalRateSessionBeanRemote {
     long createRentalRate(RentalRate rr, Category c);
+    List<RentalRate> getRentalRates();
 }

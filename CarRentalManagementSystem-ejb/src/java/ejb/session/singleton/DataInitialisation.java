@@ -80,10 +80,10 @@ public class DataInitialisation {
         categorySessionBean.createNewCategory(c1);
         
         Category c2 = new Category("Category B");
-        categorySessionBean.createNewCategory(c1);
+        categorySessionBean.createNewCategory(c2);
         
         Category c3 = new Category("Category C");
-        categorySessionBean.createNewCategory(c1);
+        categorySessionBean.createNewCategory(c3);
     }
 
     

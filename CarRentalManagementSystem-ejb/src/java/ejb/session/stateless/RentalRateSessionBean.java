@@ -7,9 +7,11 @@ package ejb.session.stateless;
 
 import entity.Category;
 import entity.RentalRate;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -27,6 +29,12 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         em.flush();
         
         return rr.getId();
+    }
+    
+    @Override
+    public List<RentalRate> getRentalRates() {
+        Query query = em.createQuery("SELECT r FROM RentalRate r INNER JOIN r.category c ORDER BY c.categoryName, r.validityPeriod ASC");
+        return query.getResultList();
     }
     
 }

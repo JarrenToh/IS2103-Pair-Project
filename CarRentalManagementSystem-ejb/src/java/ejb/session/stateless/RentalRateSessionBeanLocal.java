@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.Category;
 import entity.RentalRate;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -16,4 +17,5 @@ import javax.ejb.Local;
 @Local
 public interface RentalRateSessionBeanLocal {
     long createRentalRate(RentalRate rr, Category c);
+    List<RentalRate> getRentalRates();
 }

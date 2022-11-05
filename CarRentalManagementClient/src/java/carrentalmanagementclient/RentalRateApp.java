@@ -54,7 +54,7 @@ public class RentalRateApp {
                 {
                     createRentalRate();
                 }
-                if (response == 2) 
+                else if (response == 2) 
                 {
                     viewAllRentalRates();
                 }
@@ -87,7 +87,7 @@ public class RentalRateApp {
         System.out.println("\nList of Categories: ");
                     
         for (int i = 0; i < categories.size(); i++) {
-            System.out.print((i + 1) + ". " + categories.get(i).getCategoryName());
+            System.out.println((i + 1) + ". " + categories.get(i).getCategoryName());
         }
         
         while (true) {
@@ -126,6 +126,15 @@ public class RentalRateApp {
             System.out.println(String.format("\nYou have created rental rate with the id of %d", id));
             // once successful
             break;
+        }
+    }
+    
+    private void viewAllRentalRates() {
+        List<RentalRate> rentalRates = rentalRateModule.getRentalRateSessionBeanRemote().getRentalRates();
+        System.out.println("\nCar Category ----- Validity Period");
+        for (int i = 0; i < rentalRates.size(); i++) {
+            RentalRate r = rentalRates.get(i);
+            System.out.println(r.getCategory().getCategoryName() + " ----- " + r.getValidityPeriod());
         }
     }
 }

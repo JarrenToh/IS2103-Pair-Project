@@ -32,13 +32,14 @@ public class Category implements Serializable {
     private String categoryName;
     
     @OneToMany(mappedBy="category")
-    private List<Model> models = new ArrayList<>();
+    private List<Model> models;
     
     @OneToMany(mappedBy="category")
-    private List<RentalRate> rentalRates = new ArrayList<>();
+    private List<RentalRate> rentalRates;
 
     public Category() {
-        
+        this.models = new ArrayList<Model>();
+        this.rentalRates = new ArrayList<RentalRate>();
     }
     
     public Category(String categoryName) {
