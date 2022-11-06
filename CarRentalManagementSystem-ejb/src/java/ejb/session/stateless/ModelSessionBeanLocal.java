@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.Model;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +14,5 @@ import javax.ejb.Local;
  */
 @Local
 public interface ModelSessionBeanLocal {
-    
+    long createModel(Model m);
 }

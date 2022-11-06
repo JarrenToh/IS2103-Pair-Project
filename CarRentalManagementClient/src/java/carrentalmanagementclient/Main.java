@@ -6,6 +6,7 @@
 package carrentalmanagementclient;
 
 import ejb.session.stateless.CategorySessionBeanRemote;
+import ejb.session.stateless.ModelSessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
 import javax.ejb.EJB;
 
@@ -17,13 +18,16 @@ public class Main {
     
     @EJB
     private static CategorySessionBeanRemote categorySessionBeanRemote;
+    
+    @EJB
+    private static ModelSessionBeanRemote modelSessionBeanRemote;
 
     @EJB
     private static RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
     
     public static void main(String[] args) {
         // TODO code application logic here
-        MainApp mainApp = new MainApp(rentalRateSessionBeanRemote, categorySessionBeanRemote);
+        MainApp mainApp = new MainApp(rentalRateSessionBeanRemote, categorySessionBeanRemote, modelSessionBeanRemote);
         mainApp.run();
     }
     

@@ -6,6 +6,7 @@
 package carrentalmanagementclient;
 
 import ejb.session.stateless.CategorySessionBeanRemote;
+import ejb.session.stateless.ModelSessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
 import java.util.Scanner;
 
@@ -17,23 +18,24 @@ public class MainApp {
 
     private CategorySessionBeanRemote categorySessionBeanRemote;
     private RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
+    private ModelSessionBeanRemote modelSessionBeanRemote;
     
     // sub-apps/pages
     private RentalRateApp rentalRateApp;
+    private ModelApp modelApp;
 
     // modules
     private RentalRateModule rentalRateModule;
-    
-    // entities
-//    private AtmCard currentATMCard;
-    
+    private ModelModule modelModule;
+        
     public MainApp() {
         
     }
     
-    public MainApp(RentalRateSessionBeanRemote rentalRateSessionBeanRemote, CategorySessionBeanRemote categorySessionBeanRemote) {
+    public MainApp(RentalRateSessionBeanRemote rentalRateSessionBeanRemote, CategorySessionBeanRemote categorySessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote) {
         this.rentalRateSessionBeanRemote = rentalRateSessionBeanRemote;
         this.categorySessionBeanRemote = categorySessionBeanRemote;
+        this.modelSessionBeanRemote = modelSessionBeanRemote;
     }
     
     public void run() {
@@ -42,9 +44,11 @@ public class MainApp {
         
         // set the necessary modules here after login
         rentalRateModule = new RentalRateModule(rentalRateSessionBeanRemote, categorySessionBeanRemote);
+        modelModule = new ModelModule(modelSessionBeanRemote, categorySessionBeanRemote);
         
         // set the sub-apps/pages here
         rentalRateApp = new RentalRateApp(rentalRateModule);
+        modelApp = new ModelApp(modelModule);
         
         menuMain();
     }
@@ -78,7 +82,7 @@ public class MainApp {
                 }
                 else if (response == 2)
                 {
-                    categorySessionBeanRemote.deleteCategory();
+                    modelApp.runModelApp();
                 }
                 else if (response == 5)
                 {
@@ -96,6 +100,7 @@ public class MainApp {
                 // TODO: navigate back to home page
             }
         }
+        System.out.println("\nYou have logged out successfully\n");
     }
     
 }

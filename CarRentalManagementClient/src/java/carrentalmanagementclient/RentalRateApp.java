@@ -80,10 +80,9 @@ public class RentalRateApp {
             if (response == 6)
             {
                 break;
-                // TODO: navigate back to home page
             }
         }
-        System.out.println("You have exited out of Rental Rate page successfully");
+        System.out.println("\nYou have exited out of Rental Rate page successfully\n");
     }
     
     private void createRentalRate() {
