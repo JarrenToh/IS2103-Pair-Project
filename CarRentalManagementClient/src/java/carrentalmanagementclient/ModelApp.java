@@ -157,7 +157,7 @@ public class ModelApp {
                 System.out.println((i + 1) + ". " + categories.get(i).getCategoryName());
             }
         
-            System.out.print("\nCurrent category: " + m.getCategory().getCategoryName());
+            System.out.print("\nCurrent category: \033[0;1m" + m.getCategory().getCategoryName());
             System.out.print("\nUpdate the number (corresponding to the category) you want to update to i.e. 1 > ");
             scanner.nextLine();
             String categoryNumber = scanner.nextLine(); // why scanner.nextLine() is used instead of scanner.next() - we should allow the user to input empty blank spaces if don't want to update that particular field
@@ -173,7 +173,7 @@ public class ModelApp {
                 }
             }
 
-            System.out.println("\nCurrent (make and) model name is " + m.getMakeAndModelName());
+            System.out.println("\nCurrent (make and) model name: \033[0;1m" + m.getMakeAndModelName());
             System.out.print("Update the (make and) model > ");
             String newMakeAndModelName = scanner.nextLine();
             if (newMakeAndModelName.isEmpty()) {

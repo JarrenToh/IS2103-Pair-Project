@@ -140,6 +140,12 @@ public class RentalRateApp {
     // TODO: Cater if there is no rental rate records
     private void viewAllRentalRates() {
         List<RentalRate> rentalRates = rentalRateModule.getRentalRateSessionBeanRemote().getRentalRatesWithCategories();
+        
+        if (rentalRates.isEmpty()) {
+                System.out.println("No rental rates available.");
+                return;
+        }
+        
         System.out.println("\nCar Category ----- Validity Period");
         for (int i = 0; i < rentalRates.size(); i++) {
             RentalRate r = rentalRates.get(i);
@@ -154,6 +160,12 @@ public class RentalRateApp {
         
         while (true) {
             List<RentalRate> rentalRates = rentalRateModule.getRentalRateSessionBeanRemote().getRentalRates();
+            
+            if (rentalRates.isEmpty()) {
+                System.out.println("No rental rates available.");
+                return;
+            }
+            
             for (int i = 0; i < rentalRates.size(); i++) {
                 RentalRate r = rentalRates.get(i);
                 System.out.println((i + 1) + ". " + r.getName());
@@ -179,10 +191,17 @@ public class RentalRateApp {
         
         while (true) {
             List<RentalRate> rentalRates = rentalRateModule.getRentalRateSessionBeanRemote().getRentalRates();
+            
+            if (rentalRates.isEmpty()) {
+                System.out.println("No rental rates available.");
+                return;
+            }
+            
             for (int i = 0; i < rentalRates.size(); i++) {
                 rr = rentalRates.get(i);
                 System.out.println((i + 1) + ". " + rr.getName());
             }   
+            
             System.out.print("Select a rental rate to update (i.e. 1) > ");
             String rentalRate = scanner.next();
             if (rentalRate.matches(GlobalRegex.NUMBER_REGEX)) {
@@ -194,7 +213,7 @@ public class RentalRateApp {
         }
         
         while (true) {
-            System.out.println("\nNOTE: If you don't want to update a particular field, leave it blank unless otherwise stated!!");
+            System.out.println("\n\033[0;1mNOTE: If you don't want to update a particular field, leave it blank unless otherwise stated!!");
             List<Category> categories = rentalRateModule.getCategorySessionBeanRemote().getCategories();
             System.out.println("\nList of Categories: ");
                     
@@ -202,8 +221,8 @@ public class RentalRateApp {
                 System.out.println((i + 1) + ". " + categories.get(i).getCategoryName());
             }
         
-            System.out.print("\nCurrent category: " + rr.getCategory().getCategoryName());
-            System.out.print("\nUpdate the number (corresponding to the category) you want to update to i.e. 1 > ");
+            System.out.println("\nCurrent category: \033[0;1m" + rr.getCategory().getCategoryName());
+            System.out.print("Update the number (corresponding to the category) you want to update to i.e. 1 > ");
             scanner.nextLine();
             String categoryNumber = scanner.nextLine(); // why scanner.nextLine() is used instead of scanner.next() - we should allow the user to input empty blank spaces if don't want to update that particular field
             
@@ -218,8 +237,8 @@ public class RentalRateApp {
                 }
             }
 
-
-            System.out.print("\nUpdate the name of the rental rate > ");
+            System.out.println("\nCurrent name: \033[0;1m" + rr.getName());
+            System.out.print("Update the name of the rental rate > ");
             String newName = scanner.nextLine();
             if (newName.isEmpty()) {
                 
@@ -227,7 +246,8 @@ public class RentalRateApp {
                 rr.setName(newName);    
             }
             
-            System.out.print("\nUpdate the rate (per day) i.e. 24 hour period > ");
+            System.out.println("\nCurrent rate (per day): \033[0;1m$" + rr.getRatePerDay());
+            System.out.print("Update the rate (per day) i.e. 24 hour period > ");
             String newRatePerDay = scanner.nextLine();
             if (newRatePerDay.isEmpty()) {
                 
@@ -240,8 +260,8 @@ public class RentalRateApp {
                 }
             }
             
-            
-            System.out.print("\nUpdate the validity period of the rental rate (dd/mm/yyyy) > ");
+            System.out.println("\nCurrent validity period: \033[0;1m" + rr.getValidityPeriod());
+            System.out.print("Update the validity period of the rental rate (dd/mm/yyyy) > ");
             String newValidityPeriod = scanner.nextLine();
             if (newValidityPeriod.isEmpty()) {
                 
