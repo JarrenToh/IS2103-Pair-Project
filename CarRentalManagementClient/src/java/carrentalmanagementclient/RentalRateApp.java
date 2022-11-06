@@ -282,6 +282,11 @@ public class RentalRateApp {
                rr = rentalRates.get(rentalRateNumber - 1);       
             }
             
+            if (rr.getEnabled()) {
+                System.out.println("Unfortunately, you cannot delete the rental rate as it has already been used currently");
+                continue;
+            }
+            
             // prompt user
             while (true) {
                 System.out.print(String.format("Are you sure you want to delete rental rate of id %d (n for no, y for yes) > ", rr.getId()));

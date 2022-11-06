@@ -76,6 +76,10 @@ public class MainApp {
                 {
                     rentalRateApp.runRentalRateApp();
                 }
+                else if (response == 2)
+                {
+                    categorySessionBeanRemote.deleteCategory();
+                }
                 else if (response == 5)
                 {
                     break;

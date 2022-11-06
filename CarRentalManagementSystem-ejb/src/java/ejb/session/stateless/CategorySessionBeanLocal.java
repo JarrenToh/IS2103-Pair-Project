@@ -17,4 +17,5 @@ import javax.ejb.Local;
 public interface CategorySessionBeanLocal {
     void createNewCategory(Category newCategory);
     List<Category> getCategories();
+    void deleteCategory();
 }

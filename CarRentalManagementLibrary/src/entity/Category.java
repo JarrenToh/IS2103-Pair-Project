@@ -34,7 +34,7 @@ public class Category implements Serializable {
     @OneToMany(mappedBy="category")
     private List<Model> models;
     
-    @OneToMany(mappedBy="category")
+    @OneToMany(mappedBy="category", cascade = CascadeType.ALL)
     private List<RentalRate> rentalRates;
 
     public Category() {
