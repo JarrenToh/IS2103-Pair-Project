@@ -19,4 +19,5 @@ public interface ModelSessionBeanLocal {
     List<Model> getModels();
     List<Model> getModelsWithCategories();
     long updateModel(Model m);
+    void deleteModel(Model m);
 }

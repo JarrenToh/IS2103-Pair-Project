@@ -48,5 +48,9 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
         return m.getId();
     }
 
-    
+    @Override
+    public void deleteModel(Model m) {
+        m = em.merge(m);
+        em.remove(m);
+    }
 }

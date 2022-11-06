@@ -197,6 +197,7 @@ public class RentalRateApp {
                 return;
             }
             
+            System.out.println("\nList of Rental Rates: ");
             for (int i = 0; i < rentalRates.size(); i++) {
                 rr = rentalRates.get(i);
                 System.out.println((i + 1) + ". " + rr.getName());
@@ -289,11 +290,19 @@ public class RentalRateApp {
         
         while (true) {
             List<RentalRate> rentalRates = rentalRateModule.getRentalRateSessionBeanRemote().getRentalRates();
+            
+            if (rentalRates.isEmpty()) {
+                System.out.println("No rental rates available.");
+                return;
+            }
+            
+            System.out.println("\nList of Rental Rates: ");
             for (int i = 0; i < rentalRates.size(); i++) {
-                RentalRate r = rentalRates.get(i);
-                System.out.println((i + 1) + ". " + r.getName());
+                rr = rentalRates.get(i);
+                System.out.println((i + 1) + ". " + rr.getName());
             }   
-            System.out.println("NOTE: The deletion of rental rate is irreversible!!");
+            
+            System.out.println("\nNOTE: The deletion of rental rate is irreversible!!");
             System.out.print("Select a rental rate to delete (i.e. 1) > ");
             String rentalRate = scanner.next();
             if (rentalRate.matches(GlobalRegex.NUMBER_REGEX)) {
@@ -315,7 +324,7 @@ public class RentalRateApp {
                     break;
                 } else if (response.equals("y")) {
                     rentalRateModule.getRentalRateSessionBeanRemote().deleteRentalRate(rr);
-                    System.out.println("You have successfully deleted the rental rate");
+                    System.out.println("\nYou have successfully deleted the rental rate");
                     break;
                 }
             }

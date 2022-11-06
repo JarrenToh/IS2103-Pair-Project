@@ -119,6 +119,12 @@ public class ModelApp {
     private void viewAllModels()
     {
         List<Model> models = modelModule.getModelSessionBeanRemote().getModelsWithCategories();
+        
+        if (models.isEmpty()) {
+                System.out.println("No models available.");
+                return;
+        }
+        
         System.out.println("\nCar Category ----- Model");
         for (int i = 0; i < models.size(); i++) {
             Model m = models.get(i);
@@ -133,6 +139,12 @@ public class ModelApp {
         
         while (true) {
             List<Model> models = modelModule.getModelSessionBeanRemote().getModels();
+            
+            if (models.isEmpty()) {
+                System.out.println("No models available.");
+                return;
+            }
+            
             System.out.println("\nList of Models: ");
             for (int i = 0; i < models.size(); i++) {
                 m = models.get(i);
@@ -190,7 +202,50 @@ public class ModelApp {
     
     private void deleteModel()
     {
+        Model m = new Model();
+        Scanner scanner = new Scanner(System.in);
         
+        while (true) {
+            List<Model> models = modelModule.getModelSessionBeanRemote().getModels();
+            
+            if (models.isEmpty()) {
+                System.out.println("No models available.");
+                return;
+            }
+            
+            System.out.println("\nList of Models: ");
+            for (int i = 0; i < models.size(); i++) {
+                m = models.get(i);
+                System.out.println((i + 1) + ". " + m.getMakeAndModelName());
+            }   
+            
+            System.out.println("\nNOTE: The deletion of model is irreversible!!");
+            System.out.print("Select a model to delete (i.e. 1) > ");
+            String rentalRate = scanner.next();
+            if (rentalRate.matches(GlobalRegex.NUMBER_REGEX)) {
+               int rentalRateNumber = Integer.parseInt(rentalRate);
+               m = models.get(rentalRateNumber - 1);       
+            }
+            
+            if (m.getEnabled()) {
+                System.out.println("Unfortunately, you cannot delete the model as it has already been used currently");
+                continue;
+            }
+            
+            // prompt user
+            while (true) {
+                System.out.print(String.format("Are you sure you want to delete model of id %d (n for no, y for yes) > ", m.getId()));
+                String response = scanner.next();
+                
+                if (response.equals("n")) {
+                    break;
+                } else if (response.equals("y")) {
+                    modelModule.getModelSessionBeanRemote().deleteModel(m);
+                    System.out.println("\nYou have successfully deleted the model");
+                    break;
+                }
+            }
+        }
     }
     
 
