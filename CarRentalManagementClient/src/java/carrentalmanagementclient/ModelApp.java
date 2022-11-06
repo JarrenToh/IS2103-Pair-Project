@@ -117,7 +117,12 @@ public class ModelApp {
     
     private void viewAllModels()
     {
-        
+        List<Model> models = modelModule.getModelSessionBeanRemote().getModelsWithCategories();
+        System.out.println("\nCar Category ----- Model");
+        for (int i = 0; i < models.size(); i++) {
+            Model m = models.get(i);
+            System.out.println(m.getCategory().getCategoryName() + " ----- " + m.getMakeAndModelName());
+        }
     }
     
     private void updateModel()

@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Model;
+import java.util.List;
 import javax.ejb.Remote;
 
 /**
@@ -15,4 +16,5 @@ import javax.ejb.Remote;
 @Remote
 public interface ModelSessionBeanRemote {
     long createModel(Model m);
+    List<Model> getModelsWithCategories();
 }

@@ -6,9 +6,11 @@
 package ejb.session.stateless;
 
 import entity.Model;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -26,6 +28,12 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
         em.flush();
         
         return m.getId();
+    }
+    
+    @Override
+    public List<Model> getModelsWithCategories() {
+        Query query = em.createQuery("SELECT m FROM Model m INNER JOIN m.category c ORDER BY c.categoryName, m.makeAndModelName ASC");
+        return query.getResultList();
     }
 
     

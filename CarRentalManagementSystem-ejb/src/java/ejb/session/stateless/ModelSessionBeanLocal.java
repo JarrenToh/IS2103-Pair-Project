@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Model;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -15,4 +16,5 @@ import javax.ejb.Local;
 @Local
 public interface ModelSessionBeanLocal {
     long createModel(Model m);
+    List<Model> getModelsWithCategories();
 }
