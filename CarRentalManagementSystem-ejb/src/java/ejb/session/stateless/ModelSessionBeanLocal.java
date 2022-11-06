@@ -16,5 +16,7 @@ import javax.ejb.Local;
 @Local
 public interface ModelSessionBeanLocal {
     long createModel(Model m);
+    List<Model> getModels();
     List<Model> getModelsWithCategories();
+    long updateModel(Model m);
 }

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Scanner;
+import util.regex.GlobalRegex;
 
 /**
  *
@@ -127,7 +128,64 @@ public class ModelApp {
     
     private void updateModel()
     {
+        Model m = new Model();
+        Scanner scanner = new Scanner(System.in);
         
+        while (true) {
+            List<Model> models = modelModule.getModelSessionBeanRemote().getModels();
+            System.out.println("\nList of Models: ");
+            for (int i = 0; i < models.size(); i++) {
+                m = models.get(i);
+                System.out.println((i + 1) + ". " + m.getMakeAndModelName());
+            }   
+            System.out.print("\nSelect a model to update (i.e. 1) > ");
+            String model = scanner.next();
+            if (model.matches(GlobalRegex.NUMBER_REGEX)) {
+               int modelNumber = Integer.parseInt(model);
+               m = models.get(modelNumber - 1);       
+            }
+         
+            break; // assume if is success
+        }
+        
+        while (true) {
+            System.out.println("\nNOTE: If you don't want to update a particular field, leave it blank unless otherwise stated!!");
+            List<Category> categories = modelModule.getCategorySessionBeanRemote().getCategories();
+            System.out.println("\nList of Categories: ");
+                    
+            for (int i = 0; i < categories.size(); i++) {
+                System.out.println((i + 1) + ". " + categories.get(i).getCategoryName());
+            }
+        
+            System.out.print("\nCurrent category: " + m.getCategory().getCategoryName());
+            System.out.print("\nUpdate the number (corresponding to the category) you want to update to i.e. 1 > ");
+            scanner.nextLine();
+            String categoryNumber = scanner.nextLine(); // why scanner.nextLine() is used instead of scanner.next() - we should allow the user to input empty blank spaces if don't want to update that particular field
+            
+            if (categoryNumber.isEmpty()) {
+                
+            } else {
+                if (categoryNumber.matches(GlobalRegex.NUMBER_REGEX)) {
+                    int categoryNumberInt = Integer.parseInt(categoryNumber);
+                    if (categoryNumberInt >= 1 && categoryNumberInt <= categories.size()) {
+                        m.setCategory(categories.get(categoryNumberInt - 1));    
+                    }
+                }
+            }
+
+            System.out.println("\nCurrent (make and) model name is " + m.getMakeAndModelName());
+            System.out.print("Update the (make and) model > ");
+            String newMakeAndModelName = scanner.nextLine();
+            if (newMakeAndModelName.isEmpty()) {
+                
+            } else {
+                m.setMakeAndModelName(newMakeAndModelName);    
+            }
+                                    
+            long id = modelModule.getModelSessionBeanRemote().updateModel(m);
+            System.out.println(String.format("\nYou have successfully updated model with the id of %d", id));
+            break; // TODO: assuming if is success, need to update with validation checks
+        }
     }
     
     private void deleteModel()

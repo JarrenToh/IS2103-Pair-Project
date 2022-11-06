@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import util.regex.RentalRateRegex;
+import util.regex.GlobalRegex;
 
 /**
  *
@@ -180,12 +180,12 @@ public class RentalRateApp {
         while (true) {
             List<RentalRate> rentalRates = rentalRateModule.getRentalRateSessionBeanRemote().getRentalRates();
             for (int i = 0; i < rentalRates.size(); i++) {
-                RentalRate r = rentalRates.get(i);
-                System.out.println((i + 1) + ". " + r.getName());
+                rr = rentalRates.get(i);
+                System.out.println((i + 1) + ". " + rr.getName());
             }   
             System.out.print("Select a rental rate to update (i.e. 1) > ");
             String rentalRate = scanner.next();
-            if (rentalRate.matches(RentalRateRegex.NUMBER_REGEX)) {
+            if (rentalRate.matches(GlobalRegex.NUMBER_REGEX)) {
                int rentalRateNumber = Integer.parseInt(rentalRate);
                rr = rentalRates.get(rentalRateNumber - 1);       
             }
@@ -205,12 +205,12 @@ public class RentalRateApp {
             System.out.print("\nCurrent category: " + rr.getCategory().getCategoryName());
             System.out.print("\nUpdate the number (corresponding to the category) you want to update to i.e. 1 > ");
             scanner.nextLine();
-            String categoryNumber = scanner.nextLine();
+            String categoryNumber = scanner.nextLine(); // why scanner.nextLine() is used instead of scanner.next() - we should allow the user to input empty blank spaces if don't want to update that particular field
             
             if (categoryNumber.isEmpty()) {
                 
             } else {
-                if (categoryNumber.matches(RentalRateRegex.NUMBER_REGEX)) {
+                if (categoryNumber.matches(GlobalRegex.NUMBER_REGEX)) {
                     int categoryNumberInt = Integer.parseInt(categoryNumber);
                     if (categoryNumberInt >= 1 && categoryNumberInt <= categories.size()) {
                         rr.setCategory(categories.get(categoryNumberInt - 1));    
@@ -232,7 +232,7 @@ public class RentalRateApp {
             if (newRatePerDay.isEmpty()) {
                 
             } else {
-                if (newRatePerDay.matches(RentalRateRegex.DOUBLE_REGEX)) {
+                if (newRatePerDay.matches(GlobalRegex.DOUBLE_REGEX)) {
                    BigDecimal newRatePerDayBD = new BigDecimal(newRatePerDay);
                     if (newRatePerDayBD.compareTo(BigDecimal.ZERO) > 0) {
                         rr.setRatePerDay(newRatePerDayBD);
@@ -276,7 +276,7 @@ public class RentalRateApp {
             System.out.println("NOTE: The deletion of rental rate is irreversible!!");
             System.out.print("Select a rental rate to delete (i.e. 1) > ");
             String rentalRate = scanner.next();
-            if (rentalRate.matches(RentalRateRegex.NUMBER_REGEX)) {
+            if (rentalRate.matches(GlobalRegex.NUMBER_REGEX)) {
                int rentalRateNumber = Integer.parseInt(rentalRate);
                rr = rentalRates.get(rentalRateNumber - 1);       
             }

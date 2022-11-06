@@ -9,7 +9,7 @@ package util.regex;
  *
  * @author wjahoward
  */
-public class RentalRateRegex {
+public class GlobalRegex {
     public final static String NUMBER_REGEX = "[0-9]+";
     public final static String DOUBLE_REGEX = "[0-9]{1,13}(\\.[0-9]*)?";
 }

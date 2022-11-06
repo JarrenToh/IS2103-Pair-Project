@@ -31,9 +31,21 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
     }
     
     @Override
+    public List<Model> getModels() {
+        Query query = em.createQuery("SELECT m FROM Model m");
+        return query.getResultList();
+    }
+    
+    @Override
     public List<Model> getModelsWithCategories() {
         Query query = em.createQuery("SELECT m FROM Model m INNER JOIN m.category c ORDER BY c.categoryName, m.makeAndModelName ASC");
         return query.getResultList();
+    }
+    
+    @Override
+    public long updateModel(Model m) {
+        em.merge(m);
+        return m.getId();
     }
 
     

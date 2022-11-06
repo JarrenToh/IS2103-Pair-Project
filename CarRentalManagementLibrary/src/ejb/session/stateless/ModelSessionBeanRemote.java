@@ -16,5 +16,7 @@ import javax.ejb.Remote;
 @Remote
 public interface ModelSessionBeanRemote {
     long createModel(Model m);
+    List<Model> getModels();
     List<Model> getModelsWithCategories();
+    long updateModel(Model m);
 }
