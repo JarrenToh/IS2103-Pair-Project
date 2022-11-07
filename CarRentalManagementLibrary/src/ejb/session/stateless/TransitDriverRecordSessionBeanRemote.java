@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.TransitDriverRecord;
+import java.util.List;
 import javax.ejb.Remote;
 
 /**
@@ -15,4 +16,12 @@ import javax.ejb.Remote;
 @Remote
 public interface TransitDriverRecordSessionBeanRemote {
     void createNewTransitDriverRecord(TransitDriverRecord newTransitDriverRecord);
+
+    List<TransitDriverRecord> getTransitDriverRecord();
+
+    void assignTransitDriver(long transitDriverId, long employeeId);
+
+    void updateTransitDriverRecordAsCompleted(long transitDriverId);
+
+    TransitDriverRecord getSpecificTransitDriverRecord(long transitDriverId);
 }

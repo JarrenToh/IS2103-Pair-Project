@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,11 +25,23 @@ public class TransitDriverRecord implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long transitDriverId;
     
+    @Column(nullable = false)
+    private boolean completed;
+    
     @OneToOne(optional = false)
     private Employee employee;
     
     @OneToOne(optional = false)
     private Car car;
+
+    public TransitDriverRecord() {
+    }
+
+    public TransitDriverRecord(boolean completed, Employee employee, Car car) {
+        this.completed = completed;
+        this.employee = employee;
+        this.car = car;
+    }
 
     public Long getTransitDriverId() {
         return transitDriverId;
@@ -89,6 +102,20 @@ public class TransitDriverRecord implements Serializable {
      */
     public void setCar(Car car) {
         this.car = car;
+    }
+
+    /**
+     * @return the completed
+     */
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    /**
+     * @param completed the completed to set
+     */
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
     
 }

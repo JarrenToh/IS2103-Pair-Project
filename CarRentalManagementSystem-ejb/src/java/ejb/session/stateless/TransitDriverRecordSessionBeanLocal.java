@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.TransitDriverRecord;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -15,4 +16,12 @@ import javax.ejb.Local;
 @Local
 public interface TransitDriverRecordSessionBeanLocal {
     void createNewTransitDriverRecord(TransitDriverRecord newTransitDriverRecord);
+
+    List<TransitDriverRecord> getTransitDriverRecord();
+
+    void assignTransitDriver(long transitDriverId, long employeeId);
+
+    void updateTransitDriverRecordAsCompleted(long transitDriverId);
+
+    TransitDriverRecord getSpecificTransitDriverRecord(long transitDriverId);
 }

@@ -25,5 +25,9 @@ public interface CarSessionBeanLocal {
     Car getSpecificCar(long carId);
 
     Long UpdateCar(Car updatedCar);
+
+    void updateCarOutlet(Car updatedCar, long outletId);
+
+    void deleteCar(long carId);
     
 }

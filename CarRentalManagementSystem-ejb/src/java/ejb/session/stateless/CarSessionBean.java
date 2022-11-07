@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.Car;
 import entity.Model;
+import entity.Outlet;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -22,6 +23,9 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
 
     @PersistenceContext(unitName = "CarRentalManagementSystem-ejbPU")
     private EntityManager em;
+
+    public CarSessionBean() {
+    }
 
     @Override
     public Long createCar(Car c, long modelId) {
@@ -75,10 +79,29 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
         carToUpdate.setRentalEndDate(updatedCar.getRentalEndDate());
         return updatedCar.getCarId();
     }
+
+    @Override
+    public void updateCarOutlet(Car car, long outletId) {
+        
+        Outlet newOutlet = em.find(Outlet.class, outletId);
+        Outlet currentOutlet = em.find(Outlet.class, car.getOutlet().getOutletId());
+        Car currentCar = em.find(Car.class, car.getCarId());
+        
+        currentOutlet.getCars().remove(currentCar);
+        newOutlet.getCars().add(currentCar);
+        currentCar.setOutlet(newOutlet);        
+        
+    }
+
+    @Override
+    public void deleteCar(long carId) {
+        
+        Car carToRemove = getSpecificCar(carId);
+        em.remove(carToRemove);
+        
+    }
     
     
-    
-    
-    
+
 
 }

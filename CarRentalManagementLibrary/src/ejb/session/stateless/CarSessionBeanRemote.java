@@ -26,4 +26,8 @@ public interface CarSessionBeanRemote {
 
     Long UpdateCar(Car updatedCar);
     
+    void updateCarOutlet(Car updatedCar, long outletId);
+
+    void deleteCar(long carId);
+    
 }
