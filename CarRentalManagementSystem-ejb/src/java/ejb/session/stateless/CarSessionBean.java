@@ -5,7 +5,11 @@
  */
 package ejb.session.stateless;
 
+import entity.Car;
+import entity.Model;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -14,6 +18,28 @@ import javax.ejb.Stateless;
 @Stateless
 public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal {
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @PersistenceContext(unitName = "CarRentalManagementSystem-ejbPU")
+    private EntityManager em;
+
+    @Override
+    public Long createCar(Car c, long modelId) {
+        
+        em.persist(c);
+        
+        Model associatedModel = em.find(Model.class, modelId);
+        
+        associatedModel.getCars().add(c);
+        
+        c.setModel(associatedModel);
+        
+        em.flush();
+        
+        return c.getCarId();
+    }
+    
+    
+
+
+    
+    
 }
