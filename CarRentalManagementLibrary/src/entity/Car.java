@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +17,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import util.enumeration.CarStatusEnum;
 import util.enumeration.LocationEnum;
@@ -51,10 +51,10 @@ public class Car implements Serializable {
     private boolean enabled;
 
     @Column
-    private Date rentalStartDate;
+    private LocalDateTime rentalStartDate;
 
     @Column
-    private Date rentalEndDate;
+    private LocalDateTime rentalEndDate;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -73,7 +73,7 @@ public class Car implements Serializable {
     public Car() {
     }
 
-    public Car(String licensePlateNumber, String colour, CarStatusEnum status, LocationEnum location, boolean enabled, Date rentalStartDate, Date rentalEndDate, Outlet outlet, Model model, TransitDriverRecord transitDriverRecord, Customer customer) {
+    public Car(String licensePlateNumber, String colour, CarStatusEnum status, LocationEnum location, boolean enabled, LocalDateTime rentalStartDate, LocalDateTime rentalEndDate, Outlet outlet, Model model, TransitDriverRecord transitDriverRecord, Customer customer) {
         this.licensePlateNumber = licensePlateNumber;
         this.colour = colour;
         this.status = status;
@@ -195,28 +195,28 @@ public class Car implements Serializable {
     /**
      * @return the rentalStartDate
      */
-    public Date getRentalStartDate() {
+    public LocalDateTime getRentalStartDate() {
         return rentalStartDate;
     }
 
     /**
      * @param rentalStartDate the rentalStartDate to set
      */
-    public void setRentalStartDate(Date rentalStartDate) {
+    public void setRentalStartDate(LocalDateTime rentalStartDate) {
         this.rentalStartDate = rentalStartDate;
     }
 
     /**
      * @return the rentalEndDate
      */
-    public Date getRentalEndDate() {
+    public LocalDateTime getRentalEndDate() {
         return rentalEndDate;
     }
 
     /**
      * @param rentalEndDate the rentalEndDate to set
      */
-    public void setRentalEndDate(Date rentalEndDate) {
+    public void setRentalEndDate(LocalDateTime rentalEndDate) {
         this.rentalEndDate = rentalEndDate;
     }
 

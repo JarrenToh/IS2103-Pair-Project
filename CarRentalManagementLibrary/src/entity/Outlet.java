@@ -14,7 +14,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 /**
@@ -49,9 +48,13 @@ public class Outlet implements Serializable {
     private List<Customer> customers;
 
     public Outlet() {
+        this.cars = new ArrayList<>();
+        this.employees = new ArrayList<>();
+        this.customers = new ArrayList<>();
     }
 
     public Outlet(String address, LocalTime openingTime, LocalTime closingTime) {
+        this();
         this.address = address;
         this.openingTime = openingTime;
         this.closingTime = closingTime;

@@ -45,9 +45,12 @@ public class Model implements Serializable {
     
     public Model() {
         
+        this.cars = new ArrayList<>();
+        
     }
     
     public Model(String makeAndModelName, Boolean enabled) {
+        this();
         this.makeAndModelName = makeAndModelName;
         this.enabled = enabled;
     }
