@@ -24,8 +24,11 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     private EntityManager em;
 
     @Override
-    public long createRentalRate(RentalRate rr) {
+    public long createRentalRate(RentalRate rr, Category c) {        
         em.persist(rr);
+        
+        rr.setCategory(c);
+        
         em.flush();
         
         return rr.getId();
@@ -33,7 +36,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     
     @Override
     public List<RentalRate> getRentalRatesWithCategories() {
-        Query query = em.createQuery("SELECT r FROM RentalRate r INNER JOIN r.category c ORDER BY c.categoryName, r.validityPeriod ASC");
+        Query query = em.createQuery("SELECT r FROM RentalRate r INNER JOIN r.category c ORDER BY c.categoryName, r.startDateTime, r.endDateTime ASC");
         return query.getResultList();
     }
     
@@ -51,15 +54,21 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     }
     
     @Override
-    public long updateRentalRate(RentalRate rr) {
-        em.merge(rr);
-        return rr.getId();
+    public long updateRentalRate(RentalRate updatedRentalRate) {        
+        RentalRate rentalRateToUpdate = getSpecificRental(updatedRentalRate.getId());
+        rentalRateToUpdate.setCategory(updatedRentalRate.getCategory());
+        rentalRateToUpdate.setName(updatedRentalRate.getName());
+        rentalRateToUpdate.setRatePerDay(updatedRentalRate.getRatePerDay());
+        rentalRateToUpdate.setStartDateTime(updatedRentalRate.getStartDateTime());
+        rentalRateToUpdate.setEndDateTime(updatedRentalRate.getEndDateTime());
+        
+        return updatedRentalRate.getId();
     }
     
     @Override
-    public void deleteRentalRate(RentalRate rr) {
-        rr = em.merge(rr);
-        em.remove(rr);
+    public void deleteRentalRate(long rentalRateId) {
+        RentalRate rentalRateToRemove = getSpecificRental(rentalRateId);
+        em.remove(rentalRateToRemove);
     }
     
 }
