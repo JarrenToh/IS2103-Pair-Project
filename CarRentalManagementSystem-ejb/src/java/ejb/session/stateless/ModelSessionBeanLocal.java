@@ -22,4 +22,5 @@ public interface ModelSessionBeanLocal {
     Model getSpecificModel(long modelId);
     long updateModel(Model m);
     void deleteModel(long modelId);
+    Model getModel(String make, String model);
 }

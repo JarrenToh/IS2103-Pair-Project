@@ -28,15 +28,18 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
     }
 
     @Override
-    public Long createCar(Car c, long modelId) {
+    public Long createCar(Car c, long modelId, long outletId) {
 
         em.persist(c);
 
         Model associatedModel = em.find(Model.class, modelId);
+        Outlet associatedOutlet = em.find(Outlet.class, outletId);
 
         associatedModel.getCars().add(c);
+        associatedOutlet.getCars().add(c);
 
         c.setModel(associatedModel);
+        c.setOutlet(associatedOutlet);
 
         em.flush();
 

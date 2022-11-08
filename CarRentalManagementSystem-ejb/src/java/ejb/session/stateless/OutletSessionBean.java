@@ -9,6 +9,7 @@ import entity.Outlet;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -31,6 +32,13 @@ public class OutletSessionBean implements OutletSessionBeanRemote, OutletSession
         em.flush();
         
         return newOutlet.getOutletId();
+    }
+    
+    @Override
+    public Outlet getOutlet(String outletName) {
+        Query query = em.createQuery("SELECT o FROM Outlet o WHERE o.address = :inOutletAddress");
+        query.setParameter("inOutletAddress", outletName);
+        return (Outlet)query.getSingleResult();
     }
 
     

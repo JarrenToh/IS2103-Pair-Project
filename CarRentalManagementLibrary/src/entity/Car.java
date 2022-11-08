@@ -35,7 +35,7 @@ public class Car implements Serializable {
     @Column(nullable = false, unique = true, length = 32)
     private String licensePlateNumber;
 
-    @Column(nullable = false, length = 32)
+    @Column(nullable = true, length = 32)
     private String colour;
 
     @Enumerated(EnumType.STRING)
@@ -43,7 +43,7 @@ public class Car implements Serializable {
     private CarStatusEnum status;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocationEnum location;
 
     @Column(nullable = false)
@@ -70,6 +70,27 @@ public class Car implements Serializable {
     private Customer customer;
 
     public Car() {
+    }
+    
+    public Car(String licensePlateNumber, Model model, String status, Outlet outlet) {
+        this.licensePlateNumber = licensePlateNumber;
+        this.model = model;
+        this.status = getCarStatus(status);
+        this.outlet = outlet;
+        this.enabled = false;
+    }
+    
+    private CarStatusEnum getCarStatus(String status) {
+        switch (status) {
+            case "Available":
+                return CarStatusEnum.AVAILABLE;
+            case "Unavailable":
+                return CarStatusEnum.UNAVAILABLE;
+            case "Repair":
+                return CarStatusEnum.REPAIR;
+            default:
+                return CarStatusEnum.TRANSIT;
+        }
     }
 
     public Car(String licensePlateNumber, String colour, CarStatusEnum status, LocationEnum location, boolean enabled, LocalDateTime rentalStartDate, LocalDateTime rentalEndDate, Outlet outlet, Model model, TransitDriverRecord transitDriverRecord, Customer customer) {

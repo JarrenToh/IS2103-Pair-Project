@@ -46,8 +46,7 @@ public class RentalRate implements Serializable {
     
     @Column(nullable = true)
     private LocalDateTime endDateTime;
-
-
+    
     @Column(nullable = false) // if is being rented, the enabled will be true. by default, it is false
     private Boolean enabled;
 
@@ -56,6 +55,27 @@ public class RentalRate implements Serializable {
     private Category category;
 
     public RentalRate() {
+    }
+        
+    public RentalRate(String name, String rentalRateType, Category category, BigDecimal ratePerDay, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        this.name = name;
+        this.rentalRateType = getRentalRateType(rentalRateType);
+        this.category = category;
+        this.ratePerDay = ratePerDay;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.enabled = false;
+    }
+    
+    private RentalRateType getRentalRateType(String rentalRateType) {
+        switch (rentalRateType) {
+            case "Default":
+                return RentalRateType.DEFAULT;
+            case "Promo":
+                return RentalRateType.PROMOTION;
+            default:
+                return RentalRateType.PEAK;
+        }
     }
 
     public RentalRate(String name, RentalRateType rentalRateType, BigDecimal ratePerDay, LocalDateTime startDateTime, LocalDateTime endDateTime, Boolean enabled, Category category) {

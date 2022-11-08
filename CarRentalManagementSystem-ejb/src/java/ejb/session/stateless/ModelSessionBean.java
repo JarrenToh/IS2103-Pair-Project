@@ -68,4 +68,12 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
         Model modelToRemove = getSpecificModel(modelId);
         em.remove(modelToRemove);
     }
+    
+    @Override
+    public Model getModel(String make, String model) {
+        Query query = em.createQuery("SELECT m FROM Model m WHERE m.make = :inMake and m.model = :inModel");
+        query.setParameter("inMake", make);
+        query.setParameter("inModel", model);
+        return (Model)query.getSingleResult();
+    }
 }

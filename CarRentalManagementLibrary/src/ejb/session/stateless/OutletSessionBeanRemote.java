@@ -15,4 +15,5 @@ import javax.ejb.Remote;
 @Remote
 public interface OutletSessionBeanRemote {
     Long createNewOutlet(Outlet newOutlet);
+    Outlet getOutlet(String outletName);
 }

@@ -16,7 +16,7 @@ import javax.ejb.Remote;
 @Remote
 public interface CarSessionBeanRemote {
 
-    Long createCar(Car c, long modelId);
+    Long createCar(Car c, long modelId, long outletId);
 
     List<Car> getCarsWithCategoryAndModel();
 

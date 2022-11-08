@@ -1,7 +1,7 @@
 /*
 TODO: Need to include try-catch for each scanner.next()
 */
-package carrentalmanagementclient;
+package carrentalmanagementclient.operationsmanager;
 
 import ejb.session.stateless.CategorySessionBeanRemote;
 import ejb.session.stateless.ModelSessionBeanRemote;

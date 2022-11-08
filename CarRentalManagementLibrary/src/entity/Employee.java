@@ -56,6 +56,28 @@ public class Employee implements Serializable {
         
     }
 
+    public Employee(String userName, Outlet outlet, String role) { // test case
+        this.userName = userName;
+        this.password = "password"; // default password
+        this.outlet = outlet;
+        this.userRole = getUserRole(role);
+    }
+    
+    private EmployeeAccessRightEnum getUserRole(String role) {
+        switch (role) {
+            case "Sales Manager":
+                return EmployeeAccessRightEnum.SALESMANAGER;
+            case "Operations Manager":
+                return EmployeeAccessRightEnum.OPERATIONSMANAGER;
+            case "Customer Services Executive":
+                return EmployeeAccessRightEnum.CUSTOMERSERVICEEXECUTIVE;
+            case "Employee":
+                return EmployeeAccessRightEnum.EMPLOYEE;
+            default:
+                return EmployeeAccessRightEnum.SYSTEMADMINISTRATOR;
+        }
+    }
+    
     public Employee(EmployeeAccessRightEnum userRole, String userName, String password) {
         this.userRole = userRole;
         this.userName = userName;

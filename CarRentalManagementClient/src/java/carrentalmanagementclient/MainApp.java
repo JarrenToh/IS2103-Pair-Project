@@ -5,6 +5,10 @@
  */
 package carrentalmanagementclient;
 
+import carrentalmanagementclient.operationsmanager.ModelModule;
+import carrentalmanagementclient.operationsmanager.ModelApp;
+import carrentalmanagementclient.salesmanager.RentalRateModule;
+import carrentalmanagementclient.salesmanager.RentalRateApp;
 import ejb.session.stateless.CategorySessionBeanRemote;
 import ejb.session.stateless.ModelSessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;

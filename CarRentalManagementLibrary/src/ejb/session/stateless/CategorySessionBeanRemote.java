@@ -18,4 +18,5 @@ public interface CategorySessionBeanRemote {
     void createNewCategory(Category newCategory);
     List<Category> getCategories();
     void deleteCategory();
+    Category getCategory(String categoryName);
 }
