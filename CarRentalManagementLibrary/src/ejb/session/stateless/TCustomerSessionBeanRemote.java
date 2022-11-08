@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.Customer;
 import javax.ejb.Remote;
 
 /**
@@ -13,5 +14,16 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface TCustomerSessionBeanRemote {
+
+    Long createCustomer(Customer newCustomer, long OutletId);
+
+    Customer retrieveCustomer(long customerId);
+
+    void updateCustomerPaymentStatus(Customer customer);
+
+    void pickUpCar(long customerId, long carId);
+
+    void returnCar(long carId);
+
     
 }

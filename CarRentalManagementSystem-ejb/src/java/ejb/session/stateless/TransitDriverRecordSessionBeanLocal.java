@@ -15,7 +15,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface TransitDriverRecordSessionBeanLocal {
-    void createNewTransitDriverRecord(TransitDriverRecord newTransitDriverRecord);
+    void createNewTransitDriverRecord(TransitDriverRecord newTransitDriverRecord, long carId);
 
     List<TransitDriverRecord> getTransitDriverRecord();
 

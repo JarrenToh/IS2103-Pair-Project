@@ -15,7 +15,7 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface TransitDriverRecordSessionBeanRemote {
-    void createNewTransitDriverRecord(TransitDriverRecord newTransitDriverRecord);
+    void createNewTransitDriverRecord(TransitDriverRecord newTransitDriverRecord, long CarId);
 
     List<TransitDriverRecord> getTransitDriverRecord();
 
