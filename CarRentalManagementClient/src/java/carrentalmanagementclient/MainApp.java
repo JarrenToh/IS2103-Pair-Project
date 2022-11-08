@@ -84,6 +84,9 @@ public class MainApp {
                 {
                     modelApp.runModelApp();
                 }
+                else if (response == 3) {
+                    categorySessionBeanRemote.deleteCategory();
+                }
                 else if (response == 5)
                 {
                     break;
