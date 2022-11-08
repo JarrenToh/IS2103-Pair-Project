@@ -3,10 +3,10 @@ TODO: Need to include try-catch for each scanner.next()
 */
 package carrentalmanagementclient;
 
+import ejb.session.stateless.CategorySessionBeanRemote;
+import ejb.session.stateless.ModelSessionBeanRemote;
 import entity.Category;
 import entity.Model;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Scanner;
 import util.regex.GlobalRegex;
@@ -18,6 +18,8 @@ import util.regex.GlobalRegex;
 public class ModelApp {
     
     private ModelModule modelModule;
+    private CategorySessionBeanRemote categorySessionBeanRemote;
+    private ModelSessionBeanRemote modelSessionBeanRemote;
 
     public ModelApp() {
         
@@ -25,6 +27,8 @@ public class ModelApp {
     
     public ModelApp(ModelModule modelModule) {
         this.modelModule = modelModule;
+        this.categorySessionBeanRemote = this.modelModule.getCategorySessionBeanRemote();
+        this.modelSessionBeanRemote = this.modelModule.getModelSessionBeanRemote();
     }
     
     public void runModelApp() { 
@@ -86,7 +90,7 @@ public class ModelApp {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
         
-        List<Category> categories = modelModule.getCategorySessionBeanRemote().getCategories();
+        List<Category> categories = this.categorySessionBeanRemote.getCategories();
         System.out.println("\nList of Categories: ");
                     
         for (int i = 0; i < categories.size(); i++) {
@@ -100,16 +104,19 @@ public class ModelApp {
             // TODO: include validation for once then just copy paste the tempalte for the subsequent ones
             Category c = categories.get(response - 1); // assuming if is the right input
             
-            System.out.print("\nInput the (make and) model name > ");
-            String name = scanner.next();
-            m.setMake(name);
+            scanner.nextLine();
+            System.out.print("\nInput the make name > ");
+            String make = scanner.nextLine();
+            m.setMake(make);
+            
+            System.out.print("\nInput the model name > ");
+            String model = scanner.nextLine();
+            m.setModel(model);
                         
             boolean enabled = false;
             m.setEnabled(enabled);
             
-            m.setCategory(c);
-            
-            long id = modelModule.getModelSessionBeanRemote().createModel(m);
+            long id = this.modelSessionBeanRemote.createModel(m, c);
             System.out.println(String.format("\nYou have created model with the id of %d", id));
             // TOOD: once successful, need to include validation as well
             break;
@@ -118,17 +125,21 @@ public class ModelApp {
     
     private void viewAllModels()
     {
-        List<Model> models = modelModule.getModelSessionBeanRemote().getModelsWithCategories();
+        List<Model> models = this.modelSessionBeanRemote.getModelsWithCategories();
         
         if (models.isEmpty()) {
                 System.out.println("No models available.");
                 return;
         }
         
-        System.out.println("\nCar Category ----- Model");
+        System.out.println("\n Make ----- Model ----- Category");
         for (int i = 0; i < models.size(); i++) {
             Model m = models.get(i);
-            System.out.println(m.getCategory().getCategoryName() + " ----- " + m.getMake());
+            String make = m.getMake();
+            String model = m.getModel();
+            String category = m.getCategory().getCategoryName();
+            
+            System.out.println(make + " ----- " + model + " ----- " + category);
         }
     }
     
@@ -138,7 +149,7 @@ public class ModelApp {
         Scanner scanner = new Scanner(System.in);
         
         while (true) {
-            List<Model> models = modelModule.getModelSessionBeanRemote().getModels();
+            List<Model> models = this.modelSessionBeanRemote.getModels();
             
             if (models.isEmpty()) {
                 System.out.println("No models available.");
@@ -162,7 +173,7 @@ public class ModelApp {
         
         while (true) {
             System.out.println("\nNOTE: If you don't want to update a particular field, leave it blank unless otherwise stated!!");
-            List<Category> categories = modelModule.getCategorySessionBeanRemote().getCategories();
+            List<Category> categories = this.categorySessionBeanRemote.getCategories();
             System.out.println("\nList of Categories: ");
                     
             for (int i = 0; i < categories.size(); i++) {
@@ -185,16 +196,25 @@ public class ModelApp {
                 }
             }
 
-            System.out.println("\nCurrent (make and) model name: \033[0;1m" + m.getMake());
-            System.out.print("Update the (make and) model > ");
-            String newMakeAndModelName = scanner.nextLine();
-            if (newMakeAndModelName.isEmpty()) {
+            System.out.println("\nCurrent make name: \033[0;1m" + m.getMake());
+            System.out.print("Update the make name > ");
+            String newMakeName = scanner.nextLine();
+            if (newMakeName.isEmpty()) {
                 
             } else {
-                m.setMake(newMakeAndModelName);    
+                m.setMake(newMakeName);    
+            }
+            
+            System.out.println("\nCurrent model name: \033[0;1m" + m.getModel());
+            System.out.print("Update the model name > ");
+            String newModelName = scanner.nextLine();
+            if (newModelName.isEmpty()) {
+                
+            } else {
+                m.setModel(newModelName);    
             }
                                     
-            long id = modelModule.getModelSessionBeanRemote().updateModel(m);
+            long id = this.modelSessionBeanRemote.updateModel(m);
             System.out.println(String.format("\nYou have successfully updated model with the id of %d", id));
             break; // TODO: assuming if is success, need to update with validation checks
         }
@@ -202,11 +222,12 @@ public class ModelApp {
     
     private void deleteModel()
     {
+        long modelId = 0L;
         Model m = new Model();
         Scanner scanner = new Scanner(System.in);
         
         while (true) {
-            List<Model> models = modelModule.getModelSessionBeanRemote().getModels();
+            List<Model> models = this.modelSessionBeanRemote.getModels();
             
             if (models.isEmpty()) {
                 System.out.println("No models available.");
@@ -224,7 +245,7 @@ public class ModelApp {
             String rentalRate = scanner.next();
             if (rentalRate.matches(GlobalRegex.NUMBER_REGEX)) {
                int rentalRateNumber = Integer.parseInt(rentalRate);
-               m = models.get(rentalRateNumber - 1);       
+               modelId = models.get(rentalRateNumber - 1).getId();       
             }
             
             if (m.getEnabled()) {
@@ -240,7 +261,7 @@ public class ModelApp {
                 if (response.equals("n")) {
                     break;
                 } else if (response.equals("y")) {
-                    modelModule.getModelSessionBeanRemote().deleteModel(m);
+                    this.modelSessionBeanRemote.deleteModel(modelId);
                     System.out.println("\nYou have successfully deleted the model");
                     break;
                 }

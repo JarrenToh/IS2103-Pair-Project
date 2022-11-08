@@ -31,7 +31,7 @@ public class Category implements Serializable {
     @Column(nullable = false)
     private String categoryName;
     
-    @OneToMany(mappedBy="category")
+    @OneToMany(mappedBy="category", cascade = CascadeType.ALL)
     private List<Model> models;
     
     @OneToMany(mappedBy="category", cascade = CascadeType.ALL)

@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.Category;
 import entity.Model;
 import java.util.List;
 import javax.ejb.Local;
@@ -15,9 +16,10 @@ import javax.ejb.Local;
  */
 @Local
 public interface ModelSessionBeanLocal {
-    long createModel(Model m);
+    long createModel(Model m, Category c);
     List<Model> getModels();
     List<Model> getModelsWithCategories();
+    Model getSpecificModel(long modelId);
     long updateModel(Model m);
-    void deleteModel(Model m);
+    void deleteModel(long modelId);
 }

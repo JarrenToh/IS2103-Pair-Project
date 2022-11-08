@@ -43,7 +43,7 @@ public class CategorySessionBean implements CategorySessionBeanRemote, CategoryS
     @Override
     public void deleteCategory() {
         Query query = em.createQuery("SELECT c FROM Category c WHERE c.id = :inCategoryId");
-        query.setParameter("inCategoryId", 1L);
+        query.setParameter("inCategoryId", 2L);
         Category cat = (Category)query.getSingleResult();
         em.remove(cat);
     }

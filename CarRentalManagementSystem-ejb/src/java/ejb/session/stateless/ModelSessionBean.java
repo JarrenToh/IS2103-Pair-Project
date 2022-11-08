@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.Category;
 import entity.Model;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -23,34 +24,48 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
     private EntityManager em;
 
     @Override
-    public long createModel(Model m) {
+    public long createModel(Model m, Category c) {
         em.persist(m);
+
+        m.setCategory(c);
+
         em.flush();
-        
+
         return m.getId();
     }
-    
+
     @Override
     public List<Model> getModels() {
         Query query = em.createQuery("SELECT m FROM Model m");
         return query.getResultList();
     }
-    
+
     @Override
     public List<Model> getModelsWithCategories() {
-        Query query = em.createQuery("SELECT m FROM Model m INNER JOIN m.category c ORDER BY c.categoryName, m.makeAndModelName ASC");
+        Query query = em.createQuery("SELECT m FROM Model m INNER JOIN m.category c ORDER BY c.categoryName, m.make, m.model ASC");
         return query.getResultList();
     }
     
     @Override
-    public long updateModel(Model m) {
-        em.merge(m);
-        return m.getId();
+    public Model getSpecificModel(long modelId) {
+        Query query = em.createQuery("SELECT m FROM Model m WHERE m.id = :inModelId");
+        query.setParameter("inModelId", modelId);
+        return (Model)query.getSingleResult();
     }
 
     @Override
-    public void deleteModel(Model m) {
-        m = em.merge(m);
-        em.remove(m);
+    public long updateModel(Model updatedModel) {        
+        Model modelToUpdate = getSpecificModel(updatedModel.getId());
+        modelToUpdate.setMake(updatedModel.getMake());
+        modelToUpdate.setModel(updatedModel.getModel());
+        modelToUpdate.setCategory(updatedModel.getCategory());
+        
+        return updatedModel.getId();
+    }
+
+    @Override
+    public void deleteModel(long modelId) {
+        Model modelToRemove = getSpecificModel(modelId);
+        em.remove(modelToRemove);
     }
 }
