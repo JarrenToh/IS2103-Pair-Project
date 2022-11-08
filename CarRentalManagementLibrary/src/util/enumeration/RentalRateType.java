@@ -9,10 +9,10 @@ package util.enumeration;
  *
  * @author jarrentoh
  */
-public enum CarStatusEnum {
+public enum RentalRateType {
     
-    AVAILABLE,
-    UNAVAILABLE,
-    TRANSIT,
-    REPAIR
+    DEFAULT,
+    PROMOTION,
+    PEAK
+    
 }

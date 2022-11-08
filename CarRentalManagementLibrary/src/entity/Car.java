@@ -49,10 +49,10 @@ public class Car implements Serializable {
     @Column(nullable = false)
     private boolean enabled;
 
-    @Column
+    @Column(nullable = true)
     private LocalDateTime rentalStartDate;
 
-    @Column
+    @Column(nullable = true)
     private LocalDateTime rentalEndDate;
 
     @ManyToOne(optional = false)

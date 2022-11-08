@@ -29,29 +29,32 @@ public class Model implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false)
-    private String makeAndModelName;
-    
+    private String make;
+
+    @Column(nullable = false)
+    private String model;
+
     @Column(nullable = false)
     private Boolean enabled;
-    
-    @OneToMany(mappedBy="model", cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
     private List<Car> cars = new ArrayList<>();
-    
+
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Category category;
-    
+
     public Model() {
-        
+
         this.cars = new ArrayList<>();
-        
+
     }
-    
+
     public Model(String makeAndModelName, Boolean enabled) {
         this();
-        this.makeAndModelName = makeAndModelName;
+        this.make = makeAndModelName;
         this.enabled = enabled;
     }
 
@@ -63,12 +66,12 @@ public class Model implements Serializable {
         this.id = id;
     }
 
-    public String getMakeAndModelName() {
-        return makeAndModelName;
+    public String getMake() {
+        return make;
     }
 
-    public void setMakeAndModelName(String makeAndModelName) {
-        this.makeAndModelName = makeAndModelName;
+    public void setMake(String make) {
+        this.make = make;
     }
 
     public Boolean getEnabled() {
@@ -119,5 +122,19 @@ public class Model implements Serializable {
     public String toString() {
         return "entity.Model[ id=" + id + " ]";
     }
-    
+
+    /**
+     * @return the model
+     */
+    public String getModel() {
+        return model;
+    }
+
+    /**
+     * @param model the model to set
+     */
+    public void setModel(String model) {
+        this.model = model;
+    }
+
 }

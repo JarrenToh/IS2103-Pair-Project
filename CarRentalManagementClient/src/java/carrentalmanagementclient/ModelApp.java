@@ -102,7 +102,7 @@ public class ModelApp {
             
             System.out.print("\nInput the (make and) model name > ");
             String name = scanner.next();
-            m.setMakeAndModelName(name);
+            m.setMake(name);
                         
             boolean enabled = false;
             m.setEnabled(enabled);
@@ -128,7 +128,7 @@ public class ModelApp {
         System.out.println("\nCar Category ----- Model");
         for (int i = 0; i < models.size(); i++) {
             Model m = models.get(i);
-            System.out.println(m.getCategory().getCategoryName() + " ----- " + m.getMakeAndModelName());
+            System.out.println(m.getCategory().getCategoryName() + " ----- " + m.getMake());
         }
     }
     
@@ -148,7 +148,7 @@ public class ModelApp {
             System.out.println("\nList of Models: ");
             for (int i = 0; i < models.size(); i++) {
                 m = models.get(i);
-                System.out.println((i + 1) + ". " + m.getMakeAndModelName());
+                System.out.println((i + 1) + ". " + m.getMake());
             }   
             System.out.print("\nSelect a model to update (i.e. 1) > ");
             String model = scanner.next();
@@ -185,13 +185,13 @@ public class ModelApp {
                 }
             }
 
-            System.out.println("\nCurrent (make and) model name: \033[0;1m" + m.getMakeAndModelName());
+            System.out.println("\nCurrent (make and) model name: \033[0;1m" + m.getMake());
             System.out.print("Update the (make and) model > ");
             String newMakeAndModelName = scanner.nextLine();
             if (newMakeAndModelName.isEmpty()) {
                 
             } else {
-                m.setMakeAndModelName(newMakeAndModelName);    
+                m.setMake(newMakeAndModelName);    
             }
                                     
             long id = modelModule.getModelSessionBeanRemote().updateModel(m);
@@ -216,7 +216,7 @@ public class ModelApp {
             System.out.println("\nList of Models: ");
             for (int i = 0; i < models.size(); i++) {
                 m = models.get(i);
-                System.out.println((i + 1) + ". " + m.getMakeAndModelName());
+                System.out.println((i + 1) + ". " + m.getMake());
             }   
             
             System.out.println("\nNOTE: The deletion of model is irreversible!!");

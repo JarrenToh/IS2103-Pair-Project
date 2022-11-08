@@ -120,7 +120,7 @@ public class RentalRateApp {
             {
                 SimpleDateFormat dateFor = new SimpleDateFormat("dd/MM/yyyy");
                 validityPeriodDate = dateFor.parse(validityPeriod);
-                rr.setValidityPeriod(validityPeriodDate);
+//                rr.setValidityPeriod(validityPeriodDate);
             } catch (java.text.ParseException ex) {
                 System.out.println("Error message occued: " + ex.getMessage());
             }
@@ -149,7 +149,7 @@ public class RentalRateApp {
         System.out.println("\nCar Category ----- Validity Period");
         for (int i = 0; i < rentalRates.size(); i++) {
             RentalRate r = rentalRates.get(i);
-            System.out.println(r.getCategory().getCategoryName() + " ----- " + r.getValidityPeriod());
+//            System.out.println(r.getCategory().getCategoryName() + " ----- " + r.getValidityPeriod());
         }
     }
     
@@ -181,7 +181,7 @@ public class RentalRateApp {
         System.out.println("ID: " + rentalRate.getId());
         System.out.println("Name: " + rentalRate.getName());
         System.out.println("Rate (Per Day): $" + rentalRate.getRatePerDay());
-        System.out.println("Valid until: " + rentalRate.getValidityPeriod());
+//        System.out.println("Valid until: " + rentalRate.getValidityPeriod());
     }
     
     private void updateRentalRate() {
@@ -261,7 +261,7 @@ public class RentalRateApp {
                 }
             }
             
-            System.out.println("\nCurrent validity period: \033[0;1m" + rr.getValidityPeriod());
+//            System.out.println("\nCurrent validity period: \033[0;1m" + rr.getValidityPeriod());
             System.out.print("Update the validity period of the rental rate (dd/mm/yyyy) > ");
             String newValidityPeriod = scanner.nextLine();
             if (newValidityPeriod.isEmpty()) {
@@ -271,7 +271,7 @@ public class RentalRateApp {
                 {
                     SimpleDateFormat dateFor = new SimpleDateFormat("dd/MM/yyyy");
                     validityPeriodDate = dateFor.parse(newValidityPeriod);
-                    rr.setValidityPeriod(validityPeriodDate);
+//                    rr.setValidityPeriod(validityPeriodDate);
                 } catch (java.text.ParseException ex) {
                     System.out.println("Error message occued: " + ex.getMessage());
                 }    

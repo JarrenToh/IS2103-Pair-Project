@@ -31,10 +31,10 @@ public class Outlet implements Serializable {
     @Column(nullable = false)
     private String address;
     
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalTime openingTime;
     
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalTime closingTime;
     
     @OneToMany(mappedBy="outlet")
