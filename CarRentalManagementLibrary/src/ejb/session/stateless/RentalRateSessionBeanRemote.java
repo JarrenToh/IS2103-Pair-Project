@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.Category;
 import entity.RentalRate;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -20,6 +21,7 @@ public interface RentalRateSessionBeanRemote {
     List<RentalRate> getRentalRatesWithCategories();
     List<RentalRate> getRentalRates();
     RentalRate getSpecificRental(long rentalRateId);
+    List<RentalRate> getRentalRatesByCategoryIdBetweenPickupAndReturn(long categoryId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime);
     long updateRentalRate(RentalRate rr);
     void deleteRentalRate(long rentalRateId);
 }

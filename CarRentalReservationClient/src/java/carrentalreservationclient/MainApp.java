@@ -8,13 +8,18 @@ package carrentalreservationclient;
 import ejb.session.stateless.CarSessionBeanRemote;
 import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.OutletSessionBeanRemote;
+import ejb.session.stateless.RentalRateSessionBeanRemote;
 import entity.Car;
+import entity.Category;
 import entity.Outlet;
+import entity.RentalRate;
+import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
+import util.enumeration.RentalRateType;
 
 /**
  *
@@ -25,15 +30,17 @@ public class MainApp {
     private CarSessionBeanRemote carSessionBeanRemote;
     private CustomerSessionBeanRemote customerSessionBeanRemote;
     private OutletSessionBeanRemote outletSessionBeanRemote;
+    private RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
 
     public MainApp() {
 
     }
 
-    public MainApp(CarSessionBeanRemote carSessionBeanRemote, CustomerSessionBeanRemote customerSessionBeanRemote, OutletSessionBeanRemote outletSessionBeanRemote) {
+    public MainApp(CarSessionBeanRemote carSessionBeanRemote, CustomerSessionBeanRemote customerSessionBeanRemote, OutletSessionBeanRemote outletSessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote) {
         this.carSessionBeanRemote = carSessionBeanRemote;
         this.customerSessionBeanRemote = customerSessionBeanRemote;
         this.outletSessionBeanRemote = outletSessionBeanRemote;
+        this.rentalRateSessionBeanRemote = rentalRateSessionBeanRemote;
     }
 
     public void run() {
@@ -143,9 +150,19 @@ public class MainApp {
 //            System.out.println(o.getOutletId() + " ----- " + o.getAddress() + " ----- " + o.getOpeningTime() + " ----- " + o.getClosingTime());
             List<Car> carsFromOutlet = getCarsByOutletId(o.getOutletId(), pickupDateTime);
             System.out.println("\nAvailable cars: ");
-            System.out.println("License Plate Number ----- Make ----- Model ----- Outlet ");
+            System.out.println("License Plate Number ----- Make ----- Model ----- Outlet ----- Rental Rate");
             for (Car c : carsFromOutlet) {
-                System.out.println(c.getLicensePlateNumber() + " ----- " + c.getModel().getMake() + " ------ " + c.getModel().getModel() + " ----- " + c.getOutlet().getAddress());
+//                  System.out.println(c.getModel().getCategory().getCategoryName());
+                Category category = c.getModel().getCategory();
+//                System.out.println(category.getCategoryName());
+                List<RentalRate> rentalRates = getRentalRatesByCategoryIdBetweenPickupAndReturn(category.getId(), pickupDateTime, returnDateTime); // get record that consists of the startDateTime and endDateTime to be null as well
+//
+                for (RentalRate r: rentalRates) {
+                    System.out.println("\n" + r.getName());
+                }
+                
+//                BigDecimal rentalFee = calculateTotalRentalFee(rentalRates, pickupDateTime, returnDateTime);
+//                System.out.println(c.getLicensePlateNumber() + " ----- " + c.getModel().getMake() + " ------ " + c.getModel().getModel() + " ----- " + c.getOutlet().getAddress());
             }
         }
     }
@@ -153,10 +170,40 @@ public class MainApp {
     private List<Outlet> getOutletsForPickAndReturn(LocalDateTime pickupDateTime, LocalDateTime returnDateTime, String returnOutlet) {
         return this.outletSessionBeanRemote.getOutletWithPickAndReturnTime(pickupDateTime.toLocalTime(), returnDateTime.toLocalTime(), returnOutlet);
     }
-    
+
     private List<Car> getCarsByOutletId(long outletId, LocalDateTime pickupDateTime) {
         return this.carSessionBeanRemote.getCarsByOutletId(outletId, pickupDateTime);
     }
+
+    private List<RentalRate> getRentalRatesByCategoryIdBetweenPickupAndReturn(long categoryId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
+        return this.rentalRateSessionBeanRemote.getRentalRatesByCategoryIdBetweenPickupAndReturn(categoryId, pickupDateTime, returnDateTime);
+    }
+
+    /*
+    1	Default 	Default
+    2	Default and Promotion	Promotion
+    3	Default and Peak	Peak
+    4	Default, Promotion and Peak	Promotion
+     */
+    private BigDecimal calculateTotalRentalFee(List<RentalRate> rentalRates, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
+        BigDecimal totalRentalFee = new BigDecimal(0);
+        BigDecimal defaultFee = null;
+        BigDecimal peakFee = null;
+        BigDecimal promotionFee = null;
+
+        for (RentalRate r : rentalRates) {
+//            if (r.getRentalRateType().equals(RentalRateType.DEFAULT)) {
+//                defaultFee = r.getRatePerDay();
+//            } else if (r.getRentalRateType().equals(RentalRateType.PEAK)) {
+//                peakFee = r.getRatePerDay();
+//            }
+            System.out.println(r.getName());
+        }
+
+        return totalRentalFee;
+    }
+    
+    // 05/12/2022 12:00, 07/12/2022 12:00, Outlet C, Outlet C
 
     private void reserveCar() {
 

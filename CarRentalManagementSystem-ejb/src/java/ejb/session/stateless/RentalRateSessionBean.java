@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.Category;
 import entity.RentalRate;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -51,6 +52,17 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         Query query = em.createQuery("SELECT r FROM RentalRate r WHERE r.id = :inRentalRateId");
         query.setParameter("inRentalRateId", rentalRateId);
         return (RentalRate)query.getSingleResult();
+    }
+    
+    @Override
+    public List<RentalRate> getRentalRatesByCategoryIdBetweenPickupAndReturn(long categoryId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
+        Query query = em.createQuery("SELECT r FROM RentalRate r where r.category.id = :inCategoryId AND ((r.startDateTime IS NULL AND r.endDateTime IS NULL) OR ((r.startDateTime <= :inPickupDateTime AND :inPickupDateTime <= r.endDateTime) OR (r.endDateTime >= :inPickupDateTime AND r.endDateTime <= :inReturnDateTime) OR (:inReturnDateTime > r.startDateTime AND :inReturnDateTime < r.endDateTime)))");
+        query.setParameter("inCategoryId", categoryId);
+        query.setParameter("inPickupDateTime", pickupDateTime);
+        query.setParameter("inReturnDateTime", returnDateTime);
+//        Query query = em.createQuery("SELECT r FROM RentalRate r where r.category.id = :inCategoryId");
+//        query.setParameter("inCategoryId", categoryId);
+        return query.getResultList();
     }
     
     @Override
