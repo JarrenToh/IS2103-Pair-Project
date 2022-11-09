@@ -7,6 +7,7 @@ package carrentalreservationclient;
 
 import ejb.session.stateless.CarSessionBeanRemote;
 import ejb.session.stateless.CustomerSessionBeanRemote;
+import ejb.session.stateless.OutletSessionBeanRemote;
 import javax.ejb.EJB;
 
 /**
@@ -21,12 +22,15 @@ public class Main {
     @EJB
     private static CustomerSessionBeanRemote customerSessionBeanRemote;
     
+    @EJB
+    private static OutletSessionBeanRemote outletSessionBeanRemote;
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        MainApp mainApp = new MainApp(carSessionBeanRemote, customerSessionBeanRemote);
+        MainApp mainApp = new MainApp(carSessionBeanRemote, customerSessionBeanRemote, outletSessionBeanRemote);
         mainApp.run();
     }
     

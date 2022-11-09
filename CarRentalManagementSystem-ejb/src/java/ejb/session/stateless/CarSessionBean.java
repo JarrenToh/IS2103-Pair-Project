@@ -8,11 +8,15 @@ package ejb.session.stateless;
 import entity.Car;
 import entity.Model;
 import entity.Outlet;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.CarStatusEnum;
 
 /**
  *
@@ -66,6 +70,21 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
         return em.find(Car.class, carId);
         
     }
+    
+    @Override
+    public List<Car> getCarsByOutletId(long outletId, LocalDateTime pickupDateTime) {
+        Query query = em.createQuery("SELECT c FROM Car c WHERE c.outlet.outletId = :inOutletId AND c.status = :inStatus");
+        query.setParameter("inOutletId", outletId);
+        query.setParameter("inStatus", CarStatusEnum.AVAILABLE);
+        List<Car> cars = query.getResultList();
+        
+        cars = cars.stream().filter(c -> {         
+            return c.getRentalEndDate() == null || (c.getRentalEndDate() != null && Math.abs(ChronoUnit.HOURS.between(c.getRentalEndDate(), pickupDateTime)) >= 2);
+                }).collect(Collectors.toList());
+        
+        return cars;
+    }
+    
 
     //Excluded association updates
     @Override

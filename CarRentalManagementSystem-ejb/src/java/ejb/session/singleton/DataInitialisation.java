@@ -173,7 +173,7 @@ public class DataInitialisation {
         rentalRateSessionBean.createRentalRate(r7, r7.getCategory());
         rentalRateSessionBean.createRentalRate(r8, r8.getCategory());
         rentalRateSessionBean.createRentalRate(r9, r9.getCategory());
-//
+
         Partner p1 = new Partner("Holiday.com");
         partnerSessionBean.createNewPartner(p1);
         

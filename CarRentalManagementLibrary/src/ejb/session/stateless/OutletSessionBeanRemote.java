@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import entity.Outlet;
+import java.time.LocalTime;
+import java.util.List;
 import javax.ejb.Remote;
 
 /**
@@ -16,4 +18,5 @@ import javax.ejb.Remote;
 public interface OutletSessionBeanRemote {
     Long createNewOutlet(Outlet newOutlet);
     Outlet getOutlet(String outletName);
+    List<Outlet> getOutletWithPickAndReturnTime(LocalTime pickupTime, LocalTime returnTime, String returnOutlet);
 }

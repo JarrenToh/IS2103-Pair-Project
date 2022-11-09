@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import entity.Outlet;
+import java.time.LocalTime;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -39,6 +41,15 @@ public class OutletSessionBean implements OutletSessionBeanRemote, OutletSession
         Query query = em.createQuery("SELECT o FROM Outlet o WHERE o.address = :inOutletAddress");
         query.setParameter("inOutletAddress", outletName);
         return (Outlet)query.getSingleResult();
+    }
+    
+    @Override
+    public List<Outlet> getOutletWithPickAndReturnTime(LocalTime pickupTime, LocalTime returnTime, String returnOutlet) {
+        Query query = em.createQuery("SELECT o FROM Outlet o WHERE o.address = :inReturnOutlet AND ((o.openingTime IS NULL AND o.closingTime IS NULL) OR ((:inReturnTime >= o.openingTime AND :inReturnTime < o.closingTime) AND (:inPickupTime >= o.openingTime AND :inPickupTime <= o.closingTime)))");
+        query.setParameter("inReturnOutlet", returnOutlet);
+        query.setParameter("inReturnTime", returnTime);
+        query.setParameter("inPickupTime", pickupTime);
+        return query.getResultList();
     }
 
     
