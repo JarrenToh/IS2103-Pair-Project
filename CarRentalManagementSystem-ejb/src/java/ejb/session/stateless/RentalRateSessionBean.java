@@ -13,6 +13,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.RentalRateType;
 
 /**
  *
@@ -55,13 +56,9 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     }
     
     @Override
-    public List<RentalRate> getRentalRatesByCategoryIdBetweenPickupAndReturn(long categoryId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
-        Query query = em.createQuery("SELECT r FROM RentalRate r where r.category.id = :inCategoryId AND ((r.startDateTime IS NULL AND r.endDateTime IS NULL) OR ((r.startDateTime <= :inPickupDateTime AND :inPickupDateTime <= r.endDateTime) OR (r.endDateTime >= :inPickupDateTime AND r.endDateTime <= :inReturnDateTime) OR (:inReturnDateTime > r.startDateTime AND :inReturnDateTime < r.endDateTime)))");
+    public List<RentalRate> getRentalRatesByCategoryId(long categoryId) {
+        Query query = em.createQuery("SELECT r FROM RentalRate r where r.category.id = :inCategoryId");
         query.setParameter("inCategoryId", categoryId);
-        query.setParameter("inPickupDateTime", pickupDateTime);
-        query.setParameter("inReturnDateTime", returnDateTime);
-//        Query query = em.createQuery("SELECT r FROM RentalRate r where r.category.id = :inCategoryId");
-//        query.setParameter("inCategoryId", categoryId);
         return query.getResultList();
     }
     
@@ -81,6 +78,20 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     public void deleteRentalRate(long rentalRateId) {
         RentalRate rentalRateToRemove = getSpecificRental(rentalRateId);
         em.remove(rentalRateToRemove);
+    }
+    
+    @Override
+    public RentalRate getRentalRatePriceByDateTimeAndType(List<Long> rentalRatesIds, LocalDateTime tempDateTime, RentalRateType rentalRateType) {
+        Query query = em.createQuery("SELECT r FROM RentalRate r WHERE r.id IN :inRentalRatesIds AND r.rentalRateType = :inRentalRateType AND ((r.startDateTime IS NULL AND r.endDateTime IS NULL) OR (:inTempDateTime >= r.startDateTime AND :inTempDateTime < r.endDateTime)) ORDER BY r.ratePerDay ASC");
+        query.setParameter("inRentalRatesIds", rentalRatesIds);
+        query.setParameter("inTempDateTime", tempDateTime);
+        query.setParameter("inRentalRateType", rentalRateType);
+        List<RentalRate> rentalRates = query.getResultList();
+        if (!rentalRates.isEmpty()) {
+            return rentalRates.get(0);
+        }
+        
+        return null;
     }
     
 }
