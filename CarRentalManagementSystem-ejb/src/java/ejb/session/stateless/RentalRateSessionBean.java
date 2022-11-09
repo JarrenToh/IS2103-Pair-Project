@@ -26,9 +26,12 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
 
     @Override
     public long createRentalRate(RentalRate rr, Category c) {        
+        
         em.persist(rr);
         
-        rr.setCategory(c);
+        Category associatedCategory = em.find(Category.class, c.getId());
+        
+        rr.setCategory(associatedCategory);
         
         em.flush();
         
