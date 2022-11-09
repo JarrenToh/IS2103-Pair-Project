@@ -10,6 +10,7 @@ import entity.RentalRate;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.ejb.Local;
+import util.enumeration.RentalRateType;
 
 /**
  *
@@ -21,7 +22,8 @@ public interface RentalRateSessionBeanLocal {
     List<RentalRate> getRentalRatesWithCategories();
     List<RentalRate> getRentalRates();
     RentalRate getSpecificRental(long rentalRateId);
-    List<RentalRate> getRentalRatesByCategoryIdBetweenPickupAndReturn(long categoryId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime);
+    List<RentalRate> getRentalRatesByCategoryId(long categoryId);
     long updateRentalRate(RentalRate rr);
     void deleteRentalRate(long rentalRateId);
+    RentalRate getRentalRatePriceByDateTimeAndType(List<Long> rentalRatesIds, LocalDateTime tempDateTime, RentalRateType rentalRateType);
 }

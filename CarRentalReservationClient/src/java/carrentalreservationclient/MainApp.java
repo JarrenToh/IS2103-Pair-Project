@@ -16,8 +16,11 @@ import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import util.enumeration.RentalRateType;
 
 /**
@@ -125,6 +128,8 @@ public class MainApp {
             returnOutlet = scanner.nextLine();
 
             getCarsFromInputs(pickupDateTime, returnDateTime, pickupOutlet, returnOutlet);
+            
+            break;
         }
 
         // a car is available for rental if the enum status is available
@@ -144,22 +149,15 @@ public class MainApp {
         }
 
         for (Outlet o : outletsForPickAndReturn) {
-//            System.out.println(o.getOutletId() + " ----- " + o.getAddress() + " ----- " + o.getOpeningTime() + " ----- " + o.getClosingTime());
             List<Car> carsFromOutlet = getCarsByOutletId(o.getOutletId(), pickupDateTime);
             System.out.println("\nAvailable cars: ");
-            System.out.println("License Plate Number ----- Make ----- Model ----- Outlet ----- Rental Rate");
+            System.out.println("License Plate Number ----- Make ----- Model ----- Outlet ----- Total Rental Rate");
             for (Car c : carsFromOutlet) {
-//                  System.out.println(c.getModel().getCategory().getCategoryName());
                 Category category = c.getModel().getCategory();
-//                System.out.println(category.getCategoryName());
-                List<RentalRate> rentalRates = getRentalRatesByCategoryIdBetweenPickupAndReturn(category.getId(), pickupDateTime, returnDateTime); // get record that consists of the startDateTime and endDateTime to be null as well
-//
-                for (RentalRate r: rentalRates) {
-                    System.out.println("\n" + r.getName());
-                }
-                
-//                BigDecimal rentalFee = calculateTotalRentalFee(rentalRates, pickupDateTime, returnDateTime);
-//                System.out.println(c.getLicensePlateNumber() + " ----- " + c.getModel().getMake() + " ------ " + c.getModel().getModel() + " ----- " + c.getOutlet().getAddress());
+                List<RentalRate> rentalRates = getRentalRatesByCategoryId(category.getId());
+                List<Long> rentalRatesId = rentalRates.stream().map(r -> r.getId()).collect(Collectors.toList());
+                BigDecimal rentalFee = calculateTotalRentalFee(rentalRatesId, pickupDateTime, returnDateTime);
+                System.out.println(c.getLicensePlateNumber() + " ----- " + c.getModel().getMake() + " ------ " + c.getModel().getModel() + " ----- " + c.getOutlet().getAddress() + " ----- $" + rentalFee);
             }
         }
     }
@@ -172,8 +170,8 @@ public class MainApp {
         return this.carSessionBeanRemote.getCarsByOutletId(outletId, pickupDateTime);
     }
 
-    private List<RentalRate> getRentalRatesByCategoryIdBetweenPickupAndReturn(long categoryId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
-        return this.rentalRateSessionBeanRemote.getRentalRatesByCategoryIdBetweenPickupAndReturn(categoryId, pickupDateTime, returnDateTime);
+    private List<RentalRate> getRentalRatesByCategoryId(long categoryId) {
+        return this.rentalRateSessionBeanRemote.getRentalRatesByCategoryId(categoryId);
     }
 
     /*
@@ -181,27 +179,51 @@ public class MainApp {
     2	Default and Promotion	Promotion
     3	Default and Peak	Peak
     4	Default, Promotion and Peak	Promotion
+    
+    promotion > peak > default
+    
+    calculate based on the hourly rate
      */
-    private BigDecimal calculateTotalRentalFee(List<RentalRate> rentalRates, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
+    private BigDecimal calculateTotalRentalFee(List<Long> rentalRatesId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
         BigDecimal totalRentalFee = new BigDecimal(0);
-        BigDecimal defaultFee = null;
-        BigDecimal peakFee = null;
-        BigDecimal promotionFee = null;
+        LocalDateTime tempPickupDateTime = pickupDateTime;
+        
+        while (tempPickupDateTime.compareTo(returnDateTime) != 1) {
+            // check for promotion, peak and default based on a particular date
+            BigDecimal promotionPrice = getRentalRatePriceByDateTimeAndType(rentalRatesId, tempPickupDateTime, RentalRateType.PROMOTION);
+            if (promotionPrice != null) {
+                totalRentalFee = totalRentalFee.add(promotionPrice);
+                tempPickupDateTime = tempPickupDateTime.plusDays(1);
+                continue;
+            }
 
-        for (RentalRate r : rentalRates) {
-//            if (r.getRentalRateType().equals(RentalRateType.DEFAULT)) {
-//                defaultFee = r.getRatePerDay();
-//            } else if (r.getRentalRateType().equals(RentalRateType.PEAK)) {
-//                peakFee = r.getRatePerDay();
-//            }
-            System.out.println(r.getName());
+            BigDecimal peakPrice = getRentalRatePriceByDateTimeAndType(rentalRatesId, tempPickupDateTime, RentalRateType.PEAK);
+            if (peakPrice != null) {
+                totalRentalFee = totalRentalFee.add(peakPrice);
+                tempPickupDateTime = tempPickupDateTime.plusDays(1);
+                continue;
+            }
+
+            BigDecimal defaultPrice = getRentalRatePriceByDateTimeAndType(rentalRatesId, tempPickupDateTime, RentalRateType.DEFAULT);
+            if (defaultPrice != null) {
+                totalRentalFee = totalRentalFee.add(defaultPrice);
+                tempPickupDateTime = tempPickupDateTime.plusDays(1);
+            }
         }
 
         return totalRentalFee;
     }
-    
-    // 05/12/2022 12:00, 07/12/2022 12:00, Outlet C, Outlet C
 
+    private BigDecimal getRentalRatePriceByDateTimeAndType(List<Long> rentalRatesId, LocalDateTime tempDateTime, RentalRateType rentalRateType) {
+        RentalRate rr = this.rentalRateSessionBeanRemote.getRentalRatePriceByDateTimeAndType(rentalRatesId, tempDateTime, rentalRateType);
+        if (rr != null) {
+            return rr.getRatePerDay();
+        }
+
+        return null;
+    }
+
+    // 05/12/2022 12:00, 07/12/2022 12:00, Outlet C, Outlet C
     private void reserveCar() {
 
     }
