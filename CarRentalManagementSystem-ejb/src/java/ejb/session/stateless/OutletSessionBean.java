@@ -52,5 +52,14 @@ public class OutletSessionBean implements OutletSessionBeanRemote, OutletSession
         return query.getResultList();
     }
 
+    @Override
+    public List<Outlet> retrieveAllOutlet() {
+        
+        Query query = em.createQuery("SELECT o FROM Outlet o");
+        return query.getResultList();
+    }
+    
+    
+
     
 }

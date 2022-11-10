@@ -26,4 +26,6 @@ public interface RentalRateSessionBeanLocal {
     long updateRentalRate(RentalRate rr);
     void deleteRentalRate(long rentalRateId);
     RentalRate getRentalRatePriceByDateTimeAndType(List<Long> rentalRatesIds, LocalDateTime tempDateTime, RentalRateType rentalRateType);
+
+    boolean rentalRateInUse(long rentalRateId);
 }

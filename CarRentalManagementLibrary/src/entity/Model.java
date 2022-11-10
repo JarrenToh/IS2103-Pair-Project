@@ -49,6 +49,7 @@ public class Model implements Serializable {
     public Model() {
 
         this.cars = new ArrayList<>();
+        this.enabled = true;
 
     }
     
@@ -57,7 +58,6 @@ public class Model implements Serializable {
         this.make = make;
         this.model = model;
         this.category = category;
-        this.enabled = false;
     }
 
     public Model(String make, String model, Boolean enabled) {

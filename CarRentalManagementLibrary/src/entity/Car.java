@@ -70,14 +70,15 @@ public class Car implements Serializable {
     private Customer customer;
 
     public Car() {
+        this.enabled = true;
     }
     
     public Car(String licensePlateNumber, Model model, String status, Outlet outlet) {
+        this();
         this.licensePlateNumber = licensePlateNumber;
         this.model = model;
         this.status = getCarStatus(status);
         this.outlet = outlet;
-        this.enabled = false;
     }
     
     private CarStatusEnum getCarStatus(String status) {

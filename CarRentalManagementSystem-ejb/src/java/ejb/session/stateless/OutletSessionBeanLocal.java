@@ -19,4 +19,6 @@ public interface OutletSessionBeanLocal {
      Long createNewOutlet(Outlet newOutlet);
      Outlet getOutlet(String outletName);
      List<Outlet> getOutletWithPickAndReturnTime(LocalTime pickupTime, LocalTime returnTime, String returnOutlet);
+
+    List<Outlet> retrieveAllOutlet();
 }

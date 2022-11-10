@@ -55,16 +55,20 @@ public class RentalRate implements Serializable {
     private Category category;
 
     public RentalRate() {
+        
+        this.enabled = true;
+        
     }
         
     public RentalRate(String name, String rentalRateType, Category category, BigDecimal ratePerDay, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        this();
         this.name = name;
         this.rentalRateType = getRentalRateType(rentalRateType);
         this.category = category;
         this.ratePerDay = ratePerDay;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
-        this.enabled = false;
+        
     }
     
     private RentalRateType getRentalRateType(String rentalRateType) {

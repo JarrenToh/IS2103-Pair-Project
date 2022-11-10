@@ -9,9 +9,14 @@ import carrentalmanagementclient.operationsmanager.ModelModule;
 import carrentalmanagementclient.operationsmanager.ModelApp;
 import carrentalmanagementclient.salesmanager.RentalRateModule;
 import carrentalmanagementclient.salesmanager.RentalRateApp;
+import ejb.session.stateless.CarSessionBeanRemote;
 import ejb.session.stateless.CategorySessionBeanRemote;
 import ejb.session.stateless.ModelSessionBeanRemote;
+import ejb.session.stateless.OutletSessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
+import ejb.session.stateless.TCustomerSessionBeanRemote;
+import ejb.session.stateless.TEmployeeSessionBeanRemote;
+import ejb.session.stateless.TransitDriverRecordSessionBeanRemote;
 import java.util.Scanner;
 
 /**
@@ -23,6 +28,11 @@ public class MainApp {
     private CategorySessionBeanRemote categorySessionBeanRemote;
     private RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
     private ModelSessionBeanRemote modelSessionBeanRemote;
+    private CarSessionBeanRemote carSessionBeanRemote;
+    private TransitDriverRecordSessionBeanRemote transitDriverRecordSessionBeanRemote;
+    private OutletSessionBeanRemote outletSessionBeanRemote;
+    private TCustomerSessionBeanRemote tCustomerSessionBeanRemote;
+    private TEmployeeSessionBeanRemote tEmployeeSessionBeanRemote;
     
     // sub-apps/pages
     private RentalRateApp rentalRateApp;
@@ -36,10 +46,17 @@ public class MainApp {
         
     }
     
-    public MainApp(RentalRateSessionBeanRemote rentalRateSessionBeanRemote, CategorySessionBeanRemote categorySessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote) {
+    public MainApp(RentalRateSessionBeanRemote rentalRateSessionBeanRemote, CategorySessionBeanRemote categorySessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, TransitDriverRecordSessionBeanRemote transitDriverRecordSessionBeanRemote, CarSessionBeanRemote carSessionBeanRemote,
+            OutletSessionBeanRemote outletSessionBeanRemote, TCustomerSessionBeanRemote tCustomerSessionBeanRemote, TEmployeeSessionBeanRemote tEmployeeSessionBeanRemote) {
         this.rentalRateSessionBeanRemote = rentalRateSessionBeanRemote;
         this.categorySessionBeanRemote = categorySessionBeanRemote;
         this.modelSessionBeanRemote = modelSessionBeanRemote;
+        this.transitDriverRecordSessionBeanRemote = transitDriverRecordSessionBeanRemote;
+        this.carSessionBeanRemote = carSessionBeanRemote;
+        this.outletSessionBeanRemote = outletSessionBeanRemote;
+        this.tCustomerSessionBeanRemote = tCustomerSessionBeanRemote;
+        this.tEmployeeSessionBeanRemote = tEmployeeSessionBeanRemote;
+        
     }
     
     public void run() {
@@ -48,7 +65,7 @@ public class MainApp {
         
         // set the necessary modules here after login
         rentalRateModule = new RentalRateModule(rentalRateSessionBeanRemote, categorySessionBeanRemote);
-        modelModule = new ModelModule(modelSessionBeanRemote, categorySessionBeanRemote);
+        modelModule = new ModelModule(modelSessionBeanRemote, categorySessionBeanRemote, transitDriverRecordSessionBeanRemote, carSessionBeanRemote, outletSessionBeanRemote, tCustomerSessionBeanRemote, tEmployeeSessionBeanRemote);
         
         // set the sub-apps/pages here
         rentalRateApp = new RentalRateApp(rentalRateModule);
@@ -68,10 +85,8 @@ public class MainApp {
             // TODO: maybe can show current date and time via system.out.println() ?
             System.out.println("Select which platform you would like to navigate");
             System.out.println("1. Rental Rate");
-            System.out.println("2. Model");
-            System.out.println("3. Car");
-            System.out.println("4. Transit Driver Dispatch Records for Current Day Reservations");
-            System.out.println("5. Logout\n");
+            System.out.println("2. Model & Car Management");
+            System.out.println("3. Logout\n");
             response = 0;
             
             while(response < 1 || response > 5)
@@ -89,19 +104,14 @@ public class MainApp {
                     modelApp.runModelApp();
                 }
                 else if (response == 3) {
-                    categorySessionBeanRemote.deleteCategory();
-                }
-                else if (response == 5)
-                {
                     break;
-                }
-                else
-                {
+                    
+                } else {
                     System.out.println("Invalid option, please try again!\n");                
                 }
             }
             
-            if (response == 5)
+            if (response == 3)
             {
                 break;
                 // TODO: navigate back to home page

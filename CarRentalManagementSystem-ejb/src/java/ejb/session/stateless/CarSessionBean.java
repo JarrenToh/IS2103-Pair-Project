@@ -67,11 +67,11 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
 
     @Override
     public Car getSpecificCar(long carId) {
-        
+
         return em.find(Car.class, carId);
-        
+
     }
-    
+
     @Override
     public List<Car> getCarsByOutletId(long outletId, LocalDateTime pickupDateTime) {
         List<CarStatusEnum> carStatuses = new ArrayList<>();
@@ -81,21 +81,20 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
         query.setParameter("inOutletId", outletId);
         query.setParameter("inStatuses", carStatuses);
         List<Car> cars = query.getResultList();
-        
-        cars = cars.stream().filter(c -> {         
+
+        cars = cars.stream().filter(c -> {
             return c.getRentalEndDate() == null || (c.getRentalEndDate() != null && Math.abs(ChronoUnit.HOURS.between(c.getRentalEndDate(), pickupDateTime)) >= 2);
-                }).collect(Collectors.toList());
-        
+        }).collect(Collectors.toList());
+
         return cars;
     }
-    
 
     //Excluded association updates
     @Override
     public Long UpdateCar(Car updatedCar) {
-        
+
         Car carToUpdate = getSpecificCar(updatedCar.getCarId());
-        
+
         carToUpdate.setLicensePlateNumber(updatedCar.getLicensePlateNumber());
         carToUpdate.setColour(updatedCar.getColour());
         carToUpdate.setStatus(updatedCar.getStatus());
@@ -108,26 +107,31 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
 
     @Override
     public void updateCarOutlet(Car car, long outletId) {
-        
+
         Outlet newOutlet = em.find(Outlet.class, outletId);
         Outlet currentOutlet = em.find(Outlet.class, car.getOutlet().getOutletId());
         Car currentCar = em.find(Car.class, car.getCarId());
-        
+
         currentOutlet.getCars().remove(currentCar);
         newOutlet.getCars().add(currentCar);
-        currentCar.setOutlet(newOutlet);        
-        
+        currentCar.setOutlet(newOutlet);
+
     }
 
     @Override
     public void deleteCar(long carId) {
-        
+
         Car carToRemove = getSpecificCar(carId);
         em.remove(carToRemove);
-        
-    }
-    
-    
 
+    }
+
+    @Override
+    public List<Car> retrieveReservedCar() {
+
+        Query query = em.createQuery("SELECT c FROM Car c INNER JOIN c.model m INNER JOIN m.category cat INNER JOIN cat.rentalRates r WHERE c.status = :carStatus");
+        query.setParameter("carStatus", CarStatusEnum.UNAVAILABLE);
+        return query.getResultList();
+    }
 
 }

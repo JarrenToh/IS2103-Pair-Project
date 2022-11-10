@@ -32,5 +32,7 @@ public interface CarSessionBeanLocal {
     void updateCarOutlet(Car updatedCar, long outletId);
 
     void deleteCar(long carId);
+
+    List<Car> retrieveReservedCar();
     
 }

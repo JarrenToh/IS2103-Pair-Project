@@ -13,6 +13,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.enumeration.CarStatusEnum;
 import util.enumeration.RentalRateType;
 
 /**
@@ -21,10 +22,10 @@ import util.enumeration.RentalRateType;
  */
 @Stateless
 public class RentalRateSessionBean implements RentalRateSessionBeanRemote, RentalRateSessionBeanLocal {
-
+    
     @PersistenceContext(unitName = "CarRentalManagementSystem-ejbPU")
     private EntityManager em;
-
+    
     @Override
     public long createRentalRate(RentalRate rr, Category c) {        
         
@@ -41,7 +42,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     
     @Override
     public List<RentalRate> getRentalRatesWithCategories() {
-        Query query = em.createQuery("SELECT r FROM RentalRate r INNER JOIN r.category c ORDER BY c.categoryName, r.startDateTime, r.endDateTime ASC");
+        Query query = em.createQuery("SELECT r FROM RentalRate r ORDER BY r.category.categoryName, r.startDateTime, r.endDateTime ASC");
         return query.getResultList();
     }
     
@@ -55,7 +56,7 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
     public RentalRate getSpecificRental(long rentalRateId) {
         Query query = em.createQuery("SELECT r FROM RentalRate r WHERE r.id = :inRentalRateId");
         query.setParameter("inRentalRateId", rentalRateId);
-        return (RentalRate)query.getSingleResult();
+        return (RentalRate) query.getSingleResult();
     }
     
     @Override
@@ -73,6 +74,8 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         rentalRateToUpdate.setRatePerDay(updatedRentalRate.getRatePerDay());
         rentalRateToUpdate.setStartDateTime(updatedRentalRate.getStartDateTime());
         rentalRateToUpdate.setEndDateTime(updatedRentalRate.getEndDateTime());
+        rentalRateToUpdate.setEnabled(updatedRentalRate.getEnabled());
+        rentalRateToUpdate.setRentalRateType(updatedRentalRate.getRentalRateType());
         
         return updatedRentalRate.getId();
     }
@@ -96,5 +99,16 @@ public class RentalRateSessionBean implements RentalRateSessionBeanRemote, Renta
         
         return null;
     }
+
+    @Override
+    public boolean rentalRateInUse(long rentalRateId) {
+        
+        Query query = em.createQuery("SELECT c FROM Car c INNER JOIN c.model m INNER JOIN m.category cat INNER JOIN cat.rentalRates r WHERE c.status = :carStatus and r.id = :rentalRateId");
+        query.setParameter("carStatus", CarStatusEnum.UNAVAILABLE);
+        query.setParameter("rentalRateId", rentalRateId);
+        return !query.getResultList().isEmpty();
+    }
+    
+    
     
 }
