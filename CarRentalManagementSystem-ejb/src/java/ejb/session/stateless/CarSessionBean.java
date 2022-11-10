@@ -10,6 +10,7 @@ import entity.Model;
 import entity.Outlet;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
@@ -73,9 +74,12 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
     
     @Override
     public List<Car> getCarsByOutletId(long outletId, LocalDateTime pickupDateTime) {
-        Query query = em.createQuery("SELECT c FROM Car c WHERE c.outlet.outletId = :inOutletId AND c.status = :inStatus");
+        List<CarStatusEnum> carStatuses = new ArrayList<>();
+        carStatuses.add(CarStatusEnum.AVAILABLE);
+        carStatuses.add(CarStatusEnum.UNAVAILABLE);
+        Query query = em.createQuery("SELECT c FROM Car c WHERE c.outlet.outletId = :inOutletId AND c.status IN :inStatuses");
         query.setParameter("inOutletId", outletId);
-        query.setParameter("inStatus", CarStatusEnum.AVAILABLE);
+        query.setParameter("inStatuses", carStatuses);
         List<Car> cars = query.getResultList();
         
         cars = cars.stream().filter(c -> {         

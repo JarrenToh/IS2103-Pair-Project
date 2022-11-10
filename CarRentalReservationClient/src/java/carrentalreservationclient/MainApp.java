@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -34,6 +33,7 @@ public class MainApp {
     private CustomerSessionBeanRemote customerSessionBeanRemote;
     private OutletSessionBeanRemote outletSessionBeanRemote;
     private RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
+    private LocalDateTime currentLocalDateTime;
 
     public MainApp() {
 
@@ -44,6 +44,7 @@ public class MainApp {
         this.customerSessionBeanRemote = customerSessionBeanRemote;
         this.outletSessionBeanRemote = outletSessionBeanRemote;
         this.rentalRateSessionBeanRemote = rentalRateSessionBeanRemote;
+        this.currentLocalDateTime = LocalDateTime.now();
     }
 
     public void run() {
@@ -59,9 +60,10 @@ public class MainApp {
         while (true) {
             System.out.println("*** Hello! Car Rental Reservation Client ***\n");
 //            System.out.println("Hello " + currentATMCard.getNameOnCard()+ "\n"); - TODO: need to modify this for employee
-            // TODO: maybe can show current date and time via system.out.println() ?
+            System.out.println("Hello World " + this.currentLocalDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
             System.out.println("Select which platform you would like to navigate");
             System.out.println("1. Search Car");
+            // if is customer, view the remaining points below
             System.out.println("2. Reserve Car");
             System.out.println("3. Cancel Reservation");
             System.out.println("4. View Reservation Details");
@@ -75,9 +77,9 @@ public class MainApp {
                 response = scanner.nextInt();
 
                 if (response == 1) {
-                    searchCar();
+                    searchCar(); // both visitor and customer can do this 
                 } else if (response == 2) {
-                    reserveCar();
+                    searchCar(); // here onwards only allow customer
                 } else if (response == 3) {
                     cancelReservation();
                 } else if (response == 4) {
@@ -93,7 +95,6 @@ public class MainApp {
 
             if (response == 6) {
                 break;
-                // TODO: navigate back to home page
             }
         }
         System.out.println("\nYou have logged out successfully\n");
@@ -104,6 +105,8 @@ public class MainApp {
         String pickup, pickupOutlet, returnT, returnOutlet;
         LocalDateTime pickupDateTime = null;
         LocalDateTime returnDateTime = null;
+
+        String role = "customer"; // need to change this later
 
         while (true) {
             System.out.print("\nInput the pickup date time (dd/MM/yyyy HH:mm) > ");
@@ -130,9 +133,17 @@ public class MainApp {
             System.out.print("\nInput the return outlet > ");
             returnOutlet = scanner.nextLine();
 
-            getCarsFromInputs(pickupDateTime, returnDateTime, pickupOutlet, returnOutlet);
-            
-            break;
+            List<Car> carsFromInputs = getCarsFromInputs(pickupDateTime, returnDateTime, pickupOutlet, returnOutlet);
+
+            if (role.equals("visitor")) {
+                break;
+            } else {
+                System.out.print("\nDo you want to proceed reservation (n for no, y for yes) > ");
+                String proceedWithReservation = scanner.nextLine();
+                if (proceedWithReservation.equals("y")) {
+                    reserveCar(carsFromInputs, pickupDateTime, returnDateTime, pickupOutlet, returnOutlet);    
+                }
+            }
         }
 
         // a car is available for rental if the enum status is available
@@ -140,41 +151,36 @@ public class MainApp {
         // need to display the rental rate for the particular car
     }
 
-    private void getCarsFromInputs(LocalDateTime pickupDateTime, LocalDateTime returnDateTime, String pickupOutlet, String returnOutlet) {
+    private List<Car> getCarsFromInputs(LocalDateTime pickupDateTime, LocalDateTime returnDateTime, String pickupOutlet, String returnOutlet) {
         // assume need to have a minimum of 5 cars for each outlet
-
+        List<Car> carsFromInputs = new ArrayList<>();
         // check whether the outlet can be returned based from the return time
-        List<Outlet> outletsForPickAndReturn = getOutletsForPickAndReturn(pickupDateTime, returnDateTime, returnOutlet);
-
-        if (outletsForPickAndReturn.isEmpty()) {
+        List<Outlet> outletsForPickAndReturn = UserHandler.getOutletsForPickAndReturn(this.outletSessionBeanRemote, pickupDateTime, returnDateTime, returnOutlet);
+        int index = 1;
+        
+        if (outletsForPickAndReturn.isEmpty()) { // if the outlet are unavailable for the respective pickup and return time
             System.out.println("No available outlet for return at your timing choice");
-            return;
-        }
-
-        for (Outlet o : outletsForPickAndReturn) {
-            List<Car> carsFromOutlet = getCarsByOutletId(o.getOutletId(), pickupDateTime);
-            System.out.println("\nAvailable cars: ");
-            System.out.println("License Plate Number ----- Make ----- Model ----- Outlet ----- Total Rental Rate");
-            for (Car c : carsFromOutlet) {
-                Category category = c.getModel().getCategory();
-                List<RentalRate> rentalRates = getRentalRatesByCategoryId(category.getId());
-                List<Long> rentalRatesId = rentalRates.stream().map(r -> r.getId()).collect(Collectors.toList());
-                BigDecimal rentalFee = calculateTotalRentalFee(rentalRatesId, pickupDateTime, returnDateTime);
-                System.out.println(c.getLicensePlateNumber() + " ----- " + c.getModel().getMake() + " ------ " + c.getModel().getModel() + " ----- " + c.getOutlet().getAddress() + " ----- $" + rentalFee);
+        } else {
+            for (Outlet o : outletsForPickAndReturn) {
+                List<Car> carsFromOutlet = UserHandler.getCarsByOutletId(this.carSessionBeanRemote, o.getOutletId(), pickupDateTime);
+                System.out.println("\nAvailable cars: ");
+                System.out.println("License Plate Number ----- Make ----- Model ----- Outlet ----- Total Rental Rate");
+                for (Car c : carsFromOutlet) {
+                    Category category = c.getModel().getCategory();
+                    List<RentalRate> rentalRates = UserHandler.getRentalRatesByCategoryId(this.rentalRateSessionBeanRemote, category.getId());
+                    List<Long> rentalRatesId = rentalRates.stream().map(r -> r.getId()).collect(Collectors.toList());
+                    BigDecimal rentalFee = calculateTotalRentalFee(rentalRatesId, pickupDateTime, returnDateTime);
+                    System.out.println(index + ". " + c.getLicensePlateNumber() + " ----- " + c.getModel().getMake() + " ------ " + c.getModel().getModel() + " ----- " + c.getOutlet().getAddress() + " ----- $" + rentalFee);
+                    carsFromInputs.add(c);
+                    index++;
+                }
             }
+
+            System.out.println("\n");
         }
-    }
+        
+        return carsFromInputs;
 
-    private List<Outlet> getOutletsForPickAndReturn(LocalDateTime pickupDateTime, LocalDateTime returnDateTime, String returnOutlet) {
-        return this.outletSessionBeanRemote.getOutletWithPickAndReturnTime(pickupDateTime.toLocalTime(), returnDateTime.toLocalTime(), returnOutlet);
-    }
-
-    private List<Car> getCarsByOutletId(long outletId, LocalDateTime pickupDateTime) {
-        return this.carSessionBeanRemote.getCarsByOutletId(outletId, pickupDateTime);
-    }
-
-    private List<RentalRate> getRentalRatesByCategoryId(long categoryId) {
-        return this.rentalRateSessionBeanRemote.getRentalRatesByCategoryId(categoryId);
     }
 
     /*
@@ -190,24 +196,24 @@ public class MainApp {
     private BigDecimal calculateTotalRentalFee(List<Long> rentalRatesId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
         BigDecimal totalRentalFee = new BigDecimal(0);
         LocalDateTime tempPickupDateTime = pickupDateTime;
-        
+
         while (tempPickupDateTime.compareTo(returnDateTime) != 1) {
             // check for promotion, peak and default based on a particular date
-            BigDecimal promotionPrice = getRentalRatePriceByDateTimeAndType(rentalRatesId, tempPickupDateTime, RentalRateType.PROMOTION);
+            BigDecimal promotionPrice = UserHandler.getRentalRatePriceByDateTimeAndType(this.rentalRateSessionBeanRemote, rentalRatesId, tempPickupDateTime, RentalRateType.PROMOTION);
             if (promotionPrice != null) {
                 totalRentalFee = totalRentalFee.add(promotionPrice);
                 tempPickupDateTime = tempPickupDateTime.plusDays(1);
                 continue;
             }
 
-            BigDecimal peakPrice = getRentalRatePriceByDateTimeAndType(rentalRatesId, tempPickupDateTime, RentalRateType.PEAK);
+            BigDecimal peakPrice = UserHandler.getRentalRatePriceByDateTimeAndType(this.rentalRateSessionBeanRemote, rentalRatesId, tempPickupDateTime, RentalRateType.PEAK);
             if (peakPrice != null) {
                 totalRentalFee = totalRentalFee.add(peakPrice);
                 tempPickupDateTime = tempPickupDateTime.plusDays(1);
                 continue;
             }
 
-            BigDecimal defaultPrice = getRentalRatePriceByDateTimeAndType(rentalRatesId, tempPickupDateTime, RentalRateType.DEFAULT);
+            BigDecimal defaultPrice = UserHandler.getRentalRatePriceByDateTimeAndType(this.rentalRateSessionBeanRemote, rentalRatesId, tempPickupDateTime, RentalRateType.DEFAULT);
             if (defaultPrice != null) {
                 totalRentalFee = totalRentalFee.add(defaultPrice);
                 tempPickupDateTime = tempPickupDateTime.plusDays(1);
@@ -217,22 +223,34 @@ public class MainApp {
         return totalRentalFee;
     }
 
-    private BigDecimal getRentalRatePriceByDateTimeAndType(List<Long> rentalRatesId, LocalDateTime tempDateTime, RentalRateType rentalRateType) {
-        RentalRate rr = this.rentalRateSessionBeanRemote.getRentalRatePriceByDateTimeAndType(rentalRatesId, tempDateTime, rentalRateType);
-        if (rr != null) {
-            return rr.getRatePerDay();
+    private void reserveCar(List<Car> cars, LocalDateTime pickupDateTime, LocalDateTime returnDateTime, String pickupOutlet, String returnOutlet) {
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+        
+        while (true) {
+            System.out.print("\nSelect the car you would like to reserve (i.e. 1) > ");    
+            response = scanner.nextInt();
+            
+            if (response < 1 || response > cars.size()) {
+                // throw exception
+                continue;
+            }
+            
+            Car car = cars.get(response - 1);
+            
+            // check for credit card details
+            // if don't have, allow user to input cc details
+            
+            // need to update the status of the car to be UNAVAILABLE, as well as the rentalStartDate and rentalEndDate
+            
+            break;
         }
-
-        return null;
-    }
-
-    // 05/12/2022 12:00, 07/12/2022 12:00, Outlet C, Outlet C
-    private void reserveCar() {
-
+        
+        System.out.println("You have successfully reserved a car");
     }
 
     private void cancelReservation() {
-
+        
     }
 
     private void viewReservationDetails() {
@@ -244,3 +262,4 @@ public class MainApp {
     }
 
 }
+
