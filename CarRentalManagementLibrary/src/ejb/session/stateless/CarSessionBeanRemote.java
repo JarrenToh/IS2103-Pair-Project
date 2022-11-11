@@ -25,7 +25,7 @@ public interface CarSessionBeanRemote {
 
     Car getSpecificCar(long carId);
     
-    List<Car> getCarsByOutletId(long outletId, LocalDateTime pickupDateTime);
+    List<Car> getCarsByOutletId(long outletId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime);
 
     Long UpdateCar(Car updatedCar);
     
@@ -34,5 +34,7 @@ public interface CarSessionBeanRemote {
     void deleteCar(long carId);
 
     List<Car> retrieveReservedCar();
+    
+    long getNumOfCarsBasedOnMakeAndModel(String make, String model);
     
 }

@@ -21,17 +21,25 @@ import util.enumeration.RentalRateType;
  * @author wjahoward
  */
 public class UserHandler {
+    
+    public static Outlet getOutletByName(OutletSessionBeanRemote outletSessionBeanRemote, String outletName) {
+        return outletSessionBeanRemote.getOutlet(outletName);
+    }
 
     public static List<Outlet> getOutletsForPickAndReturn(OutletSessionBeanRemote outletSessionBeanRemote, LocalDateTime pickupDateTime, LocalDateTime returnDateTime, String returnOutlet) {
         return outletSessionBeanRemote.getOutletWithPickAndReturnTime(pickupDateTime.toLocalTime(), returnDateTime.toLocalTime(), returnOutlet);
     }
 
-    public static List<Car> getCarsByOutletId(CarSessionBeanRemote carSessionBeanRemote, long outletId, LocalDateTime pickupDateTime) {
-        return carSessionBeanRemote.getCarsByOutletId(outletId, pickupDateTime);
+    public static List<Car> getCarsByOutletId(CarSessionBeanRemote carSessionBeanRemote, long outletId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
+        return carSessionBeanRemote.getCarsByOutletId(outletId, pickupDateTime, returnDateTime);
     }
 
     public static List<RentalRate> getRentalRatesByCategoryId(RentalRateSessionBeanRemote rentalRateSessionBeanRemote, long categoryId) {
         return rentalRateSessionBeanRemote.getRentalRatesByCategoryId(categoryId);
+    }
+    
+    public static long getNumOfCarsBasedOnMakeAndModel(CarSessionBeanRemote carSessionBeanRemote, String make, String model) {
+        return carSessionBeanRemote.getNumOfCarsBasedOnMakeAndModel(make, model);
     }
 
     public static BigDecimal getRentalRatePriceByDateTimeAndType(RentalRateSessionBeanRemote rentalRateSessionBeanRemote, List<Long> rentalRatesId, LocalDateTime tempDateTime, RentalRateType rentalRateType) {
