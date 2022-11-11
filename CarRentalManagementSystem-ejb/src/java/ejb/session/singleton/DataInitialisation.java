@@ -39,7 +39,7 @@ import javax.persistence.PersistenceContext;
 @LocalBean
 @Startup
 public class DataInitialisation {
-    
+
     @EJB
     private CarSessionBeanLocal carSessionBean;
 
@@ -57,7 +57,7 @@ public class DataInitialisation {
 
     @EJB
     private TEmployeeSessionBeanLocal employeeSessionBean;
-    
+
     @EJB
     private RentalRateSessionBeanLocal rentalRateSessionBean;
 
@@ -107,7 +107,6 @@ public class DataInitialisation {
         employeeSessionBean.createNewEmployee(e10, e10.getOutlet().getOutletId());
         employeeSessionBean.createNewEmployee(e11, e11.getOutlet().getOutletId());
 
-
         Category c1 = new Category("Standard Sedan");
         Category c2 = new Category("Family Sedan");
         Category c3 = new Category("Luxury Sedan");
@@ -131,16 +130,17 @@ public class DataInitialisation {
         modelSessionBean.createModel(m6, m6.getCategory());
 
         Car car1 = new Car("SS00A1TC", getModel("Toyota", "Corolla"), "Available", getOutlet("Outlet A"));
-        Car car2 = new Car("SS00A3TC", getModel("Toyota", "Corolla"), "Available", getOutlet("Outlet A"));
-        Car car3 = new Car("SS00B1HC", getModel("Honda", "Civic"), "Available", getOutlet("Outlet B"));
-        Car car4 = new Car("SS00B2HC", getModel("Honda", "Civic"), "Available", getOutlet("Outlet B"));
-        Car car5 = new Car("SS00B3HC", getModel("Honda", "Civic"), "Available", getOutlet("Outlet B"));
-        Car car6 = new Car("SS00C1NS", getModel("Nissan", "Sunny"), "Available", getOutlet("Outlet C"));
-        Car car7 = new Car("SS00C2NS", getModel("Nissan", "Sunny"), "Available", getOutlet("Outlet C"));
-        Car car8 = new Car("SS00C3NS", getModel("Nissan", "Sunny"), "Repair", getOutlet("Outlet C"));
-        Car car9 = new Car("LS00A4ME", getModel("Mercedes", "E Class"), "Available", getOutlet("Outlet A"));
-        Car car10 = new Car("LS00B4B5", getModel("BMW", "5 Series"), "Available", getOutlet("Outlet B"));
-        Car car11 = new Car("LS00C4A6", getModel("Audi", "A6"), "Available", getOutlet("Outlet C"));
+        Car car2 = new Car("SS00A2TC", getModel("Toyota", "Corolla"), "Available", getOutlet("Outlet A"));
+        Car car3 = new Car("SS00A3TC", getModel("Toyota", "Corolla"), "Available", getOutlet("Outlet A"));
+        Car car4 = new Car("SS00B1HC", getModel("Honda", "Civic"), "Available", getOutlet("Outlet B"));
+        Car car5 = new Car("SS00B2HC", getModel("Honda", "Civic"), "Available", getOutlet("Outlet B"));
+        Car car6 = new Car("SS00B3HC", getModel("Honda", "Civic"), "Available", getOutlet("Outlet B"));
+        Car car7 = new Car("SS00C1NS", getModel("Nissan", "Sunny"), "Available", getOutlet("Outlet C"));
+        Car car8 = new Car("SS00C2NS", getModel("Nissan", "Sunny"), "Available", getOutlet("Outlet C"));
+        Car car9 = new Car("SS00C3NS", getModel("Nissan", "Sunny"), "Repair", getOutlet("Outlet C"));
+        Car car10 = new Car("LS00A4ME", getModel("Mercedes", "E Class"), "Available", getOutlet("Outlet A"));
+        Car car11 = new Car("LS00B4B5", getModel("BMW", "5 Series"), "Available", getOutlet("Outlet B"));
+        Car car12 = new Car("LS00C4A6", getModel("Audi", "A6"), "Available", getOutlet("Outlet C"));
         carSessionBean.createCar(car1, car1.getModel().getId(), car1.getOutlet().getOutletId());
         carSessionBean.createCar(car2, car2.getModel().getId(), car2.getOutlet().getOutletId());
         carSessionBean.createCar(car3, car3.getModel().getId(), car3.getOutlet().getOutletId());
@@ -154,7 +154,7 @@ public class DataInitialisation {
         carSessionBean.createCar(car11, car11.getModel().getId(), car11.getOutlet().getOutletId());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        
+
         RentalRate r1 = new RentalRate("Standard Sedan - Default", "Default", getCategory("Standard Sedan"), new BigDecimal(100), null, null);
         RentalRate r2 = new RentalRate("Standard Sedan - Weekend", "Promo", getCategory("Standard Sedan"), new BigDecimal(80), LocalDateTime.parse("09/12/2022 12:00", formatter), LocalDateTime.parse("11/12/2022 00:00", formatter));
         RentalRate r3 = new RentalRate("Family Sedan - Default", "Default", getCategory("Family Sedan"), new BigDecimal(200), null, null);
@@ -176,7 +176,7 @@ public class DataInitialisation {
 
         Partner p1 = new Partner("Holiday.com");
         partnerSessionBean.createNewPartner(p1);
-        
+
     }
 
     private Outlet getOutlet(String outletName) {
