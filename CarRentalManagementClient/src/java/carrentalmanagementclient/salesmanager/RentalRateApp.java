@@ -214,14 +214,14 @@ public class RentalRateApp {
             doUpdateRentalRate(rentalRate);
 
         } else if (response == 2) {
-            
+             
             if(!rentalRateSessionBeanRemote.rentalRateInUse(rentalRate.getId())) {
 
                 doDeleteRentalRate(rentalRate);
                 
             } else {
             
-                System.out.println("Unfortunately, you cannot delete the model as it has already been used currently");
+                System.out.println("Unfortunately, you cannot delete the Rental Rate as it has already been used currently");
                 
                 rentalRate.setEnabled(false);
                 

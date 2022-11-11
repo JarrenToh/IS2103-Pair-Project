@@ -34,5 +34,7 @@ public interface CarSessionBeanLocal {
     void deleteCar(long carId);
 
     List<Car> retrieveReservedCar();
+
+    boolean carInUse(long carId);
     
 }

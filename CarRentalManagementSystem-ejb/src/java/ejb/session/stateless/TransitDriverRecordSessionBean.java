@@ -8,6 +8,8 @@ package ejb.session.stateless;
 import entity.Car;
 import entity.Employee;
 import entity.TransitDriverRecord;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -35,11 +37,11 @@ public class TransitDriverRecordSessionBean implements TransitDriverRecordSessio
     {
         em.persist(newTransitDriverRecord);
         Car associatedCar = em.find(Car.class, CarId);
-        
+
         //Association
         newTransitDriverRecord.setCar(associatedCar);
         associatedCar.setTransitDriverRecord(newTransitDriverRecord);
-        
+
         em.flush();
     }
 
@@ -52,7 +54,7 @@ public class TransitDriverRecordSessionBean implements TransitDriverRecordSessio
 
     @Override
     public TransitDriverRecord getSpecificTransitDriverRecord(long transitDriverId) {
-        
+
         return em.find(TransitDriverRecord.class, transitDriverId);
     }
 
@@ -61,14 +63,13 @@ public class TransitDriverRecordSessionBean implements TransitDriverRecordSessio
 
         TransitDriverRecord currentTransitDriverRecord = em.find(TransitDriverRecord.class, transitDriverId);
         Employee currentEmployee = em.find(Employee.class, employeeId);
-        
+
         //If employee DispatchStatus is null/completed, we can assign employee?
         currentEmployee.setDispatchStatus(DispatchStatusEnum.INCOMPLETE);
-        
 
         Car carToUpdate = em.find(Car.class, currentTransitDriverRecord.getCar().getCarId());
         carToUpdate.setStatus(CarStatusEnum.TRANSIT);
-        
+
         //association
         currentTransitDriverRecord.setEmployee(currentEmployee);
         currentEmployee.setTransitDriverRecord(currentTransitDriverRecord);
@@ -78,18 +79,30 @@ public class TransitDriverRecordSessionBean implements TransitDriverRecordSessio
 
     @Override
     public void updateTransitDriverRecordAsCompleted(long transitDriverId) {
-        
+
         //Do we need to disassociate the employee?
         TransitDriverRecord currentTransitDriverRecord = getSpecificTransitDriverRecord(transitDriverId);
-        
+
         Car carToUpdate = em.find(Car.class, currentTransitDriverRecord.getCar().getCarId());
         carToUpdate.setStatus(CarStatusEnum.AVAILABLE);
-        
+
         Employee employeeToUpdate = em.find(Employee.class, currentTransitDriverRecord.getEmployee().getEmployeeId());
         employeeToUpdate.setDispatchStatus(DispatchStatusEnum.COMPLETED);
-        
+
         currentTransitDriverRecord.setCompleted(true);
-        
+
     }
+
+    @Override
+    public List<TransitDriverRecord> getTransitDriverRecordForCurrentDay(long outletId) {
+        
+        Query query = em.createQuery("SELECT td FROM TransitDriverRecord td WHERE td.car.rentalStartDate.toLocalDate() = :startDate AND td.completed = :status AND td.car.outlet.getOutletId() = :oId");
+        query.setParameter("startDate", LocalDate.now());
+        query.setParameter("status", false);
+        query.setParameter("oId", outletId);
+        return query.getResultList();
+    }
+    
+    
 
 }

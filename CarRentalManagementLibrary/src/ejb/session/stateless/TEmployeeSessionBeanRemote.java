@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Employee;
+import java.util.List;
 import javax.ejb.Remote;
 
 /**
@@ -15,4 +16,6 @@ import javax.ejb.Remote;
 @Remote
 public interface TEmployeeSessionBeanRemote {
     void createNewEmployee(Employee newEmployee, Long outletId);
+
+    Employee retrieveAvailableEmployeeByOutlet(long OutletId);
 }

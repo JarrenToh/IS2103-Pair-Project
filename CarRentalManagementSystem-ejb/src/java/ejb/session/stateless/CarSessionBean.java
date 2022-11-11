@@ -61,7 +61,7 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
     @Override
     public List<Car> getCarsWithCategoryAndModel() {
 
-        Query query = em.createQuery("SELECT c FROM Car c INNER JOIN c.model m INNER JOIN m.category cat ORDER BY cat.categoryName, m.makeAndModelName, c.licensePlateNumber ASC");
+        Query query = em.createQuery("SELECT c FROM Car c INNER JOIN c.model m INNER JOIN m.category cat ORDER BY cat.categoryName, m.make, m.model, c.licensePlateNumber ASC");
         return query.getResultList();
     }
 
@@ -132,6 +132,16 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
         Query query = em.createQuery("SELECT c FROM Car c INNER JOIN c.model m INNER JOIN m.category cat INNER JOIN cat.rentalRates r WHERE c.status = :carStatus");
         query.setParameter("carStatus", CarStatusEnum.UNAVAILABLE);
         return query.getResultList();
+    }
+
+    @Override
+    public boolean carInUse(long carId) {
+
+        Query query = em.createQuery("SELECT c FROM Car c WHERE c.status = :carStatus and c.id = :carId");
+        query.setParameter("carStatus", CarStatusEnum.UNAVAILABLE);
+        query.setParameter("carId", carId);
+        return !query.getResultList().isEmpty();
+
     }
 
 }

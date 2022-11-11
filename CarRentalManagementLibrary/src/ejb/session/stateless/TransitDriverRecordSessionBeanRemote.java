@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.TransitDriverRecord;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -24,4 +25,6 @@ public interface TransitDriverRecordSessionBeanRemote {
     void updateTransitDriverRecordAsCompleted(long transitDriverId);
 
     TransitDriverRecord getSpecificTransitDriverRecord(long transitDriverId);
+
+    List<TransitDriverRecord> getTransitDriverRecordForCurrentDay(long outletId);
 }

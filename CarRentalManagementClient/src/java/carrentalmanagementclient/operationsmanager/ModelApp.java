@@ -12,10 +12,15 @@ import ejb.session.stateless.TEmployeeSessionBeanRemote;
 import ejb.session.stateless.TransitDriverRecordSessionBeanRemote;
 import entity.Car;
 import entity.Category;
+import entity.Employee;
 import entity.Model;
 import entity.Outlet;
 import entity.TransitDriverRecord;
 import java.math.BigDecimal;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 import util.enumeration.CarStatusEnum;
@@ -66,15 +71,16 @@ public class ModelApp {
             System.out.println("-----------------------");
             System.out.println("5: Create New Car");
             System.out.println("6: View All Car");
+            System.out.println("7: View Car Details");
             System.out.println("-----------------------");
-            System.out.println("7: View Transit Driver Dispatch Record");
-            System.out.println("8: Assign Transit Driver");
-            System.out.println("9: Update Transit As Completed");
+            System.out.println("8: View Transit Driver Dispatch Record");
+            System.out.println("9: Assign Transit Driver");
+            System.out.println("10: Update Transit As Completed");
             System.out.println("-----------------------");
-            System.out.println("10: Go back\n");
+            System.out.println("11: Go back\n");
             response = 0;
 
-            while (response < 1 || response > 5) {
+            while (response < 1 || response > 11) {
                 System.out.print("> ");
 
                 response = scanner.nextInt();
@@ -105,17 +111,21 @@ public class ModelApp {
 
                 } else if (response == 7) {
 
-                    viewTransitDriverDispatchRecords();
+                    viewCarDetails();
 
                 } else if (response == 8) {
 
-                    assignTransitDriver();
+                    viewTransitDriverDispatchRecords();
 
                 } else if (response == 9) {
 
-                    updateTransitAsCompleted();
+                    assignTransitDriver();
 
                 } else if (response == 10) {
+
+                    updateTransitAsCompleted();
+
+                } else if (response == 11) {
 
                     break;
 
@@ -124,7 +134,7 @@ public class ModelApp {
                 }
             }
 
-            if (response == 5) {
+            if (response == 11) {
                 break;
             }
         }
@@ -436,36 +446,303 @@ public class ModelApp {
 
             }
         }
-        
+
         scanner.nextLine();
-        
+
         System.out.print("\nInput License Plate Number >");
         String licensePlateNumber = scanner.nextLine();
         newCar.setLicensePlateNumber(licensePlateNumber);
-        
+
         System.out.print("\nInput colour >");
         String colour = scanner.nextLine();
         newCar.setColour(colour);
-        
+
         newCar.setStatus(CarStatusEnum.AVAILABLE);
         newCar.setLocation(LocationEnum.OUTLET);
         newCar.setRentalEndDate(null);
         newCar.setRentalStartDate(null);
-        
+
         long newCarId = carSessionBeanRemote.createCar(newCar, model.getId(), outlet.getOutletId());
         System.out.println(String.format("\nYou have created Car with the id of %d", newCarId));
 
     }
 
     private void viewAllCar() {
+
+        List<Car> cars = carSessionBeanRemote.getCarsWithCategoryAndModel();
+        if (cars.isEmpty()) {
+            System.out.println("No car available.");
+            return;
+        }
+
+        System.out.println("\nID ----- Category ----- Make ----- Model ----- License Plate Number ");
+        for (Car car : cars) {
+
+            System.out.println(car.getCarId() + " ----- " + car.getModel().getCategory().getCategoryName() + " ----- " + car.getModel().getMake() + " ----- " + car.getModel().getModel() + " ----- " + car.getLicensePlateNumber());
+
+        }
+
+    }
+
+    private void viewCarDetails() {
+
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+
+        System.out.print("Enter Car ID> ");
+        long carId = scanner.nextLong();
+
+        Car car = carSessionBeanRemote.getSpecificCar(carId);
+        System.out.println("\n------------------------");
+        System.out.println("\nID ----- Category ----- Make ----- Model ----- License Plate Number ");
+        System.out.println(car.getCarId() + " ----- " + car.getModel().getCategory().getCategoryName() + " ----- " + car.getModel().getMake() + " ----- " + car.getModel().getModel() + " ----- " + car.getLicensePlateNumber());
+        System.out.println("------------------------");
+        System.out.println("1: Update Car");
+        System.out.println("2: Delete Car");
+        System.out.println("3: Back\n");
+        System.out.print("> ");
+        response = scanner.nextInt();
+
+        if (response == 1) {
+
+            doUpdateCar(car);
+
+        } else if (response == 2) {
+
+            if (!carSessionBeanRemote.carInUse(car.getCarId())) {
+
+                doDeleteCar(car);
+
+            } else {
+
+                System.out.println("Unfortunately, you cannot delete the Car as it has already been used currently");
+
+                car.setEnabled(false);
+
+                carSessionBeanRemote.UpdateCar(car);
+
+                System.out.println("System have disable car with Id = " + car.getCarId());
+
+            }
+
+        }
+
+    }
+
+    private void doUpdateCar(Car car) {
+
+        Scanner scanner = new Scanner(System.in);
+        String input;
+        Integer integerInput;
+        LocalDateTime startDateTime;
+        LocalDateTime endDateTime;
+
+        System.out.println("*** Update Car ***\n");
+        System.out.print("Enter Car License Plate Number (blank if no change)> ");
+        input = scanner.nextLine().trim();
+
+        if (input.length() > 0) {
+
+            car.setLicensePlateNumber(input);
+        }
+
+        System.out.print("Enter Car Colour (blank if no change)> ");
+        input = scanner.nextLine().trim();
+
+        if (input.length() > 0) {
+
+            car.setColour(input);
+        }
+
+        while (true) {
+
+            System.out.print("\nSelect Car Status (1: Available, 2: Unavailable, 3: Transit, 4: Repair) (negative number if no change)> ");
+            integerInput = scanner.nextInt();
+
+            if (integerInput >= 1 && integerInput <= 4) {
+
+                car.setStatus(CarStatusEnum.values()[integerInput - 1]);
+                break;
+
+            } else {
+
+                System.out.println("Invalid option, please try again!\n");
+            }
+
+            if (integerInput < 0) {
+
+                break;
+
+            }
+
+        }
+
+        while (true) {
+
+            System.out.print("\nSelect Car Location (1: Specific Customer, 2: Outlet) (negative number if no change)> ");
+            integerInput = scanner.nextInt();
+
+            if (integerInput >= 1 && integerInput <= 2) {
+
+                car.setLocation(LocationEnum.values()[integerInput - 1]);
+                break;
+
+            } else {
+
+                System.out.println("Invalid option, please try again!\n");
+            }
+
+            if (integerInput < 0) {
+
+                break;
+
+            }
+
+        }
+
+        System.out.print("\nInput the start date time of the rental (dd/MM/yyyy HH:mm) (blank if no change)> ");
+        input = scanner.nextLine();
+
+        if (input.length() > 0) {
+            try {
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                startDateTime = LocalDateTime.parse(input, formatter);
+                car.setRentalStartDate(startDateTime);
+
+            } catch (DateTimeException ex) {
+
+                System.out.println("Error message occued: " + ex.getMessage());
+
+            }
+        }
+
+        System.out.print("\nInput the end date time of the rental (dd/MM/yyyy HH:mm) (blank if no change)> ");
+        input = scanner.nextLine();
+
+        if (input.length() > 0) {
+            try {
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                endDateTime = LocalDateTime.parse(input, formatter);
+                car.setRentalEndDate(endDateTime);
+
+            } catch (DateTimeException ex) {
+
+                System.out.println("Error message occued: " + ex.getMessage());
+
+            }
+        }
+
+        while (true) {
+
+            System.out.print("\nEnable Car (1: true, 2: false) (negative number if no change)> ");
+            integerInput = scanner.nextInt();
+
+            if (integerInput < 0) {
+
+                break;
+
+            } else if (integerInput == 1) {
+
+                car.setEnabled(true);
+                break;
+
+            } else if (integerInput == 2) {
+
+                car.setEnabled(false);
+                break;
+
+            } else {
+
+                System.out.println("Invalid option, please try again!\n");
+
+            }
+        }
+
+        carSessionBeanRemote.UpdateCar(car);
+
+        System.out.println(String.format("\nYou have successfully update Car with ID: %d", car.getCarId()));
+
+    }
+
+    private void doDeleteCar(Car car) {
+
+        Scanner scanner = new Scanner(System.in);
+        String input;
+
+        System.out.println("*** Delete Car ***\n");
+        System.out.printf("Confirm Delete Car %s (Car Id: %d) (Enter 'Y' to Delete)> ", car.getLicensePlateNumber(), car.getCarId());
+        input = scanner.nextLine().trim();
+
+        if (input.equals("Y")) {
+
+            carSessionBeanRemote.deleteCar(car.getCarId());
+            System.out.println("Car deleted successfully!\n");
+
+        } else {
+
+            System.out.println("Car NOT deleted!\n");
+
+        }
     }
 
     private void viewTransitDriverDispatchRecords() {
+
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+        System.out.print("Enter outlet ID> ");
+        long outletId = scanner.nextLong();
+
+        List<TransitDriverRecord> transitDriverRecords = transitDriverRecordSessionBeanRemote.getTransitDriverRecordForCurrentDay(outletId);
+
+        if (transitDriverRecords.isEmpty()) {
+
+            System.out.println("No Transit Driver for current day.");
+            return;
+        }
+
+        System.out.println("Transit Driver Record ID ----- Car ID ----- Car License Plate Number ----- Employee Id ----- Employee UserName");
+
+        for (TransitDriverRecord td : transitDriverRecords) {
+
+            System.out.println(td.getTransitDriverId() + " ----- " + td.getCar().getCarId()
+                    + " ----- " + td.getCar().getLicensePlateNumber() + " ----- " + td.getEmployee().getEmployeeId()
+                    + " ----- " + td.getEmployee().getUserName());
+
+        }
+
     }
 
     private void assignTransitDriver() {
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter outlet ID >");
+        long outletId = scanner.nextLong();
+
+        Employee employee = tEmployeeSessionBeanRemote.retrieveAvailableEmployeeByOutlet(outletId);
+
+        scanner.nextLine();
+
+        System.out.print("Enter Transit Driver Record ID >");
+        long transitDriverId = scanner.nextLong();
+        scanner.nextLine();
+
+        transitDriverRecordSessionBeanRemote.assignTransitDriver(transitDriverId, employee.getEmployeeId());
+
+        System.out.println("Successfully assign Employee ID: " + employee.getEmployeeId() + " to Transit Driver Record ID: " + transitDriverId);
+
     }
 
     private void updateTransitAsCompleted() {
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Transit Driver Record ID To Be Completed >");
+        long transitDriverId = scanner.nextLong();
+        scanner.nextLine();
+        
+        transitDriverRecordSessionBeanRemote.updateTransitDriverRecordAsCompleted(transitDriverId);
+        
+        System.out.println("Updated Transit Record ID: " + transitDriverId + " Successfully");
     }
 }
