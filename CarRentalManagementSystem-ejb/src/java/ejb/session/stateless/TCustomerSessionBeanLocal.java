@@ -19,11 +19,5 @@ public interface TCustomerSessionBeanLocal {
 
     Customer retrieveCustomer(long customerId);
 
-    void updateCustomerPaymentStatus(Customer customer);
-
-    void pickUpCar(long customerId, long carId);
-
-    void returnCar(long carId);
-
 
 }

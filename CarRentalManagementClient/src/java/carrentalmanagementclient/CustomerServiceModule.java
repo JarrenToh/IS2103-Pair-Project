@@ -6,6 +6,7 @@
 package carrentalmanagementclient;
 
 import ejb.session.stateless.CarSessionBeanRemote;
+import ejb.session.stateless.ReservedSessionBeanRemote;
 import ejb.session.stateless.TCustomerSessionBeanRemote;
 import entity.Car;
 import entity.Customer;
@@ -19,13 +20,15 @@ public class CustomerServiceModule {
 
     private CarSessionBeanRemote carSessionBeanRemote;
     private TCustomerSessionBeanRemote tCustomerSessionBeanRemote;
+    private ReservedSessionBeanRemote reservedSessionBeanRemote;
 
     public CustomerServiceModule() {
     }
 
-    public CustomerServiceModule(CarSessionBeanRemote carSessionBeanRemote, TCustomerSessionBeanRemote tCustomerSessionBeanRemote) {
+    public CustomerServiceModule(CarSessionBeanRemote carSessionBeanRemote, TCustomerSessionBeanRemote tCustomerSessionBeanRemote, ReservedSessionBeanRemote reservedSessionBeanRemote) {
         this.carSessionBeanRemote = carSessionBeanRemote;
         this.tCustomerSessionBeanRemote = tCustomerSessionBeanRemote;
+        this.reservedSessionBeanRemote = reservedSessionBeanRemote;
     }
 
     public void runCustomerServiceModule() {
@@ -79,42 +82,48 @@ public class CustomerServiceModule {
     private void pickUpCar() {
 
         Scanner scanner = new Scanner(System.in);
-        Integer response = 0;
 
         System.out.print("Enter Customer ID > ");
         long customerId = scanner.nextLong();
-
-        Customer customer = tCustomerSessionBeanRemote.retrieveCustomer(customerId);
 
         scanner.nextLine();
 
         System.out.print("\nEnter Car ID > ");
         long carId = scanner.nextLong();
 
-        Car car = carSessionBeanRemote.getSpecificCar(carId);
+        Long reservedId = reservedSessionBeanRemote.pickUpCar(carId, customerId);
 
-        carSessionBeanRemote.updateCarCustomer(car, customer);
+        if (reservedId != null) {
 
-        System.out.println("\nCustomer ID: " + customerId + "have successfully picked up Car ID: " + carId + "\n");
+            System.out.println("\nCustomer ID: " + customerId + "have successfully picked up Car ID: " + carId);
+            System.out.println("Reservation ID: " + reservedId + "\n");
+        }
 
     }
 
     private void returnCar() {
 
         Scanner scanner = new Scanner(System.in);
-        Integer response = 0;
 
         System.out.print("Enter Customer ID > ");
         long customerId = scanner.nextLong();
+
         scanner.nextLine();
-        
-        Customer customer = tCustomerSessionBeanRemote.retrieveCustomer(customerId);
-        Car car = carSessionBeanRemote.getSpecificCar(customer.getCar().getCarId());
-        
-        carSessionBeanRemote.updateCarCustomer(car, null);
 
-        System.out.println("\nCustomer ID: " + customerId + "have successfully return Car ID: " + car.getCarId() + "\n");
+        System.out.print("\nEnter Car ID > ");
+        long carId = scanner.nextLong();
 
+        scanner.nextLine();
+
+        System.out.print("\nEnter Returning Outlet ID > ");
+        long outletId = scanner.nextLong();
+
+        Long reservedId = reservedSessionBeanRemote.returnCar(carId, customerId, outletId);
+
+        if (reservedId != null) {
+            System.out.println("\nCustomer ID: " + customerId + "have successfully return Car ID: " + carId + " to Outlet ID: " + outletId);
+            System.out.println("Reservation Id: " + reservedId + "\n");
+        }
 
     }
 

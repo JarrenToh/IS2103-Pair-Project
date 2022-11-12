@@ -39,7 +39,5 @@ public interface CarSessionBeanLocal {
     boolean carInUse(long carId);
     
     long getNumOfCarsBasedOnMakeAndModel(String make, String model);
-
-    void updateCarCustomer(Car car, Customer customer);
     
 }

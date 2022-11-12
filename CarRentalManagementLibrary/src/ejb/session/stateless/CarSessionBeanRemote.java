@@ -40,6 +40,5 @@ public interface CarSessionBeanRemote {
     
     long getNumOfCarsBasedOnMakeAndModel(String make, String model);
 
-    void updateCarCustomer(Car car, Customer customer);
     
 }

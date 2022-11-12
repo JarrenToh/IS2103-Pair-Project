@@ -132,34 +132,6 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
     }
 
     @Override
-    public void updateCarCustomer(Car car, Customer customer) {
-
-        Car carToUpdate = em.find(Car.class, car.getCarId());
-
-        //Pick Up
-        if (customer != null) {
-
-            Customer customerToUpdate = em.find(Customer.class, customer.getCustomerId());
-            customerToUpdate.setPaid(true);
-            carToUpdate.setStatus(CarStatusEnum.UNAVAILABLE);
-            carToUpdate.setLocation(LocationEnum.SPECIFIC_CUSTOMER);
-            carToUpdate.setCustomer(customerToUpdate);
-            customerToUpdate.setCar(carToUpdate);
-
-            //Return    
-        } else {
-
-            Customer customerToUpdate = em.find(Customer.class, carToUpdate.getCustomer().getCustomerId());
-            carToUpdate.setStatus(CarStatusEnum.AVAILABLE);
-            carToUpdate.setLocation(LocationEnum.OUTLET);
-            customerToUpdate.setCar(null);
-            carToUpdate.setCustomer(null);
-
-        }
-
-    }
-
-    @Override
     public void deleteCar(long carId) {
 
         Car carToRemove = getSpecificCar(carId);

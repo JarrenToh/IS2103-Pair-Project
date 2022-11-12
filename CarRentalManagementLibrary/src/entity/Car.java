@@ -7,6 +7,8 @@ package entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,6 +18,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import util.enumeration.CarStatusEnum;
 import util.enumeration.LocationEnum;
@@ -66,11 +69,12 @@ public class Car implements Serializable {
     @OneToOne(mappedBy = "car")
     private TransitDriverRecord transitDriverRecord;
     
-    @OneToOne(mappedBy = "car")
-    private Customer customer;
+    @OneToMany(mappedBy = "car")
+    private List<Reserved> reserveds;
 
     public Car() {
         this.enabled = true;
+        this.reserveds = new ArrayList<>();
     }
     
     public Car(String licensePlateNumber, Model model, String status, Outlet outlet) {
@@ -94,7 +98,7 @@ public class Car implements Serializable {
         }
     }
 
-    public Car(String licensePlateNumber, String colour, CarStatusEnum status, LocationEnum location, boolean enabled, LocalDateTime rentalStartDate, LocalDateTime rentalEndDate, Outlet outlet, Model model, TransitDriverRecord transitDriverRecord, Customer customer) {
+    public Car(String licensePlateNumber, String colour, CarStatusEnum status, LocationEnum location, boolean enabled, LocalDateTime rentalStartDate, LocalDateTime rentalEndDate, Outlet outlet, Model model, TransitDriverRecord transitDriverRecord) {
         this.licensePlateNumber = licensePlateNumber;
         this.colour = colour;
         this.status = status;
@@ -105,7 +109,6 @@ public class Car implements Serializable {
         this.outlet = outlet;
         this.model = model;
         this.transitDriverRecord = transitDriverRecord;
-        this.customer = customer;
     }
     
     
@@ -269,19 +272,6 @@ public class Car implements Serializable {
         this.transitDriverRecord = transitDriverRecord;
     }
 
-    /**
-     * @return the customer
-     */
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    /**
-     * @param customer the customer to set
-     */
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
 
     /**
      * @return the model
@@ -295,6 +285,20 @@ public class Car implements Serializable {
      */
     public void setModel(Model model) {
         this.model = model;
+    }
+
+    /**
+     * @return the reserveds
+     */
+    public List<Reserved> getReserveds() {
+        return reserveds;
+    }
+
+    /**
+     * @param reserveds the reserveds to set
+     */
+    public void setReserveds(List<Reserved> reserveds) {
+        this.reserveds = reserveds;
     }
 
 }

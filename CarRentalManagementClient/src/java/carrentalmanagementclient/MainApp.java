@@ -14,6 +14,7 @@ import ejb.session.stateless.CategorySessionBeanRemote;
 import ejb.session.stateless.ModelSessionBeanRemote;
 import ejb.session.stateless.OutletSessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
+import ejb.session.stateless.ReservedSessionBeanRemote;
 import ejb.session.stateless.TCustomerSessionBeanRemote;
 import ejb.session.stateless.TEmployeeSessionBeanRemote;
 import ejb.session.stateless.TransitDriverRecordSessionBeanRemote;
@@ -33,6 +34,7 @@ public class MainApp {
     private OutletSessionBeanRemote outletSessionBeanRemote;
     private TCustomerSessionBeanRemote tCustomerSessionBeanRemote;
     private TEmployeeSessionBeanRemote tEmployeeSessionBeanRemote;
+    private ReservedSessionBeanRemote reservedSessionBeanRemote;
 
     // sub-apps/pages
     private RentalRateApp rentalRateApp;
@@ -50,7 +52,8 @@ public class MainApp {
     }
 
     public MainApp(RentalRateSessionBeanRemote rentalRateSessionBeanRemote, CategorySessionBeanRemote categorySessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, TransitDriverRecordSessionBeanRemote transitDriverRecordSessionBeanRemote, CarSessionBeanRemote carSessionBeanRemote,
-            OutletSessionBeanRemote outletSessionBeanRemote, TCustomerSessionBeanRemote tCustomerSessionBeanRemote, TEmployeeSessionBeanRemote tEmployeeSessionBeanRemote) {
+            OutletSessionBeanRemote outletSessionBeanRemote, TCustomerSessionBeanRemote tCustomerSessionBeanRemote, TEmployeeSessionBeanRemote tEmployeeSessionBeanRemote, 
+            ReservedSessionBeanRemote reservedSessionBeanRemote) {
         this.rentalRateSessionBeanRemote = rentalRateSessionBeanRemote;
         this.categorySessionBeanRemote = categorySessionBeanRemote;
         this.modelSessionBeanRemote = modelSessionBeanRemote;
@@ -59,6 +62,7 @@ public class MainApp {
         this.outletSessionBeanRemote = outletSessionBeanRemote;
         this.tCustomerSessionBeanRemote = tCustomerSessionBeanRemote;
         this.tEmployeeSessionBeanRemote = tEmployeeSessionBeanRemote;
+        this.reservedSessionBeanRemote = reservedSessionBeanRemote;
 
     }
 
@@ -107,7 +111,7 @@ public class MainApp {
                     
                 } else if (response == 3) {
                     
-                    customerServiceModule = new CustomerServiceModule(carSessionBeanRemote, tCustomerSessionBeanRemote);
+                    customerServiceModule = new CustomerServiceModule(carSessionBeanRemote, tCustomerSessionBeanRemote, reservedSessionBeanRemote);
                     customerServiceModule.runCustomerServiceModule();
                     
                 } else if (response == 4) {

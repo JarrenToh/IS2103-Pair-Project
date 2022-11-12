@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,10 +14,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
+
 
 /**
  *
@@ -45,28 +45,27 @@ public class Customer implements Serializable {
     @Column(nullable = false, length = 32)
     private String CreditCardDetails;
 
-    @Column(nullable = false)
-    private boolean paid;
 
-    @OneToOne
-    private Car car;
+    @OneToMany(mappedBy = "customer")
+    private List<Reserved> reserveds;
 
-    //Changed the cardinality of the assciation
+    //Changed the cardinality of the association
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Outlet outlet;
 
     public Customer() {
+        
+        this.reserveds = new ArrayList<>();
     }
 
-    public Customer(String MobilePhoneNo, String email, String passportNo, String password, String CreditCardDetails, boolean paid, Car car, Outlet outlet) {
+    public Customer(String MobilePhoneNo, String email, String passportNo, String password, String CreditCardDetails, Outlet outlet) {
+        this();
         this.MobilePhoneNo = MobilePhoneNo;
         this.email = email;
         this.passportNo = passportNo;
         this.password = password;
         this.CreditCardDetails = CreditCardDetails;
-        this.paid = paid;
-        this.car = car;
         this.outlet = outlet;
     }
     
@@ -173,33 +172,6 @@ public class Customer implements Serializable {
         this.CreditCardDetails = CreditCardDetails;
     }
 
-    /**
-     * @return the paid
-     */
-    public boolean isPaid() {
-        return paid;
-    }
-
-    /**
-     * @param paid the paid to set
-     */
-    public void setPaid(boolean paid) {
-        this.paid = paid;
-    }
-
-    /**
-     * @return the car
-     */
-    public Car getCar() {
-        return car;
-    }
-
-    /**
-     * @param car the car to set
-     */
-    public void setCar(Car car) {
-        this.car = car;
-    }
 
     /**
      * @return the outlet
@@ -213,6 +185,20 @@ public class Customer implements Serializable {
      */
     public void setOutlet(Outlet outlet) {
         this.outlet = outlet;
+    }
+
+    /**
+     * @return the reserveds
+     */
+    public List<Reserved> getReserveds() {
+        return reserveds;
+    }
+
+    /**
+     * @param reserveds the reserveds to set
+     */
+    public void setReserveds(List<Reserved> reserveds) {
+        this.reserveds = reserveds;
     }
 
 }
