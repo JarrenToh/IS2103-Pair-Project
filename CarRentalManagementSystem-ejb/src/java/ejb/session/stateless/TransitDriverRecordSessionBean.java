@@ -11,6 +11,7 @@ import entity.TransitDriverRecord;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -95,14 +96,24 @@ public class TransitDriverRecordSessionBean implements TransitDriverRecordSessio
 
     @Override
     public List<TransitDriverRecord> getTransitDriverRecordForCurrentDay(long outletId) {
-        
-        Query query = em.createQuery("SELECT td FROM TransitDriverRecord td WHERE td.car.rentalStartDate.toLocalDate() = :startDate AND td.completed = :status AND td.car.outlet.getOutletId() = :oId");
-        query.setParameter("startDate", LocalDate.now());
+
+        Query query = em.createQuery("SELECT td FROM TransitDriverRecord td WHERE td.completed = :status AND td.car.outlet.outletId = :oId");
         query.setParameter("status", false);
         query.setParameter("oId", outletId);
-        return query.getResultList();
-    }
-    
-    
 
+        List<TransitDriverRecord> transitDriverRecords = query.getResultList();
+
+        for (TransitDriverRecord tdr : transitDriverRecords) {
+
+            if (!tdr.getCar().getRentalStartDate().toLocalDate().equals(LocalDate.now())) {
+
+                transitDriverRecords.remove(tdr);
+
+            }
+
+        }
+
+        return transitDriverRecords;
+
+    }
 }

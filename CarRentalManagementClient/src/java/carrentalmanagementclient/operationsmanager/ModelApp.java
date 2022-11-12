@@ -155,7 +155,7 @@ public class ModelApp {
         }
 
         while (true) {
-            System.out.print("\nSelect which category do you want to include model i.e. 1 > ");
+            System.out.print("\nSelect which category do you want to include model i.e. 1 >");
             response = scanner.nextInt();
 
             // TODO: include validation for once then just copy paste the tempalte for the subsequent ones
@@ -185,7 +185,7 @@ public class ModelApp {
             return;
         }
 
-        System.out.println("\n ID ----- Make ----- Model ----- Category ");
+        System.out.println("\nID ----- Make ----- Model ----- Category ");
         for (int i = 0; i < models.size(); i++) {
             Model m = models.get(i);
             long modelId = m.getId();
@@ -195,6 +195,7 @@ public class ModelApp {
 
             System.out.println(modelId + " ----- " + make + " ----- " + model + " ----- " + category);
         }
+        System.out.println("\n----------------------------------------");
     }
 
     private void updateModel() {
@@ -269,7 +270,7 @@ public class ModelApp {
             }
         }
 
-        System.out.print("Enter Make (blank if no change)> ");
+        System.out.print("Enter Make (blank if no change) > ");
         input = scanner.nextLine().trim();
 
         if (input.length() > 0) {
@@ -277,7 +278,7 @@ public class ModelApp {
             model.setMake(input);
         }
 
-        System.out.print("Enter Model (blank if no change)> ");
+        System.out.print("Enter Model (blank if no change) > ");
         input = scanner.nextLine().trim();
 
         if (input.length() > 0) {
@@ -287,7 +288,7 @@ public class ModelApp {
 
         while (true) {
 
-            System.out.print("\nEnable Make and Model (1: true, 2: false) (negative number if no change)> ");
+            System.out.print("\nEnable Make and Model (1: true, 2: false) (negative number if no change) > ");
             integerInput = scanner.nextInt();
 
             if (integerInput < 0) {
@@ -376,7 +377,7 @@ public class ModelApp {
         String input;
 
         System.out.println("*** Delete Rental Rate ***\n");
-        System.out.printf("Confirm Delete Make %s & Model %s (Make and Model Id: %d) (Enter 'Y' to Delete)> ", model.getMake(), model.getModel(), model.getId());
+        System.out.printf("Confirm Delete Make %s & Model %s (Make and Model Id: %d) (Enter 'Y' to Delete) > ", model.getMake(), model.getModel(), model.getId());
         input = scanner.nextLine().trim();
 
         if (input.equals("Y")) {
@@ -453,7 +454,7 @@ public class ModelApp {
         String licensePlateNumber = scanner.nextLine();
         newCar.setLicensePlateNumber(licensePlateNumber);
 
-        System.out.print("\nInput colour >");
+        System.out.print("\nInput colour > ");
         String colour = scanner.nextLine();
         newCar.setColour(colour);
 
@@ -481,6 +482,7 @@ public class ModelApp {
             System.out.println(car.getCarId() + " ----- " + car.getModel().getCategory().getCategoryName() + " ----- " + car.getModel().getMake() + " ----- " + car.getModel().getModel() + " ----- " + car.getLicensePlateNumber());
 
         }
+        System.out.println("\n----------------------------------------");
 
     }
 
@@ -489,7 +491,7 @@ public class ModelApp {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
-        System.out.print("Enter Car ID> ");
+        System.out.print("Enter Car ID > ");
         long carId = scanner.nextLong();
 
         Car car = carSessionBeanRemote.getSpecificCar(carId);
@@ -538,7 +540,7 @@ public class ModelApp {
         LocalDateTime endDateTime;
 
         System.out.println("*** Update Car ***\n");
-        System.out.print("Enter Car License Plate Number (blank if no change)> ");
+        System.out.print("Enter Car License Plate Number (blank if no change) > ");
         input = scanner.nextLine().trim();
 
         if (input.length() > 0) {
@@ -546,7 +548,7 @@ public class ModelApp {
             car.setLicensePlateNumber(input);
         }
 
-        System.out.print("Enter Car Colour (blank if no change)> ");
+        System.out.print("Enter Car Colour (blank if no change) > ");
         input = scanner.nextLine().trim();
 
         if (input.length() > 0) {
@@ -556,7 +558,7 @@ public class ModelApp {
 
         while (true) {
 
-            System.out.print("\nSelect Car Status (1: Available, 2: Unavailable, 3: Transit, 4: Repair) (negative number if no change)> ");
+            System.out.print("\nSelect Car Status (1: Available, 2: Unavailable, 3: Transit, 4: Repair) (negative number if no change) > ");
             integerInput = scanner.nextInt();
 
             if (integerInput >= 1 && integerInput <= 4) {
@@ -579,7 +581,7 @@ public class ModelApp {
 
         while (true) {
 
-            System.out.print("\nSelect Car Location (1: Specific Customer, 2: Outlet) (negative number if no change)> ");
+            System.out.print("\nSelect Car Location (1: Specific Customer, 2: Outlet) (negative number if no change) > ");
             integerInput = scanner.nextInt();
 
             if (integerInput >= 1 && integerInput <= 2) {
@@ -600,7 +602,7 @@ public class ModelApp {
 
         }
 
-        System.out.print("\nInput the start date time of the rental (dd/MM/yyyy HH:mm) (blank if no change)> ");
+        System.out.print("\nInput the start date time of the rental (dd/MM/yyyy HH:mm) (blank if no change) > ");
         input = scanner.nextLine();
 
         if (input.length() > 0) {
@@ -617,7 +619,7 @@ public class ModelApp {
             }
         }
 
-        System.out.print("\nInput the end date time of the rental (dd/MM/yyyy HH:mm) (blank if no change)> ");
+        System.out.print("\nInput the end date time of the rental (dd/MM/yyyy HH:mm) (blank if no change) > ");
         input = scanner.nextLine();
 
         if (input.length() > 0) {
@@ -636,7 +638,7 @@ public class ModelApp {
 
         while (true) {
 
-            System.out.print("\nEnable Car (1: true, 2: false) (negative number if no change)> ");
+            System.out.print("\nEnable Car (1: true, 2: false) (negative number if no change) > ");
             integerInput = scanner.nextInt();
 
             if (integerInput < 0) {
@@ -672,7 +674,7 @@ public class ModelApp {
         String input;
 
         System.out.println("*** Delete Car ***\n");
-        System.out.printf("Confirm Delete Car %s (Car Id: %d) (Enter 'Y' to Delete)> ", car.getLicensePlateNumber(), car.getCarId());
+        System.out.printf("Confirm Delete Car %s (Car Id: %d) (Enter 'Y' to Delete) > ", car.getLicensePlateNumber(), car.getCarId());
         input = scanner.nextLine().trim();
 
         if (input.equals("Y")) {
@@ -691,7 +693,7 @@ public class ModelApp {
 
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
-        System.out.print("Enter outlet ID> ");
+        System.out.print("Enter outlet ID > ");
         long outletId = scanner.nextLong();
 
         List<TransitDriverRecord> transitDriverRecords = transitDriverRecordSessionBeanRemote.getTransitDriverRecordForCurrentDay(outletId);
@@ -707,8 +709,8 @@ public class ModelApp {
         for (TransitDriverRecord td : transitDriverRecords) {
 
             System.out.println(td.getTransitDriverId() + " ----- " + td.getCar().getCarId()
-                    + " ----- " + td.getCar().getLicensePlateNumber() + " ----- " + td.getEmployee().getEmployeeId()
-                    + " ----- " + td.getEmployee().getUserName());
+                    + " ----- " + td.getCar().getLicensePlateNumber() + " ----- " + (td.getEmployee() != null ? td.getEmployee().getEmployeeId() : null)
+                    + " ----- " + (td.getEmployee() != null ? td.getEmployee().getUserName(): null));
 
         }
 

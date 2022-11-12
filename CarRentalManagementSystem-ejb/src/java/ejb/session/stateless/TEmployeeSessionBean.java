@@ -45,7 +45,7 @@ public class TEmployeeSessionBean implements TEmployeeSessionBeanRemote, TEmploy
     @Override
     public Employee retrieveAvailableEmployeeByOutlet(long OutletId) {
 
-        Query query = em.createQuery("SELECT e FROM Employee e WHERE e.outlet.getOutletId() = :oId AND e.dispatchStatus <> :status");
+        Query query = em.createQuery("SELECT e FROM Employee e WHERE e.outlet.outletId = :oId AND e.dispatchStatus <> :status");
         query.setParameter("oId", OutletId);
         query.setParameter("status", DispatchStatusEnum.COMPLETED);
         return (Employee) query.getSingleResult();
