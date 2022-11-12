@@ -138,7 +138,7 @@ public class ModelApp {
                 break;
             }
         }
-        System.out.println("\nYou have exited out of Model page successfully\n");
+        System.out.println("\nYou have exited out of Model & Car Management page successfully\n");
     }
 
     private void createModel() {

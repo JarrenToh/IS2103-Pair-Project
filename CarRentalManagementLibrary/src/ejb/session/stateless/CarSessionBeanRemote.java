@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Car;
+import entity.Customer;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.ejb.Remote;
@@ -38,5 +39,7 @@ public interface CarSessionBeanRemote {
     boolean carInUse(long carId);
     
     long getNumOfCarsBasedOnMakeAndModel(String make, String model);
+
+    void updateCarCustomer(Car car, Customer customer);
     
 }

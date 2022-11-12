@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Car;
+import entity.Customer;
 import entity.Model;
 import entity.Outlet;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.enumeration.CarStatusEnum;
+import util.enumeration.LocationEnum;
 
 /**
  *
@@ -89,13 +91,13 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
         query.setParameter("inStatus", CarStatusEnum.AVAILABLE);
         query.setParameter("inPickupDateTime", pickupDateTime);
         query.setParameter("inReturnDateTime", returnDateTime);
-        List<Car> availableCars = query.getResultList();        
+        List<Car> availableCars = query.getResultList();
 
         // get unavailable cars that are either rented out or haven't rented out
         Query query2 = em.createQuery("SELECT c FROM Car c WHERE c.outlet.outletId = :inOutletId AND c.status = :inStatus AND ((c.outlet.openingTime IS NULL AND c.outlet.closingTime IS NULL) OR (:pickupDateTime >= c.outlet.openingTime))");
         query2.setParameter("inOutletId", outletId);
         query2.setParameter("inStatus", CarStatusEnum.UNAVAILABLE);
-        List<Car> unavailableCars = query.getResultList(); 
+        List<Car> unavailableCars = query.getResultList();
 
         return cars;
     }
@@ -130,6 +132,34 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
     }
 
     @Override
+    public void updateCarCustomer(Car car, Customer customer) {
+
+        Car carToUpdate = em.find(Car.class, car.getCarId());
+
+        //Pick Up
+        if (customer != null) {
+
+            Customer customerToUpdate = em.find(Customer.class, customer.getCustomerId());
+            customerToUpdate.setPaid(true);
+            carToUpdate.setStatus(CarStatusEnum.UNAVAILABLE);
+            carToUpdate.setLocation(LocationEnum.SPECIFIC_CUSTOMER);
+            carToUpdate.setCustomer(customerToUpdate);
+            customerToUpdate.setCar(carToUpdate);
+
+            //Return    
+        } else {
+
+            Customer customerToUpdate = em.find(Customer.class, carToUpdate.getCustomer().getCustomerId());
+            carToUpdate.setStatus(CarStatusEnum.AVAILABLE);
+            carToUpdate.setLocation(LocationEnum.OUTLET);
+            customerToUpdate.setCar(null);
+            carToUpdate.setCustomer(null);
+
+        }
+
+    }
+
+    @Override
     public void deleteCar(long carId) {
 
         Car carToRemove = getSpecificCar(carId);
@@ -144,7 +174,7 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
         query.setParameter("carStatus", CarStatusEnum.UNAVAILABLE);
         return query.getResultList();
     }
-    
+
     @Override
     public long getNumOfCarsBasedOnMakeAndModel(String make, String model) {
         Query query = em.createQuery("SELECT c FROM Car c WHERE c.model.make = :make AND c.model.model = :model");
