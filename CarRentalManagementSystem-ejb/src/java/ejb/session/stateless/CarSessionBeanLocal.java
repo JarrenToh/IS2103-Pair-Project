@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.Car;
 import entity.Customer;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -26,7 +27,9 @@ public interface CarSessionBeanLocal {
 
     Car getSpecificCar(long carId);
     
-    List<Car> getCarsByOutletId(long outletId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime);
+    List<Car> getAvailableCars(LocalDateTime pickupDateTime);
+    
+    List<Car> getUnavailableCars(LocalDateTime pickupDateTime, String pickupOutlet);
 
     Long UpdateCar(Car updatedCar);
 

@@ -16,9 +16,18 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface OutletSessionBeanRemote {
+
     Long createNewOutlet(Outlet newOutlet);
+
     Outlet getOutlet(String outletName);
+
     List<Outlet> getOutletWithPickAndReturnTime(LocalTime pickupTime, LocalTime returnTime, String returnOutlet);
 
     List<Outlet> retrieveAllOutlet();
+
+    Outlet getOutletForPickup(LocalTime pickupTime, String outlet);
+    
+    Outlet getOutletForReturn(LocalTime returnTime, String outletName);
+    
+    List<Outlet> getOutletsAvailableForReturn(LocalTime returnTime);
 }

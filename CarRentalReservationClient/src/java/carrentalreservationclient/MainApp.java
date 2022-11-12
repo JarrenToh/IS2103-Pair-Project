@@ -153,58 +153,57 @@ public class MainApp {
 //                }
 //            }
         }
-
-        // a car is available for rental if the enum status is available
-        // need to get the inputs from the user and filter them accordingly
-        // need to display the rental rate for the particular car
     }
 
     private List<Car> getCarsFromInputs(LocalDateTime pickupDateTime, LocalDateTime returnDateTime, String pickupOutlet, String returnOutlet) {
-        // assume need to have a minimum of 5 cars for each outlet
         List<Car> carsFromInputs = new ArrayList<>();
-        // check whether the outlet can be returned based from the return time
-        List<Outlet> outletsForPickAndReturn = UserHandler.getOutletsForPickAndReturn(this.outletSessionBeanRemote, pickupDateTime, returnDateTime, returnOutlet);
+
+        List<Car> availableCarsFromAllOutlets = UserHandler.getAvailableCars(this.carSessionBeanRemote, pickupDateTime);
+
+        if (!availableCarsFromAllOutlets.isEmpty()) {
+            System.out.println("\nAvailable Cars: ");
+            carsFromInputs.addAll(getCars(availableCarsFromAllOutlets, pickupDateTime, returnDateTime));
+        }
+
+        List<Car> unavailableCarsFromAllOutlets = UserHandler.getUnavailableCars(this.carSessionBeanRemote, pickupDateTime, pickupOutlet);
+
+        if (!unavailableCarsFromAllOutlets.isEmpty()) {
+            System.out.println("\nCars that are unavailable now but are available based on your pickup time: ");
+            carsFromInputs.addAll(getCars(unavailableCarsFromAllOutlets, pickupDateTime, returnDateTime));
+        }
+
+        return carsFromInputs;
+    }
+
+    private List<Car> getCars(List<Car> carsFromAllOutlets, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
+        List<Car> cars = new ArrayList<>();
         HashMap<String, Integer> categoryHM = new HashMap<>();
+        
+        for (Car c : carsFromAllOutlets) {
+            Category category = c.getModel().getCategory();
 
-        if (outletsForPickAndReturn.isEmpty()) { // if the outlet is close given the respective pickup and return time, search for the other outlets
-//            Outlet currentOutlet 
-//            List<Car> carsFromOtherOutlets = UserHandler.getCarsByNotCurrentOutletId(this.carSessionBeanRemote, o.getOutletId(), pickupDateTime);
-        } else { // get from the particular outlet
-            Outlet o = outletsForPickAndReturn.get(0);
-            List<Car> carsFromChosenOutlet = UserHandler.getCarsByOutletId(this.carSessionBeanRemote, o.getOutletId(), pickupDateTime, returnDateTime);
-            System.out.println(String.format("\nAvailable cars in %s :", o.getAddress()));
-            System.out.println("Make ----- Model ----- Category ----- Rental Fee ----- Quantity");            
-
-            for (Car c : carsFromChosenOutlet) {
-                Category category = c.getModel().getCategory();
-
-                if (!categoryHM.containsKey(category.getCategoryName())) {
-                    categoryHM.put(category.getCategoryName(), 1);
-                } else {
-                    continue;
-                }
+            if (!categoryHM.containsKey(category.getCategoryName())) { // there are cars with the same categories
+                categoryHM.put(category.getCategoryName(), 1);
 
                 Model m = c.getModel();
                 String make = m.getMake();
                 String model = m.getModel();
 
                 long numOfCarsOfCarsBasedOnMakeAndModel = UserHandler.getNumOfCarsBasedOnMakeAndModel(this.carSessionBeanRemote, make, model);
-                
+
                 if (numOfCarsOfCarsBasedOnMakeAndModel == 0) { // no more inventory
                     continue;
                 }
-                
+
                 List<RentalRate> rentalRates = UserHandler.getRentalRatesByCategoryId(this.rentalRateSessionBeanRemote, category.getId());
                 List<Long> rentalRatesId = rentalRates.stream().map(r -> r.getId()).collect(Collectors.toList());
                 BigDecimal rentalFee = calculateTotalRentalFee(rentalRatesId, pickupDateTime, returnDateTime);
-                System.out.println(make + " ----- " + model + " ------ " + category.getCategoryName() + " ----- $" + rentalFee + " ----- " + numOfCarsOfCarsBasedOnMakeAndModel);
-                carsFromInputs.add(c);
+                System.out.println(c.getOutlet().getAddress() + " ----- " + make + " ----- " + model + " ------ " + category.getCategoryName() + " ----- $" + rentalFee + " ----- " + numOfCarsOfCarsBasedOnMakeAndModel);
+                cars.add(c);
             }
         }
-
-//            System.out.println("\n");
-        return carsFromInputs;
-
+        
+        return cars;
     }
 
     /*

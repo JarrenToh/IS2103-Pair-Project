@@ -30,8 +30,12 @@ public class UserHandler {
         return outletSessionBeanRemote.getOutletWithPickAndReturnTime(pickupDateTime.toLocalTime(), returnDateTime.toLocalTime(), returnOutlet);
     }
 
-    public static List<Car> getCarsByOutletId(CarSessionBeanRemote carSessionBeanRemote, long outletId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
-        return carSessionBeanRemote.getCarsByOutletId(outletId, pickupDateTime, returnDateTime);
+    public static List<Car> getAvailableCars(CarSessionBeanRemote carSessionBeanRemote, LocalDateTime pickupDateTime) {
+        return carSessionBeanRemote.getAvailableCars(pickupDateTime);
+    }
+    
+    public static List<Car> getUnavailableCars(CarSessionBeanRemote carSessionBeanRemote, LocalDateTime pickupDateTime, String pickupOutlet) {
+        return carSessionBeanRemote.getUnavailableCars(pickupDateTime, pickupOutlet);
     }
 
     public static List<RentalRate> getRentalRatesByCategoryId(RentalRateSessionBeanRemote rentalRateSessionBeanRemote, long categoryId) {
@@ -51,4 +55,18 @@ public class UserHandler {
         return null;
     }
 
+    public static Outlet getOutletForPickup(OutletSessionBeanRemote outletSessionBeanRemote, LocalDateTime pickupDateTime, String pickupOutlet) {
+        Outlet outlet = outletSessionBeanRemote.getOutletForPickup(pickupDateTime.toLocalTime(), pickupOutlet);
+        return outlet;
+    }
+    
+    public static boolean checkReturnAvailability(OutletSessionBeanRemote outletSessionBeanRemote, LocalDateTime returnDateTime, String returnOutlet) {
+        Outlet outlet = outletSessionBeanRemote.getOutletForReturn(returnDateTime.toLocalTime(), returnOutlet);
+        return outlet != null;
+    }
+    
+    public static List<Outlet> getOutletsAvailableForReturn(OutletSessionBeanRemote outletSessionBeanRemote, LocalDateTime returnDateTime) {
+        List<Outlet> outlets = outletSessionBeanRemote.getOutletsAvailableForReturn(returnDateTime.toLocalTime());
+        return outlets;
+    }
 }
