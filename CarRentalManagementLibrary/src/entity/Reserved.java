@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import util.enumeration.PaidStatus;
 
 /**
@@ -48,8 +49,7 @@ public class Reserved implements Serializable {
     @JoinColumn(nullable = false)
     private Customer customer;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @OneToOne(optional = false)
     private Car car;
 
     public Reserved() {

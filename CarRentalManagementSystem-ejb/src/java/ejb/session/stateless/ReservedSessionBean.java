@@ -43,7 +43,7 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
 
         //associate Car and reserved
         reserved.setCar(car);
-        car.getReserveds().add(reserved);
+        car.setReserved(reserved);
 
         //associate customer and reserved
         reserved.setCustomer(customer);

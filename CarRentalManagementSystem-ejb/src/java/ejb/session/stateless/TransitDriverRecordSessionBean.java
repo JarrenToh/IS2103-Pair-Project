@@ -105,7 +105,11 @@ public class TransitDriverRecordSessionBean implements TransitDriverRecordSessio
 
         for (TransitDriverRecord tdr : transitDriverRecords) {
 
-            if (!tdr.getCar().getRentalStartDate().toLocalDate().equals(LocalDate.now())) {
+            if(tdr.getCar().getRentalStartDate() == null) {
+                
+                transitDriverRecords.remove(tdr);
+                
+            } else if (tdr.getCar().getRentalStartDate() != null && !tdr.getCar().getRentalStartDate().toLocalDate().equals(LocalDate.now())) {
 
                 transitDriverRecords.remove(tdr);
 

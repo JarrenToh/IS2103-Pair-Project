@@ -35,10 +35,11 @@ public class TransitDriverRecord implements Serializable {
     private Car car;
 
     public TransitDriverRecord() {
+        completed = false;
     }
 
-    public TransitDriverRecord(boolean completed, Employee employee, Car car) {
-        this.completed = completed;
+    public TransitDriverRecord(Employee employee, Car car) {
+        this();
         this.employee = employee;
         this.car = car;
     }

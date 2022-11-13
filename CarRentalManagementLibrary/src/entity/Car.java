@@ -69,12 +69,11 @@ public class Car implements Serializable {
     @OneToOne(mappedBy = "car")
     private TransitDriverRecord transitDriverRecord;
     
-    @OneToMany(mappedBy = "car")
-    private List<Reserved> reserveds;
+    @OneToOne(mappedBy = "car")
+    private Reserved reserved;
 
     public Car() {
         this.enabled = true;
-        this.reserveds = new ArrayList<>();
     }
     
     public Car(String licensePlateNumber, Model model, String status, Outlet outlet) {
@@ -288,17 +287,19 @@ public class Car implements Serializable {
     }
 
     /**
-     * @return the reserveds
+     * @return the reserved
      */
-    public List<Reserved> getReserveds() {
-        return reserveds;
+    public Reserved getReserved() {
+        return reserved;
     }
 
     /**
-     * @param reserveds the reserveds to set
+     * @param reserved the reserved to set
      */
-    public void setReserveds(List<Reserved> reserveds) {
-        this.reserveds = reserveds;
+    public void setReserved(Reserved reserved) {
+        this.reserved = reserved;
     }
+
+
 
 }
