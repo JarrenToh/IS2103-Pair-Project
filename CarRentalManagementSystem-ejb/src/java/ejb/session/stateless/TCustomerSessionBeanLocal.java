@@ -15,7 +15,7 @@ import javax.ejb.Local;
 @Local
 public interface TCustomerSessionBeanLocal {
 
-    Long createCustomer(Customer newCustomer, long OutletId);
+    Long createCustomer(Customer newCustomer);
 
     Customer retrieveCustomer(long customerId);
 

@@ -11,9 +11,11 @@ import ejb.session.stateless.ModelSessionBeanLocal;
 import ejb.session.stateless.OutletSessionBeanLocal;
 import ejb.session.stateless.PartnerSessionBeanLocal;
 import ejb.session.stateless.RentalRateSessionBeanLocal;
+import ejb.session.stateless.TCustomerSessionBeanLocal;
 import ejb.session.stateless.TEmployeeSessionBeanLocal;
 import entity.Car;
 import entity.Category;
+import entity.Customer;
 import entity.Employee;
 import entity.Model;
 import entity.Outlet;
@@ -45,6 +47,9 @@ public class DataInitialisation {
 
     @EJB
     private CategorySessionBeanLocal categorySessionBean;
+    
+    @EJB
+    private TCustomerSessionBeanLocal customerSessionBean;
 
     @EJB
     private PartnerSessionBeanLocal partnerSessionBean;
@@ -177,6 +182,9 @@ public class DataInitialisation {
 
         Partner p1 = new Partner("Holiday.com");
         partnerSessionBean.createNewPartner(p1);
+        
+        Customer cust1 = new Customer("91234567", "Mary", "S1234567A", "password", "1234 5678 9012 3456");
+        customerSessionBean.createCustomer(cust1);
 
     }
 

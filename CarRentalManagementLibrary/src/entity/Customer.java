@@ -43,30 +43,29 @@ public class Customer implements Serializable {
     private String password;
 
     @Column(nullable = false, length = 32)
-    private String CreditCardDetails;
+    private String creditCardDetails;
 
 
     @OneToMany(mappedBy = "customer")
     private List<Reserved> reserveds;
 
-    //Changed the cardinality of the association
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private Outlet outlet;
-
     public Customer() {
         
         this.reserveds = new ArrayList<>();
     }
+    
+    public Customer(String email) {
+        this.email = email;
+        this.creditCardDetails = "1234 5678 9012 3456";
+    }
 
-    public Customer(String MobilePhoneNo, String email, String passportNo, String password, String CreditCardDetails, Outlet outlet) {
+    public Customer(String MobilePhoneNo, String email, String passportNo, String password, String creditCardDetails) {
         this();
         this.MobilePhoneNo = MobilePhoneNo;
         this.email = email;
         this.passportNo = passportNo;
         this.password = password;
-        this.CreditCardDetails = CreditCardDetails;
-        this.outlet = outlet;
+        this.creditCardDetails = creditCardDetails;
     }
     
     public Long getCustomerId() {
@@ -162,29 +161,14 @@ public class Customer implements Serializable {
      * @return the CreditCardDetails
      */
     public String getCreditCardDetails() {
-        return CreditCardDetails;
+        return creditCardDetails;
     }
 
     /**
-     * @param CreditCardDetails the CreditCardDetails to set
+     * @param creditCardDetails the CreditCardDetails to set
      */
-    public void setCreditCardDetails(String CreditCardDetails) {
-        this.CreditCardDetails = CreditCardDetails;
-    }
-
-
-    /**
-     * @return the outlet
-     */
-    public Outlet getOutlet() {
-        return outlet;
-    }
-
-    /**
-     * @param outlet the outlet to set
-     */
-    public void setOutlet(Outlet outlet) {
-        this.outlet = outlet;
+    public void setCreditCardDetails(String creditCardDetails) {
+        this.creditCardDetails = creditCardDetails;
     }
 
     /**

@@ -24,14 +24,9 @@ public class TCustomerSessionBean implements TCustomerSessionBeanRemote, TCustom
     private EntityManager em;
 
     @Override
-    public Long createCustomer(Customer newCustomer, long OutletId) {
+    public Long createCustomer(Customer newCustomer) {
 
         em.persist(newCustomer);
-        Outlet currentOutlet = em.find(Outlet.class, OutletId);
-
-        //Association
-        newCustomer.setOutlet(currentOutlet);
-        currentOutlet.getCustomers().add(newCustomer);
 
         em.flush();
         return newCustomer.getCustomerId();
