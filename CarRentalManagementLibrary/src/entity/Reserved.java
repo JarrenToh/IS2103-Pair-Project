@@ -9,11 +9,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import util.enumeration.PaidStatus;
 
 /**
  *
@@ -28,8 +31,9 @@ public class Reserved implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservedId;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean paid;
+    private PaidStatus paid;
 
     @Column(nullable = false)
     private BigDecimal totalCost;
@@ -49,7 +53,7 @@ public class Reserved implements Serializable {
     private Car car;
 
     public Reserved() {
-        this.paid = false;
+        this.paid = PaidStatus.UNPAID;
     }
 
     public Long getReservedId() {
@@ -83,20 +87,6 @@ public class Reserved implements Serializable {
     @Override
     public String toString() {
         return "entity.Reserved[ id=" + reservedId + " ]";
-    }
-
-    /**
-     * @return the paid
-     */
-    public boolean isPaid() {
-        return paid;
-    }
-
-    /**
-     * @param paid the paid to set
-     */
-    public void setPaid(boolean paid) {
-        this.paid = paid;
     }
 
     /**
@@ -168,5 +158,20 @@ public class Reserved implements Serializable {
     public void setReturnOutlet(String returnOutlet) {
         this.returnOutlet = returnOutlet;
     }
+
+    /**
+     * @return the paid
+     */
+    public PaidStatus getPaid() {
+        return paid;
+    }
+
+    /**
+     * @param paid the paid to set
+     */
+    public void setPaid(PaidStatus paid) {
+        this.paid = paid;
+    }
+    
 
 }
