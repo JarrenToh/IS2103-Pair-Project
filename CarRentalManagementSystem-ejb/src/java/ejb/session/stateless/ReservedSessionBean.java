@@ -6,7 +6,6 @@
 package ejb.session.stateless;
 
 import entity.Car;
-import entity.Customer;
 import entity.Outlet;
 import entity.Reserved;
 import java.math.BigDecimal;
@@ -123,7 +122,7 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
         BigDecimal penaltyFactor = new BigDecimal("0.00");
         BigDecimal refundAmount = new BigDecimal("0.00");
         
-        int daysBeforePickUp = car.getRentalStartDate().compareTo(LocalDateTime.now());
+        int daysBeforePickUp = car.getReserved().getRentalStartDate().compareTo(LocalDateTime.now());
         
         if(daysBeforePickUp < 14 && daysBeforePickUp >= 7) {
         

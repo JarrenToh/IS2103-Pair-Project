@@ -9,9 +9,7 @@ import entity.Car;
 import entity.Employee;
 import entity.TransitDriverRecord;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -105,11 +103,11 @@ public class TransitDriverRecordSessionBean implements TransitDriverRecordSessio
 
         for (TransitDriverRecord tdr : transitDriverRecords) {
 
-            if(tdr.getCar().getRentalStartDate() == null) {
+            if(tdr.getCar().getReserved().getRentalStartDate() == null) {
                 
                 transitDriverRecords.remove(tdr);
                 
-            } else if (tdr.getCar().getRentalStartDate() != null && !tdr.getCar().getRentalStartDate().toLocalDate().equals(LocalDate.now())) {
+            } else if (tdr.getCar().getReserved().getRentalStartDate() != null && !tdr.getCar().getReserved().getRentalStartDate().toLocalDate().equals(LocalDate.now())) {
 
                 transitDriverRecords.remove(tdr);
 

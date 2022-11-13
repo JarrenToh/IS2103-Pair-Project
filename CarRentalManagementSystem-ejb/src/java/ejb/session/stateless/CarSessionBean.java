@@ -105,8 +105,8 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
         unavailableCars = query.getResultList();
 
         unavailableCars = unavailableCars.stream()
-                .filter(c -> c.getOutlet().getAddress().equals(pickupOutlet) && pickupDateTime.isBefore(c.getRentalEndDate())) // same outlet
-                .filter(c -> !c.getOutlet().getAddress().equals(pickupOutlet) && Math.abs(ChronoUnit.HOURS.between(c.getRentalEndDate(), pickupDateTime)) >= 2) // differemt outlet
+                .filter(c -> c.getOutlet().getAddress().equals(pickupOutlet) && pickupDateTime.isBefore(c.getReserved().getRentalEndDate())) // same outlet
+                .filter(c -> !c.getOutlet().getAddress().equals(pickupOutlet) && Math.abs(ChronoUnit.HOURS.between(c.getReserved().getRentalEndDate(), pickupDateTime)) >= 2) // differemt outlet
                 .collect(Collectors.toList());
 
         return unavailableCars;
@@ -123,8 +123,6 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
         carToUpdate.setStatus(updatedCar.getStatus());
         carToUpdate.setLocation(updatedCar.getLocation());
         carToUpdate.setEnabled(updatedCar.isEnabled());
-        carToUpdate.setRentalStartDate(updatedCar.getRentalStartDate());
-        carToUpdate.setRentalEndDate(updatedCar.getRentalEndDate());
         return updatedCar.getCarId();
     }
 
@@ -179,13 +177,15 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
     @Override
     public Long reserveCar(Car updatedCar, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
 
-        Car carToUpdate = getFirstAvailableCarBasedOnMakeAndModel(updatedCar);
+//        Car carToUpdate = getFirstAvailableCarBasedOnMakeAndModel(updatedCar);
+//
+//        carToUpdate.setStatus(CarStatusEnum.UNAVAILABLE);
+//        carToUpdate.setRentalStartDate(pickupDateTime);
+//        carToUpdate.setRentalEndDate(returnDateTime);
+//
+//        return updatedCar.getCarId();
 
-        carToUpdate.setStatus(CarStatusEnum.UNAVAILABLE);
-        carToUpdate.setRentalStartDate(pickupDateTime);
-        carToUpdate.setRentalEndDate(returnDateTime);
-
-        return updatedCar.getCarId();
+          return 1L;
     }
 
 }

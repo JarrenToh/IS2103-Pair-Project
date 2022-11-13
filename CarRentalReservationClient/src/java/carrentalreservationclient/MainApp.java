@@ -83,7 +83,7 @@ public class MainApp {
                 if (response == 1) {
                     searchCar(); // both visitor and customer can do this 
                 } else if (response == 2) {
-                    searchCar(); // here onwards only allow customer
+                    reserveCar(); // here onwards only allow customer
                 } else if (response == 3) {
                     cancelReservation();
                 } else if (response == 4) {
@@ -119,8 +119,6 @@ public class MainApp {
         LocalDateTime pickupDateTime = null;
         LocalDateTime returnDateTime = null;
 
-        String role = "customer"; // need to change this later
-
         while (true) {
             System.out.print("\nInput the pickup date time (dd/MM/yyyy HH:mm) > ");
             pickup = scanner.nextLine();
@@ -148,16 +146,16 @@ public class MainApp {
 
             Pair<List<Car>, List<BigDecimal>> carsRentalFeesFromInputs = getCarsRentalFeesFromInputs(pickupDateTime, returnDateTime, pickupOutlet, returnOutlet);
 
-            if (role.equals("visitor")) {
-                break;
-            } else {
-                System.out.print("\nDo you want to proceed reservation (Y for yes) > ");
-                String proceedWithReservation = scanner.nextLine();
-                if (proceedWithReservation.equals("Y")) {
-                    reserveCar(carsRentalFeesFromInputs, pickupDateTime, returnDateTime, pickupOutlet, returnOutlet);    
-                    break;
-                }
-            }
+//            if (role.equals("visitor")) {
+//                break;
+//            } else {
+//                System.out.print("\nDo you want to proceed reservation (Y for yes) > ");
+//                String proceedWithReservation = scanner.nextLine();
+//                if (proceedWithReservation.equals("Y")) {
+//                    reserveCar(carsRentalFeesFromInputs, pickupDateTime, returnDateTime, pickupOutlet, returnOutlet);    
+//                    break;
+//                }
+//            }
         }
     }
 
@@ -253,24 +251,59 @@ public class MainApp {
         return totalRentalFee;
     }
 
-    private void reserveCar(Pair<List<Car>, List<BigDecimal>> carsRentalFees, LocalDateTime pickupDateTime, LocalDateTime returnDateTime, String pickupOutlet, String returnOutlet) {
+//    private void reserveCar(Pair<List<Car>, List<BigDecimal>> carsRentalFees, LocalDateTime pickupDateTime, LocalDateTime returnDateTime, String pickupOutlet, String returnOutlet) {
+      private void reserveCar() {
         Scanner scanner = new Scanner(System.in);
+        String pickup, returnT, pickupOutlet, returnOutlet, make, model, category;
+        LocalDateTime pickupDateTime = null;
+        LocalDateTime returnDateTime = null;
+        
         Integer response = 0;
         
-        List<Car> cars = carsRentalFees.first();
-        List<BigDecimal> rentalFees = carsRentalFees.second();
+//        List<Car> cars = carsRentalFees.first();
+//        List<BigDecimal> rentalFees = carsRentalFees.second();
 
         while (true) {
-            System.out.print("\nSelect the car you would like to reserve (i.e. 1) > ");
-            response = scanner.nextInt();
-
-            if (response < 1 || response > cars.size()) {
-                // throw exception
-                continue;
+            System.out.print("\nInput the pickup date time (dd/MM/yyyy HH:mm) > ");
+            pickup = scanner.nextLine();
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                pickupDateTime = LocalDateTime.parse(pickup, formatter);
+            } catch (DateTimeException ex) {
+                System.out.println("Error message occued: " + ex.getMessage());
             }
 
-            Car car = cars.get(response - 1); // need to change this part to get the particular make and model
-            BigDecimal rentalFee = rentalFees.get(response - 1);
+            System.out.print("\nInput the return time (dd/MM/yyyy HH:mm) > ");
+            returnT = scanner.nextLine();
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                returnDateTime = LocalDateTime.parse(returnT, formatter);
+            } catch (DateTimeException ex) {
+                System.out.println("Error message occued: " + ex.getMessage());
+            }
+
+            System.out.print("\nInput the pickup outlet > ");
+            pickupOutlet = scanner.nextLine();
+
+            System.out.print("\nInput the return outlet > ");
+            returnOutlet = scanner.nextLine();
+            
+            System.out.println("\nInput 1 for Make and Model, 2 for Category > ");
+            response = scanner.nextInt();
+            
+            if (response == 1) {
+                System.out.print("\nInput the make > ");
+                make = scanner.nextLine();
+
+                System.out.print("\nInput the model > ");
+                model = scanner.nextLine();
+            } else {
+                System.out.print("\nInput the category > ");
+                category = scanner.nextLine();
+            }
+
+//            Car car = cars.get(response - 1); // need to change this part to get the particular make and model
+//            BigDecimal rentalFee = rentalFees.get(response - 1);
             
             // check for credit card details
             // if don't have, allow user to input cc details
@@ -278,11 +311,11 @@ public class MainApp {
             
             // reserve car
             Reserved reserved = new Reserved();
-            reserved.setTotalCost(rentalFee);
-            reserved.setPickUpOutlet(pickupOutlet);
-            reserved.setReturnOutlet(returnOutlet);
+//            reserved.setTotalCost(rentalFee);
+//            reserved.setPickUpOutlet(pickupOutlet);
+//            reserved.setReturnOutlet(returnOutlet);
 
-            UserHandler.reserveCar(this.carSessionBeanRemote, this.reservedSessionBeanRemote, car, 1L, pickupDateTime, returnDateTime, reserved);
+//            UserHandler.reserveCar(this.carSessionBeanRemote, this.reservedSessionBeanRemote, car, 1L, pickupDateTime, returnDateTime, reserved);
             break;
         }
 
