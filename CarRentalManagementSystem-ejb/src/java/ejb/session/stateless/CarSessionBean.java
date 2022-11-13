@@ -73,6 +73,15 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
         return em.find(Car.class, carId);
 
     }
+    
+    @Override
+    public Car getFirstAvailableCarBasedOnMakeAndModel(Car updatedCar) {
+        Query query = em.createQuery("SELECT c FROM Car c WHERE c.status = :status AND c.model.make = :make AND c.model.model = :model");
+        query.setParameter("status", CarStatusEnum.AVAILABLE);
+        query.setParameter("make", updatedCar.getModel().getMake());
+        query.setParameter("model", updatedCar.getModel().getModel());
+        return (Car)query.getResultList().get(0);
+    }
 
     @Override
     public List<Car> getAvailableCars(LocalDateTime pickupDateTime) {
@@ -85,21 +94,21 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
 
         return availableCars;
     }
-    
+
     @Override
     public List<Car> getUnavailableCars(LocalDateTime pickupDateTime, String pickupOutlet) {
         List<Car> unavailableCars = new ArrayList<>();
-        
+
         Query query = em.createQuery("SELECT c FROM Car c WHERE c.status = :inStatus AND ((c.outlet.openingTime IS NULL AND c.outlet.closingTime IS NULL) OR (:pickupTime >= c.outlet.openingTime AND :pickupTime <= c.outlet.closingTime))");
         query.setParameter("inStatus", CarStatusEnum.UNAVAILABLE);
         query.setParameter("pickupTime", pickupDateTime.toLocalTime());
         unavailableCars = query.getResultList();
-        
+
         unavailableCars = unavailableCars.stream()
-                                        .filter(c -> c.getOutlet().getAddress().equals(pickupOutlet) && pickupDateTime.isBefore(c.getRentalEndDate())) // same outlet
-                                        .filter(c -> !c.getOutlet().getAddress().equals(pickupOutlet) && Math.abs(ChronoUnit.HOURS.between(c.getRentalEndDate(), pickupDateTime)) >= 2) // differemt outlet
-                                        .collect(Collectors.toList());
-        
+                .filter(c -> c.getOutlet().getAddress().equals(pickupOutlet) && pickupDateTime.isBefore(c.getRentalEndDate())) // same outlet
+                .filter(c -> !c.getOutlet().getAddress().equals(pickupOutlet) && Math.abs(ChronoUnit.HOURS.between(c.getRentalEndDate(), pickupDateTime)) >= 2) // differemt outlet
+                .collect(Collectors.toList());
+
         return unavailableCars;
     }
 
@@ -150,7 +159,8 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
 
     @Override
     public long getNumOfCarsBasedOnMakeAndModel(String make, String model) {
-        Query query = em.createQuery("SELECT c FROM Car c WHERE c.model.make = :make AND c.model.model = :model");
+        Query query = em.createQuery("SELECT c FROM Car c WHERE c.status = :status AND c.model.make = :make AND c.model.model = :model");
+        query.setParameter("status", CarStatusEnum.AVAILABLE);
         query.setParameter("make", make);
         query.setParameter("model", model);
         return query.getResultList().size();
@@ -164,6 +174,18 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
         query.setParameter("carId", carId);
         return !query.getResultList().isEmpty();
 
+    }
+
+    @Override
+    public Long reserveCar(Car updatedCar, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
+
+        Car carToUpdate = getFirstAvailableCarBasedOnMakeAndModel(updatedCar);
+
+        carToUpdate.setStatus(CarStatusEnum.UNAVAILABLE);
+        carToUpdate.setRentalStartDate(pickupDateTime);
+        carToUpdate.setRentalEndDate(returnDateTime);
+
+        return updatedCar.getCarId();
     }
 
 }

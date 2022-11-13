@@ -8,9 +8,11 @@ package carrentalreservationclient;
 import ejb.session.stateless.CarSessionBeanRemote;
 import ejb.session.stateless.OutletSessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
+import ejb.session.stateless.ReservedSessionBeanRemote;
 import entity.Car;
 import entity.Outlet;
 import entity.RentalRate;
+import entity.Reserved;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -68,5 +70,10 @@ public class UserHandler {
     public static List<Outlet> getOutletsAvailableForReturn(OutletSessionBeanRemote outletSessionBeanRemote, LocalDateTime returnDateTime) {
         List<Outlet> outlets = outletSessionBeanRemote.getOutletsAvailableForReturn(returnDateTime.toLocalTime());
         return outlets;
+    }
+    
+    public static void reserveCar(CarSessionBeanRemote carSessionBeanRemote, ReservedSessionBeanRemote reservedSessionBeanRemote, Car car, long customerId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime, Reserved reserved) {
+        carSessionBeanRemote.reserveCar(car, pickupDateTime, returnDateTime);
+        reservedSessionBeanRemote.createNewReservation(reserved, car.getCarId(), customerId);
     }
 }

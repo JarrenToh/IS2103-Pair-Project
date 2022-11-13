@@ -27,6 +27,8 @@ public interface CarSessionBeanLocal {
 
     Car getSpecificCar(long carId);
     
+    Car getFirstAvailableCarBasedOnMakeAndModel(Car updatedCar); 
+    
     List<Car> getAvailableCars(LocalDateTime pickupDateTime);
     
     List<Car> getUnavailableCars(LocalDateTime pickupDateTime, String pickupOutlet);
@@ -42,5 +44,7 @@ public interface CarSessionBeanLocal {
     boolean carInUse(long carId);
     
     long getNumOfCarsBasedOnMakeAndModel(String make, String model);
+    
+    Long reserveCar(Car updatedCar, LocalDateTime pickupDateTime, LocalDateTime returnDateTime);
     
 }
