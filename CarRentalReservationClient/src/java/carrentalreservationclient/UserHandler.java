@@ -6,10 +6,14 @@
 package carrentalreservationclient;
 
 import ejb.session.stateless.CarSessionBeanRemote;
+import ejb.session.stateless.CategorySessionBeanRemote;
+import ejb.session.stateless.ModelSessionBeanRemote;
 import ejb.session.stateless.OutletSessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
 import ejb.session.stateless.ReservedSessionBeanRemote;
 import entity.Car;
+import entity.Category;
+import entity.Model;
 import entity.Outlet;
 import entity.RentalRate;
 import entity.Reserved;
@@ -32,8 +36,8 @@ public class UserHandler {
         return outletSessionBeanRemote.getOutletWithPickAndReturnTime(pickupDateTime.toLocalTime(), returnDateTime.toLocalTime(), returnOutlet);
     }
 
-    public static List<Car> getAvailableCars(CarSessionBeanRemote carSessionBeanRemote, LocalDateTime pickupDateTime) {
-        return carSessionBeanRemote.getAvailableCars(pickupDateTime);
+    public static List<Car> getAvailableCars(CarSessionBeanRemote carSessionBeanRemote, List<Long> carsReservedIds, LocalDateTime pickupDateTime) {
+        return carSessionBeanRemote.getAvailableCars(pickupDateTime, carsReservedIds);
     }
     
     public static List<Car> getUnavailableCars(CarSessionBeanRemote carSessionBeanRemote, LocalDateTime pickupDateTime, String pickupOutlet) {
@@ -75,5 +79,17 @@ public class UserHandler {
     public static void reserveCar(CarSessionBeanRemote carSessionBeanRemote, ReservedSessionBeanRemote reservedSessionBeanRemote, Car car, long customerId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime, Reserved reserved) {
         carSessionBeanRemote.reserveCar(car, pickupDateTime, returnDateTime);
 //        reservedSessionBeanRemote.createNewReservation(reserved, car.getCarId(), customerId);
+    }
+    
+    public static Model getModelByMakeAndModel(ModelSessionBeanRemote modelSessionBeanRemote, String make, String model) {
+        return modelSessionBeanRemote.getModelByMakeAndModel(make, model);
+    }
+    
+    public static Category getCategoryByCategoryName(CategorySessionBeanRemote categorySessionBeanRemote, String category) {
+        return categorySessionBeanRemote.getCategory(category);
+    }
+    
+    public static List<Reserved> getReservedRecords(ReservedSessionBeanRemote reservedSessionBeanRemote) {
+        return reservedSessionBeanRemote.getReservedRecords();
     }
 }

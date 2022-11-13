@@ -31,4 +31,6 @@ public interface ReservedSessionBeanRemote {
 
     BigDecimal CancelReservation(long reservationId);
     
+    List<Reserved> getReservedRecords();
+    
 }

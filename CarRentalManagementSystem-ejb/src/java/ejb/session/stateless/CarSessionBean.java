@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -105,14 +106,14 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
                     query.setParameter("make", updatedCar.getModel().getMake());
                     query.setParameter("model", updatedCar.getModel().getModel());
                     return (Car) query.getResultList().get(0);
-                    
+
                 } catch (PersistenceException ex) {
                     if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
-                        
+
                         if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-                            
+
                             throw new CarNotFoundException();
-                            
+
                         } else {
                             throw new UnknownPersistenceException(ex.getMessage());
                         }
@@ -121,7 +122,7 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
                     }
                 }
             } else {
-                
+
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
 
@@ -132,12 +133,21 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
     }
 
     @Override
-    public List<Car> getAvailableCars(LocalDateTime pickupDateTime) {
+    public List<Car> getAvailableCars(LocalDateTime pickupDateTime, List<Long> carsReservedIds) {
         List<Car> availableCars = new ArrayList<>();
 
-        Query query = em.createQuery("SELECT c FROM Car c WHERE c.status = :inStatus AND ((c.outlet.openingTime IS NULL AND c.outlet.closingTime IS NULL) OR (:pickupTime >= c.outlet.openingTime AND :pickupTime <= c.outlet.closingTime))");
-        query.setParameter("inStatus", CarStatusEnum.AVAILABLE);
-        query.setParameter("pickupTime", pickupDateTime.toLocalTime());
+        Query query = null;
+
+        if (carsReservedIds.isEmpty()) {
+            query = em.createQuery("SELECT c FROM Car c WHERE c.status = :inStatus AND ((c.outlet.openingTime IS NULL AND c.outlet.closingTime IS NULL) OR (:pickupTime >= c.outlet.openingTime AND :pickupTime <= c.outlet.closingTime))");
+            query.setParameter("inStatus", CarStatusEnum.AVAILABLE);
+            query.setParameter("pickupTime", pickupDateTime.toLocalTime());
+        } else {
+            query = em.createQuery("SELECT c FROM Car c WHERE c.status = :inStatus AND c.carId NOT IN :carsReservedIds AND ((c.outlet.openingTime IS NULL AND c.outlet.closingTime IS NULL) OR (:pickupTime >= c.outlet.openingTime AND :pickupTime <= c.outlet.closingTime))");
+            query.setParameter("inStatus", CarStatusEnum.AVAILABLE);
+            query.setParameter("carsReservedIds", carsReservedIds);
+            query.setParameter("pickupTime", pickupDateTime.toLocalTime());
+        }
         availableCars = query.getResultList();
 
         return availableCars;
@@ -233,9 +243,12 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
 //
 //        return updatedCar.getCarId();
         return 1L;
+
     }
+
     
-        private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Car>> constraintViolations) {
+
+     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Car>>constraintViolations) {
         String msg = "Input data validation error!:";
 
         for (ConstraintViolation constraintViolation : constraintViolations) {

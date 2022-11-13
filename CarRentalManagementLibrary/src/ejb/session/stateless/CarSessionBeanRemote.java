@@ -32,7 +32,7 @@ public interface CarSessionBeanRemote {
     
     Car getFirstAvailableCarBasedOnMakeAndModel(Car updatedCar) throws CarNotFoundException, UnknownPersistenceException, InputDataValidationException;
     
-    List<Car> getAvailableCars(LocalDateTime pickupDateTime);
+    List<Car> getAvailableCars(LocalDateTime pickupDateTime, List<Long> carsReservedIds);
     
     List<Car> getUnavailableCars(LocalDateTime pickupDateTime, String pickupOutlet);
 

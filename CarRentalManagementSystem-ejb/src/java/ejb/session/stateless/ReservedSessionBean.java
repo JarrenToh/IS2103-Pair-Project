@@ -99,6 +99,12 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
         return reserved == null ? null : reserved.getReservedId();
 
     }
+    
+    @Override
+    public List<Reserved> getReservedRecords() {
+       Query query = em.createQuery("SELECT r FROM Reserved r");
+       return query.getResultList();
+    }
 
     @Override
     public Reserved viewSpecificReservation(long reservedId) {
