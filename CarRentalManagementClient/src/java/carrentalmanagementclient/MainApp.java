@@ -18,7 +18,9 @@ import ejb.session.stateless.ReservedSessionBeanRemote;
 import ejb.session.stateless.TCustomerSessionBeanRemote;
 import ejb.session.stateless.TEmployeeSessionBeanRemote;
 import ejb.session.stateless.TransitDriverRecordSessionBeanRemote;
+import entity.Employee;
 import java.util.Scanner;
+import util.exception.InvalidLoginCredentialException;
 
 /**
  *
@@ -47,12 +49,15 @@ public class MainApp {
     //CustomerServiceModule
     private CustomerServiceModule customerServiceModule;
     
+    
+    private Employee employee;
+
     public MainApp() {
 
     }
 
     public MainApp(RentalRateSessionBeanRemote rentalRateSessionBeanRemote, CategorySessionBeanRemote categorySessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, TransitDriverRecordSessionBeanRemote transitDriverRecordSessionBeanRemote, CarSessionBeanRemote carSessionBeanRemote,
-            OutletSessionBeanRemote outletSessionBeanRemote, TCustomerSessionBeanRemote tCustomerSessionBeanRemote, TEmployeeSessionBeanRemote tEmployeeSessionBeanRemote, 
+            OutletSessionBeanRemote outletSessionBeanRemote, TCustomerSessionBeanRemote tCustomerSessionBeanRemote, TEmployeeSessionBeanRemote tEmployeeSessionBeanRemote,
             ReservedSessionBeanRemote reservedSessionBeanRemote) {
         this.rentalRateSessionBeanRemote = rentalRateSessionBeanRemote;
         this.categorySessionBeanRemote = categorySessionBeanRemote;
@@ -102,20 +107,20 @@ public class MainApp {
                 response = scanner.nextInt();
 
                 if (response == 1) {
-                    
+
                     rentalRateApp.runRentalRateApp();
-                    
+
                 } else if (response == 2) {
-                    
+
                     modelApp.runModelApp();
-                    
+
                 } else if (response == 3) {
-                    
+
                     customerServiceModule = new CustomerServiceModule(carSessionBeanRemote, tCustomerSessionBeanRemote, reservedSessionBeanRemote);
                     customerServiceModule.runCustomerServiceModule();
-                    
+
                 } else if (response == 4) {
-                    
+
                     break;
 
                 } else {
@@ -129,6 +134,28 @@ public class MainApp {
             }
         }
         System.out.println("\nYou have logged out successfully\n");
+    }
+
+    private void doLogin() throws InvalidLoginCredentialException {
+
+        Scanner scanner = new Scanner(System.in);
+        String username = "";
+        String password = "";
+
+        System.out.println("*** POS System :: Login ***\n");
+        System.out.print("Enter username> ");
+        username = scanner.nextLine().trim();
+        System.out.print("Enter password> ");
+        password = scanner.nextLine().trim();
+        
+        if(username.length() > 0 && password.length() > 0)
+        {
+            employee = tEmployeeSessionBeanRemote.employeeLogin(username, password);
+        }
+        else
+        {
+            throw new InvalidLoginCredentialException("Missing login credential!");
+        }
     }
 
 }
