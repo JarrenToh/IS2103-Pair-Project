@@ -22,6 +22,7 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Reserved implements Serializable {
 
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +33,13 @@ public class Reserved implements Serializable {
 
     @Column(nullable = false)
     private BigDecimal totalCost;
-
+    
+    @Column(nullable = false)
+    private String pickUpOutlet;
+    
+    @Column(nullable = false)
+    private String returnOutlet;
+    
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Customer customer;
@@ -132,6 +139,34 @@ public class Reserved implements Serializable {
      */
     public void setTotalCost(BigDecimal totalCost) {
         this.totalCost = totalCost;
+    }
+    
+       /**
+     * @return the pickUpOutlet
+     */
+    public String getPickUpOutlet() {
+        return pickUpOutlet;
+    }
+
+    /**
+     * @param pickUpOutlet the pickUpOutlet to set
+     */
+    public void setPickUpOutlet(String pickUpOutlet) {
+        this.pickUpOutlet = pickUpOutlet;
+    }
+
+    /**
+     * @return the returnOutlet
+     */
+    public String getReturnOutlet() {
+        return returnOutlet;
+    }
+
+    /**
+     * @param returnOutlet the returnOutlet to set
+     */
+    public void setReturnOutlet(String returnOutlet) {
+        this.returnOutlet = returnOutlet;
     }
 
 }
