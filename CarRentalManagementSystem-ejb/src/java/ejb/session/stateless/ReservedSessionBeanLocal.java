@@ -30,6 +30,8 @@ public interface ReservedSessionBeanLocal {
     List<Reserved> viewAllReservationOfCustomer(long customerId);
 
     BigDecimal CancelReservation(long reservationId);
+    
+    List<Reserved> getReservedRecords();
 
 
 }

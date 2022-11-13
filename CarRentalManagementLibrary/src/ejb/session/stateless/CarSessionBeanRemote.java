@@ -29,7 +29,7 @@ public interface CarSessionBeanRemote {
     
     Car getFirstAvailableCarBasedOnMakeAndModel(Car updatedCar);
     
-    List<Car> getAvailableCars(LocalDateTime pickupDateTime);
+    List<Car> getAvailableCars(LocalDateTime pickupDateTime, List<Long> carsReservedIds);
     
     List<Car> getUnavailableCars(LocalDateTime pickupDateTime, String pickupOutlet);
 

@@ -16,13 +16,22 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface ModelSessionBeanRemote {
+
     long createModel(Model m, Category c);
+
     List<Model> getModels();
+
     List<Model> getModelsWithCategories();
+
     Model getSpecificModel(long modelId);
+
     long updateModel(Model m);
+
     void deleteModel(long modelId);
+
     Model getModel(String make, String model);
 
     boolean modelInUse(long modelId);
+
+    Model getModelByMakeAndModel(String make, String model);
 }

@@ -88,5 +88,13 @@ public class ModelSessionBean implements ModelSessionBeanRemote, ModelSessionBea
         query.setParameter("modelId", modelId);
         return !query.getResultList().isEmpty();
     }
+    
+    @Override
+    public Model getModelByMakeAndModel(String make, String model) {
+        Query query = em.createQuery("SELECT m FROM Model m WHERE m.make = :make AND m.model = :model");
+        query.setParameter("make", make);
+        query.setParameter("model", make);
+        return (Model) query.getSingleResult();
+    }
 
 }

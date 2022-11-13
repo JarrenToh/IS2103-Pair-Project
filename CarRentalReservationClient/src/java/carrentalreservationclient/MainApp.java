@@ -6,12 +6,15 @@
 package carrentalreservationclient;
 
 import ejb.session.stateless.CarSessionBeanRemote;
+import ejb.session.stateless.CategorySessionBeanRemote;
+import ejb.session.stateless.ModelSessionBeanRemote;
 import ejb.session.stateless.OutletSessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
 import ejb.session.stateless.ReservedSessionBeanRemote;
 import entity.Car;
 import entity.Category;
 import entity.Model;
+import entity.Outlet;
 import entity.RentalRate;
 import entity.Reserved;
 import java.math.BigDecimal;
@@ -33,6 +36,8 @@ import util.enumeration.RentalRateType;
 public class MainApp {
 
     private CarSessionBeanRemote carSessionBeanRemote;
+    private CategorySessionBeanRemote categorySessionBeanRemote;
+    private ModelSessionBeanRemote modelSessionBeanRemote;
     private OutletSessionBeanRemote outletSessionBeanRemote;
     private RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
     private ReservedSessionBeanRemote reservedSessionBeanRemote;
@@ -42,12 +47,14 @@ public class MainApp {
 
     }
 
-    public MainApp(CarSessionBeanRemote carSessionBeanRemote, OutletSessionBeanRemote outletSessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ReservedSessionBeanRemote reservedSessionBeanRemote) {
+    public MainApp(CarSessionBeanRemote carSessionBeanRemote, CategorySessionBeanRemote categorySessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, OutletSessionBeanRemote outletSessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ReservedSessionBeanRemote reservedSessionBeanRemote) {
         this.carSessionBeanRemote = carSessionBeanRemote;
+        this.categorySessionBeanRemote = categorySessionBeanRemote;
+        this.modelSessionBeanRemote = modelSessionBeanRemote;
         this.outletSessionBeanRemote = outletSessionBeanRemote;
         this.rentalRateSessionBeanRemote = rentalRateSessionBeanRemote;
         this.reservedSessionBeanRemote = reservedSessionBeanRemote;
-        
+
         this.currentLocalDateTime = LocalDateTime.now();
     }
 
@@ -129,7 +136,7 @@ public class MainApp {
                 System.out.println("Error message occued: " + ex.getMessage());
             }
 
-            System.out.print("\nInput the return time (dd/MM/yyyy HH:mm) > ");
+            System.out.print("\nInput the return date time (dd/MM/yyyy HH:mm) > ");
             returnT = scanner.nextLine();
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -145,6 +152,7 @@ public class MainApp {
             returnOutlet = scanner.nextLine();
 
             showCarsRentalFeesFromInputs(pickupDateTime, returnDateTime, pickupOutlet, returnOutlet);
+            break;
         }
     }
 
@@ -152,7 +160,13 @@ public class MainApp {
         List<Car> carsFromInputs = new ArrayList<>();
         List<BigDecimal> rentalFeesCarsFromInputs = new ArrayList<>();
 
-        List<Car> availableCarsFromAllOutlets = UserHandler.getAvailableCars(this.carSessionBeanRemote, pickupDateTime);
+        // get the reserved records from the reserved entity whether if any cars have been reserved
+        List<Reserved> reservedRecords = UserHandler.getReservedRecords(reservedSessionBeanRemote);
+        List<Long> carsReservedIds = reservedRecords.stream()
+                                                       .map(r -> r.getCar().getCarId())
+                                                       .collect(Collectors.toList());
+        
+        List<Car> availableCarsFromAllOutlets = UserHandler.getAvailableCars(this.carSessionBeanRemote, carsReservedIds, pickupDateTime);
 
         if (!availableCarsFromAllOutlets.isEmpty()) {
             System.out.println("\nAvailable Cars: ");
@@ -184,9 +198,9 @@ public class MainApp {
             String make = m.getMake();
             String model = m.getModel();
             String outlet = c.getOutlet().getAddress();
-            
+
             String makeModelOutlet = make + " " + model + " " + outlet;
-            
+
             if (!makeModelOutletHM.containsKey(makeModelOutlet)) { // there are cars with the same categories
                 makeModelOutletHM.put(makeModelOutlet, 1);
 
@@ -240,17 +254,23 @@ public class MainApp {
     }
 
 //    private void reserveCar(Pair<List<Car>, List<BigDecimal>> carsRentalFees, LocalDateTime pickupDateTime, LocalDateTime returnDateTime, String pickupOutlet, String returnOutlet) {
-      private void reserveCar() {
+    private void reserveCar() {
+        Model m = null;
+        Category c = null;
+        
         Scanner scanner = new Scanner(System.in);
-        String pickup, returnT, pickupOutlet, returnOutlet, make, model, category;
+        String pickup, returnT, pickupOutlet, returnOutlet, ccDetails;
+        String make = "";
+        String model = "";
+        String category = "";
+        
         LocalDateTime pickupDateTime = null;
         LocalDateTime returnDateTime = null;
-        
+
         Integer response = 0;
-        
+
 //        List<Car> cars = carsRentalFees.first();
 //        List<BigDecimal> rentalFees = carsRentalFees.second();
-
         while (true) {
             System.out.print("\nInput the pickup date time (dd/MM/yyyy HH:mm) > ");
             pickup = scanner.nextLine();
@@ -275,10 +295,10 @@ public class MainApp {
 
             System.out.print("\nInput the return outlet > ");
             returnOutlet = scanner.nextLine();
-            
+
             System.out.println("\nInput 1 for Make and Model, 2 for Category > ");
             response = scanner.nextInt();
-            
+
             if (response == 1) {
                 System.out.print("\nInput the make > ");
                 make = scanner.nextLine();
@@ -290,20 +310,50 @@ public class MainApp {
                 category = scanner.nextLine();
             }
 
-//            Car car = cars.get(response - 1); // need to change this part to get the particular make and model
-//            BigDecimal rentalFee = rentalFees.get(response - 1);
-            
-            // check for credit card details
-            // if don't have, allow user to input cc details
-            // need to update the status of the car to be UNAVAILABLE, as well as the rentalStartDate and rentalEndDate
-            
-            // reserve car
-            Reserved reserved = new Reserved();
-//            reserved.setTotalCost(rentalFee);
-//            reserved.setPickUpOutlet(pickupOutlet);
-//            reserved.setReturnOutlet(returnOutlet);
+            Outlet pickupOutletAvailable = UserHandler.getOutletForPickup(this.outletSessionBeanRemote, pickupDateTime, pickupOutlet);
 
-//            UserHandler.reserveCar(this.carSessionBeanRemote, this.reservedSessionBeanRemote, car, 1L, pickupDateTime, returnDateTime, reserved);
+            if (pickupOutletAvailable == null) {
+                System.out.println("Outlet is closed given the pickup time");
+            }
+
+            // validate return outlet not allowed
+            
+            
+            if (category.equals("")) {
+                // check that make and model of that category of the outlet is available
+                
+                m = UserHandler.getModelByMakeAndModel(modelSessionBeanRemote, make, model);
+                // get the total numbers of cars of that model of that outlet
+                
+                // get the number of reservation records of that models
+                
+                // calculate the difference
+                
+                // if the difference == 0, cannot reserve
+                
+                // else, can reserve
+                c = m.getCategory();
+            } else {
+                c = UserHandler.getCategoryByCategoryName(categorySessionBeanRemote, category);
+            }
+
+            List<RentalRate> rentalRates = UserHandler.getRentalRatesByCategoryId(this.rentalRateSessionBeanRemote, c.getId());
+            List<Long> rentalRatesId = rentalRates.stream().map(r -> r.getId()).collect(Collectors.toList());
+            BigDecimal rentalFee = calculateTotalRentalFee(rentalRatesId, pickupDateTime, returnDateTime);
+
+            Reserved reserved = new Reserved();
+            reserved.setTotalCost(rentalFee);
+            reserved.setPickUpOutlet(pickupOutlet);
+            reserved.setReturnOutlet(returnOutlet);
+            
+//            if (category.equals("")) {
+//                reserved.setModel(m);
+//                UserHandler.reserveMakeModel(this.modelSessionBeanRemote, this.reservedSessionBeanRemote, m, 1L, pickupDateTime, returnDateTime, reserved);
+//            } else {
+//                reserved.setCategory(c);
+//                UserHandler.reserveCategory(this.categorySessionBeanRemote, this.reservedSessionBeanRemote, c, 1L, pickupDateTime, returnDateTime, reserved);
+//            }
+
             break;
         }
 

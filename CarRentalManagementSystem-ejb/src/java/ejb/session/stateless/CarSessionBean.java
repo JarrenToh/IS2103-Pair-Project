@@ -6,7 +6,6 @@
 package ejb.session.stateless;
 
 import entity.Car;
-import entity.Customer;
 import entity.Model;
 import entity.Outlet;
 import java.time.LocalDateTime;
@@ -16,10 +15,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.enumeration.CarStatusEnum;
-import util.enumeration.LocationEnum;
 
 /**
  *
@@ -73,23 +72,32 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
         return em.find(Car.class, carId);
 
     }
-    
+
     @Override
     public Car getFirstAvailableCarBasedOnMakeAndModel(Car updatedCar) {
         Query query = em.createQuery("SELECT c FROM Car c WHERE c.status = :status AND c.model.make = :make AND c.model.model = :model");
         query.setParameter("status", CarStatusEnum.AVAILABLE);
         query.setParameter("make", updatedCar.getModel().getMake());
         query.setParameter("model", updatedCar.getModel().getModel());
-        return (Car)query.getResultList().get(0);
+        return (Car) query.getResultList().get(0);
     }
 
     @Override
-    public List<Car> getAvailableCars(LocalDateTime pickupDateTime) {
+    public List<Car> getAvailableCars(LocalDateTime pickupDateTime, List<Long> carsReservedIds) {
         List<Car> availableCars = new ArrayList<>();
 
-        Query query = em.createQuery("SELECT c FROM Car c WHERE c.status = :inStatus AND ((c.outlet.openingTime IS NULL AND c.outlet.closingTime IS NULL) OR (:pickupTime >= c.outlet.openingTime AND :pickupTime <= c.outlet.closingTime))");
-        query.setParameter("inStatus", CarStatusEnum.AVAILABLE);
-        query.setParameter("pickupTime", pickupDateTime.toLocalTime());
+        Query query = null;
+
+        if (carsReservedIds.isEmpty()) {
+            query = em.createQuery("SELECT c FROM Car c WHERE c.status = :inStatus AND ((c.outlet.openingTime IS NULL AND c.outlet.closingTime IS NULL) OR (:pickupTime >= c.outlet.openingTime AND :pickupTime <= c.outlet.closingTime))");
+            query.setParameter("inStatus", CarStatusEnum.AVAILABLE);
+            query.setParameter("pickupTime", pickupDateTime.toLocalTime());
+        } else {
+            query = em.createQuery("SELECT c FROM Car c WHERE c.status = :inStatus AND c.carId NOT IN :carsReservedIds AND ((c.outlet.openingTime IS NULL AND c.outlet.closingTime IS NULL) OR (:pickupTime >= c.outlet.openingTime AND :pickupTime <= c.outlet.closingTime))");
+            query.setParameter("inStatus", CarStatusEnum.AVAILABLE);
+            query.setParameter("carsReservedIds", carsReservedIds);
+            query.setParameter("pickupTime", pickupDateTime.toLocalTime());
+        }
         availableCars = query.getResultList();
 
         return availableCars;
@@ -184,8 +192,6 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
 //        carToUpdate.setRentalEndDate(returnDateTime);
 //
 //        return updatedCar.getCarId();
-
-          return 1L;
+        return 1L;
     }
-
 }
