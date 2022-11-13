@@ -152,6 +152,7 @@ public class DataInitialisation {
         carSessionBean.createCar(car9, car9.getModel().getId(), car9.getOutlet().getOutletId());
         carSessionBean.createCar(car10, car10.getModel().getId(), car10.getOutlet().getOutletId());
         carSessionBean.createCar(car11, car11.getModel().getId(), car11.getOutlet().getOutletId());
+        carSessionBean.createCar(car12, car12.getModel().getId(), car12.getOutlet().getOutletId());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 

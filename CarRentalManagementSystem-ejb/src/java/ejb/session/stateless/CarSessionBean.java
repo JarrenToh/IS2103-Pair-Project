@@ -82,18 +82,7 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
         query.setParameter("inStatus", CarStatusEnum.AVAILABLE);
         query.setParameter("pickupTime", pickupDateTime.toLocalTime());
         availableCars = query.getResultList();
-//
-//        // get unavailable cars that are either rented out or haven't rented out
-//        Query query2 = em.createQuery("SELECT c FROM Car c WHERE c.status = :inStatus");
-//        query2.setParameter("inOutletId", outletId);
-//        query2.setParameter("inStatus", CarStatusEnum.UNAVAILABLE);
-//        List<Car> unavailableCars = query.getResultList();
-//        unavailableCars = unavailableCars.stream()
-//                                        .filter(c -> c.getRentalEndDate() != null && Math.abs(ChronoUnit.HOURS.between(c.getRentalEndDate(), pickupDateTime)) >= 2)
-//                                        .collect(Collectors.toList());
-//
-//        cars.addAll(availableCars);
-//        cars.addAll(unavailableCars);
+
         return availableCars;
     }
     

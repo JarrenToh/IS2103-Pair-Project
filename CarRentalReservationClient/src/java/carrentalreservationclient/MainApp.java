@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
+import util.helper.Pair;
 import util.enumeration.RentalRateType;
 
 /**
@@ -141,7 +142,7 @@ public class MainApp {
             System.out.print("\nInput the return outlet > ");
             returnOutlet = scanner.nextLine();
 
-            List<Car> carsFromInputs = getCarsFromInputs(pickupDateTime, returnDateTime, pickupOutlet, returnOutlet);
+            Pair<List<Car>, List<BigDecimal>> carsRentalFeesFromInputs = getCarsRentalFeesFromInputs(pickupDateTime, returnDateTime, pickupOutlet, returnOutlet);
 
 //            if (role.equals("visitor")) {
 //                break;
@@ -155,39 +156,48 @@ public class MainApp {
         }
     }
 
-    private List<Car> getCarsFromInputs(LocalDateTime pickupDateTime, LocalDateTime returnDateTime, String pickupOutlet, String returnOutlet) {
+    private Pair<List<Car>, List<BigDecimal>> getCarsRentalFeesFromInputs(LocalDateTime pickupDateTime, LocalDateTime returnDateTime, String pickupOutlet, String returnOutlet) {
         List<Car> carsFromInputs = new ArrayList<>();
+        List<BigDecimal> rentalFeesCarsFromInputs = new ArrayList<>();
 
         List<Car> availableCarsFromAllOutlets = UserHandler.getAvailableCars(this.carSessionBeanRemote, pickupDateTime);
 
         if (!availableCarsFromAllOutlets.isEmpty()) {
             System.out.println("\nAvailable Cars: ");
-            carsFromInputs.addAll(getCars(availableCarsFromAllOutlets, pickupDateTime, returnDateTime));
+            Pair<List<Car>, List<BigDecimal>> carsRentalFees = getCarsWithRentalRates(availableCarsFromAllOutlets, pickupDateTime, returnDateTime);
+            carsFromInputs.addAll(carsRentalFees.first());
+            rentalFeesCarsFromInputs.addAll(carsRentalFees.second());
         }
 
         List<Car> unavailableCarsFromAllOutlets = UserHandler.getUnavailableCars(this.carSessionBeanRemote, pickupDateTime, pickupOutlet);
 
         if (!unavailableCarsFromAllOutlets.isEmpty()) {
             System.out.println("\nCars that are unavailable now but are available based on your pickup time: ");
-            carsFromInputs.addAll(getCars(unavailableCarsFromAllOutlets, pickupDateTime, returnDateTime));
+            Pair<List<Car>, List<BigDecimal>> carsRentalFees = getCarsWithRentalRates(unavailableCarsFromAllOutlets, pickupDateTime, returnDateTime);
+            carsFromInputs.addAll(carsRentalFees.first());
+            rentalFeesCarsFromInputs.addAll(carsRentalFees.second());
         }
 
-        return carsFromInputs;
+        return Pair.of(carsFromInputs, rentalFeesCarsFromInputs);
     }
 
-    private List<Car> getCars(List<Car> carsFromAllOutlets, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
+    private Pair<List<Car>, List<BigDecimal>> getCarsWithRentalRates(List<Car> carsFromAllOutlets, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
         List<Car> cars = new ArrayList<>();
-        HashMap<String, Integer> categoryHM = new HashMap<>();
-        
+        List<BigDecimal> returnedRentalFees = new ArrayList<>();
+        HashMap<String, Integer> makeModelOutletHM = new HashMap<>();
+        int index = 1;
+
         for (Car c : carsFromAllOutlets) {
             Category category = c.getModel().getCategory();
-
-            if (!categoryHM.containsKey(category.getCategoryName())) { // there are cars with the same categories
-                categoryHM.put(category.getCategoryName(), 1);
-
-                Model m = c.getModel();
-                String make = m.getMake();
-                String model = m.getModel();
+            Model m = c.getModel();
+            String make = m.getMake();
+            String model = m.getModel();
+            String outlet = c.getOutlet().getAddress();
+            
+            String makeModelOutlet = make + " " + model + " " + outlet;
+            
+            if (!makeModelOutletHM.containsKey(makeModelOutlet)) { // there are cars with the same categories
+                makeModelOutletHM.put(makeModelOutlet, 1);
 
                 long numOfCarsOfCarsBasedOnMakeAndModel = UserHandler.getNumOfCarsBasedOnMakeAndModel(this.carSessionBeanRemote, make, model);
 
@@ -198,12 +208,14 @@ public class MainApp {
                 List<RentalRate> rentalRates = UserHandler.getRentalRatesByCategoryId(this.rentalRateSessionBeanRemote, category.getId());
                 List<Long> rentalRatesId = rentalRates.stream().map(r -> r.getId()).collect(Collectors.toList());
                 BigDecimal rentalFee = calculateTotalRentalFee(rentalRatesId, pickupDateTime, returnDateTime);
-                System.out.println(c.getOutlet().getAddress() + " ----- " + make + " ----- " + model + " ------ " + category.getCategoryName() + " ----- $" + rentalFee + " ----- " + numOfCarsOfCarsBasedOnMakeAndModel);
+                System.out.println(index + ". " + c.getOutlet().getAddress() + " ----- " + make + " ----- " + model + " ------ " + category.getCategoryName() + " ----- $" + rentalFee + " ----- " + numOfCarsOfCarsBasedOnMakeAndModel);
                 cars.add(c);
+                returnedRentalFees.add(rentalFee);
+                index++;
             }
         }
-        
-        return cars;
+
+        return Pair.of(cars, returnedRentalFees);
     }
 
     /*
