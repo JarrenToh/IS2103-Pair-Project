@@ -16,11 +16,7 @@ import entity.Employee;
 import entity.Model;
 import entity.Outlet;
 import entity.TransitDriverRecord;
-import java.math.BigDecimal;
-import java.time.DateTimeException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 import util.enumeration.CarStatusEnum;
@@ -460,8 +456,6 @@ public class ModelApp {
 
         newCar.setStatus(CarStatusEnum.AVAILABLE);
         newCar.setLocation(LocationEnum.OUTLET);
-        newCar.setRentalEndDate(null);
-        newCar.setRentalStartDate(null);
 
         long newCarId = carSessionBeanRemote.createCar(newCar, model.getId(), outlet.getOutletId());
         System.out.println(String.format("\nYou have created Car with the id of %d", newCarId));
@@ -600,40 +594,6 @@ public class ModelApp {
 
             }
 
-        }
-
-        System.out.print("\nInput the start date time of the rental (dd/MM/yyyy HH:mm) (blank if no change) > ");
-        input = scanner.nextLine();
-
-        if (input.length() > 0) {
-            try {
-
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-                startDateTime = LocalDateTime.parse(input, formatter);
-                car.setRentalStartDate(startDateTime);
-
-            } catch (DateTimeException ex) {
-
-                System.out.println("Error message occued: " + ex.getMessage());
-
-            }
-        }
-
-        System.out.print("\nInput the end date time of the rental (dd/MM/yyyy HH:mm) (blank if no change) > ");
-        input = scanner.nextLine();
-
-        if (input.length() > 0) {
-            try {
-
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-                endDateTime = LocalDateTime.parse(input, formatter);
-                car.setRentalEndDate(endDateTime);
-
-            } catch (DateTimeException ex) {
-
-                System.out.println("Error message occued: " + ex.getMessage());
-
-            }
         }
 
         while (true) {

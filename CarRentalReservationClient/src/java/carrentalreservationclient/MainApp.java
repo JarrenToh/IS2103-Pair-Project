@@ -144,22 +144,11 @@ public class MainApp {
             System.out.print("\nInput the return outlet > ");
             returnOutlet = scanner.nextLine();
 
-            Pair<List<Car>, List<BigDecimal>> carsRentalFeesFromInputs = getCarsRentalFeesFromInputs(pickupDateTime, returnDateTime, pickupOutlet, returnOutlet);
-
-//            if (role.equals("visitor")) {
-//                break;
-//            } else {
-//                System.out.print("\nDo you want to proceed reservation (Y for yes) > ");
-//                String proceedWithReservation = scanner.nextLine();
-//                if (proceedWithReservation.equals("Y")) {
-//                    reserveCar(carsRentalFeesFromInputs, pickupDateTime, returnDateTime, pickupOutlet, returnOutlet);    
-//                    break;
-//                }
-//            }
+            showCarsRentalFeesFromInputs(pickupDateTime, returnDateTime, pickupOutlet, returnOutlet);
         }
     }
 
-    private Pair<List<Car>, List<BigDecimal>> getCarsRentalFeesFromInputs(LocalDateTime pickupDateTime, LocalDateTime returnDateTime, String pickupOutlet, String returnOutlet) {
+    private void showCarsRentalFeesFromInputs(LocalDateTime pickupDateTime, LocalDateTime returnDateTime, String pickupOutlet, String returnOutlet) {
         List<Car> carsFromInputs = new ArrayList<>();
         List<BigDecimal> rentalFeesCarsFromInputs = new ArrayList<>();
 
@@ -181,7 +170,6 @@ public class MainApp {
             rentalFeesCarsFromInputs.addAll(carsRentalFees.second());
         }
 
-        return Pair.of(carsFromInputs, rentalFeesCarsFromInputs);
     }
 
     private Pair<List<Car>, List<BigDecimal>> getCarsWithRentalRates(List<Car> carsFromAllOutlets, LocalDateTime pickupDateTime, LocalDateTime returnDateTime) {
