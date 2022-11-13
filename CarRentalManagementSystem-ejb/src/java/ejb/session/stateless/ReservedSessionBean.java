@@ -118,11 +118,10 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
     public BigDecimal CancelReservation(long reservationId) {
         
         Reserved reserved = em.find(Reserved.class, reservationId);
-        Car car = em.find(Car.class, reserved.getCar().getCarId());
         BigDecimal penaltyFactor = new BigDecimal("0.00");
         BigDecimal refundAmount = new BigDecimal("0.00");
         
-        int daysBeforePickUp = car.getReserved().getRentalStartDate().compareTo(LocalDateTime.now());
+        int daysBeforePickUp = reserved.getRentalStartDate().compareTo(LocalDateTime.now());
         
         if(daysBeforePickUp < 14 && daysBeforePickUp >= 7) {
         

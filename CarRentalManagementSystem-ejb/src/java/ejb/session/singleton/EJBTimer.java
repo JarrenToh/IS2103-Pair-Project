@@ -51,11 +51,11 @@ public class EJBTimer {
 
         for (Car car : cars) {
             
-            if(car.getRentalStartDate() == null) {
+            if(car.getReserved().getRentalStartDate() == null) {
                 
                 cars.remove(car);
 
-            } else if (car.getRentalStartDate() != null &&  !car.getRentalStartDate().toLocalDate().equals(LocalDate.now())) {
+            } else if (car.getReserved().getRentalStartDate() != null &&  !car.getReserved().getRentalStartDate().toLocalDate().equals(LocalDate.now())) {
 
                 cars.remove(car);
 
