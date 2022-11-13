@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Reserved;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -28,6 +29,6 @@ public interface ReservedSessionBeanRemote {
 
     List<Reserved> viewAllReservationOfCustomer(long customerId);
 
-    Long CancelReservation(long reservationId);
+    BigDecimal CancelReservation(long reservationId);
     
 }

@@ -9,6 +9,7 @@ import entity.Car;
 import entity.Customer;
 import entity.Outlet;
 import entity.Reserved;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -121,35 +122,47 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
     }
 
     @Override
-    public Long CancelReservation(long reservationId) {
+    public BigDecimal CancelReservation(long reservationId) {
         
         Reserved reserved = em.find(Reserved.class, reservationId);
         Car car = em.find(Car.class, reserved.getCar().getCarId());
-        double penaltyFactor = 0;
+        BigDecimal penaltyFactor = new BigDecimal("0.00");
+        BigDecimal refundAmount = new BigDecimal("0.00");
         
         int daysBeforePickUp = car.getRentalStartDate().compareTo(LocalDateTime.now());
         
         if(daysBeforePickUp < 14 && daysBeforePickUp >= 7) {
         
-            penaltyFactor = 0.2;
+            penaltyFactor = new BigDecimal("0.20");
             
         } else if (daysBeforePickUp < 7 && daysBeforePickUp >= 3) {
         
-            penaltyFactor = 0.5;
+            penaltyFactor = new BigDecimal("0.50");
             
         } else if (daysBeforePickUp < 3) {
             
-            penaltyFactor = 0.7;
+            penaltyFactor = new BigDecimal("0.70");
         
         } 
         
+        if(reserved.getPaid() == PaidStatus.PAID) {
+            
+            //If refundAmount is positive we refund customer
+            refundAmount = reserved.getTotalCost().multiply(BigDecimal.ONE.subtract(penaltyFactor));
+        
+        } else {
+            
+            //If refundAmount is negative we need to charge it to customer
+            refundAmount = reserved.getTotalCost().multiply(penaltyFactor).negate();
+            
+        }
+        
+        reserved.setPaid(PaidStatus.REFUND);
         
         
-        return null;
+        return refundAmount;
     }
     
-    
-
     
     
 }
