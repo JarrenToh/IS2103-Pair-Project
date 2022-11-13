@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Reserved;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -22,6 +23,10 @@ public interface ReservedSessionBeanLocal {
     Long pickUpCar(long carId, long customerId);
 
     Long returnCar(long carId, long customerId, long outletId);
+
+    Reserved viewSpecificReservation(long reservedId);
+
+    List<Reserved> viewAllReservationOfCustomer(long customerId);
 
 
 }

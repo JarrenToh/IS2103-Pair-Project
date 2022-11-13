@@ -9,6 +9,7 @@ import entity.Car;
 import entity.Customer;
 import entity.Outlet;
 import entity.Reserved;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -100,4 +101,23 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
 
     }
 
+    @Override
+    public Reserved viewSpecificReservation(long reservedId) {
+        
+        Reserved reserved = em.find(Reserved.class, reservedId);
+        
+        return reserved;
+    }
+
+    @Override
+    public List<Reserved> viewAllReservationOfCustomer(long customerId) {
+        
+        Query query = em.createQuery("SELECT r FROM Reserved r WHERE r.customer.CustomerId = :customerId");
+        query.setParameter("customerId", customerId);
+        
+        return query.getResultList();
+    }
+
+    
+    
 }
