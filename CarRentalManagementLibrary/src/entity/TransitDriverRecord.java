@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -26,6 +27,7 @@ public class TransitDriverRecord implements Serializable {
     private Long transitDriverId;
     
     @Column(nullable = false)
+    @NotNull
     private boolean completed;
     
     @OneToOne(optional = false)

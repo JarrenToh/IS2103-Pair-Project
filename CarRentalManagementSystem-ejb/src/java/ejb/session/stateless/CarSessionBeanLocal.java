@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.CarNotFoundException;
+import util.exception.InputDataValidationException;
+import util.exception.UnknownPersistenceException;
 
 /**
  *
@@ -27,7 +30,7 @@ public interface CarSessionBeanLocal {
 
     Car getSpecificCar(long carId);
     
-    Car getFirstAvailableCarBasedOnMakeAndModel(Car updatedCar); 
+    Car getFirstAvailableCarBasedOnMakeAndModel(Car updatedCar) throws CarNotFoundException, UnknownPersistenceException, InputDataValidationException;
     
     List<Car> getAvailableCars(LocalDateTime pickupDateTime);
     

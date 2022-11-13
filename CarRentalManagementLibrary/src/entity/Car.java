@@ -16,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import util.enumeration.CarStatusEnum;
 import util.enumeration.LocationEnum;
 
@@ -32,6 +34,8 @@ public class Car implements Serializable {
     private Long carId;
 
     @Column(nullable = false, unique = true, length = 32)
+    @NotNull
+    @Size(min=8, max=8)
     private String licensePlateNumber;
 
     @Column(nullable = true, length = 32)
@@ -39,6 +43,7 @@ public class Car implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NotNull
     private CarStatusEnum status;
 
     @Enumerated(EnumType.STRING)

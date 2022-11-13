@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Car;
+import entity.Category;
 import entity.Customer;
 import entity.Model;
 import entity.Outlet;
@@ -13,13 +14,22 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.enumeration.CarStatusEnum;
 import util.enumeration.LocationEnum;
+import util.exception.CarNotFoundException;
+import util.exception.InputDataValidationException;
+import util.exception.UnknownPersistenceException;
 
 /**
  *
@@ -31,7 +41,13 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
     @PersistenceContext(unitName = "CarRentalManagementSystem-ejbPU")
     private EntityManager em;
 
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+
     public CarSessionBean() {
+
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
 
     @Override
@@ -73,14 +89,46 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
         return em.find(Car.class, carId);
 
     }
-    
+
     @Override
-    public Car getFirstAvailableCarBasedOnMakeAndModel(Car updatedCar) {
-        Query query = em.createQuery("SELECT c FROM Car c WHERE c.status = :status AND c.model.make = :make AND c.model.model = :model");
-        query.setParameter("status", CarStatusEnum.AVAILABLE);
-        query.setParameter("make", updatedCar.getModel().getMake());
-        query.setParameter("model", updatedCar.getModel().getModel());
-        return (Car)query.getResultList().get(0);
+    public Car getFirstAvailableCarBasedOnMakeAndModel(Car updatedCar) throws CarNotFoundException, UnknownPersistenceException, InputDataValidationException {
+
+        if (updatedCar != null && updatedCar.getCarId() != null) {
+
+            Set<ConstraintViolation<Car>> constraintViolations = validator.validate(updatedCar);
+
+            Query query = null;
+            if (constraintViolations.isEmpty()) {
+                try {
+                    query = em.createQuery("SELECT c FROM Car c WHERE c.status = :status AND c.model.make = :make AND c.model.model = :model");
+                    query.setParameter("status", CarStatusEnum.AVAILABLE);
+                    query.setParameter("make", updatedCar.getModel().getMake());
+                    query.setParameter("model", updatedCar.getModel().getModel());
+                    return (Car) query.getResultList().get(0);
+                    
+                } catch (PersistenceException ex) {
+                    if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
+                        
+                        if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
+                            
+                            throw new CarNotFoundException();
+                            
+                        } else {
+                            throw new UnknownPersistenceException(ex.getMessage());
+                        }
+                    } else {
+                        throw new UnknownPersistenceException(ex.getMessage());
+                    }
+                }
+            } else {
+                
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+
+        } else {
+
+            throw new CarNotFoundException("Car ID Not provided for Car!");
+        }
     }
 
     @Override
@@ -184,8 +232,17 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
 //        carToUpdate.setRentalEndDate(returnDateTime);
 //
 //        return updatedCar.getCarId();
+        return 1L;
+    }
+    
+        private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Car>> constraintViolations) {
+        String msg = "Input data validation error!:";
 
-          return 1L;
+        for (ConstraintViolation constraintViolation : constraintViolations) {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+
+        return msg;
     }
 
 }

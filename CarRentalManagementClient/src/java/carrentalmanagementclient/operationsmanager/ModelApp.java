@@ -151,7 +151,7 @@ public class ModelApp {
         }
 
         while (true) {
-            System.out.print("\nSelect which category do you want to include model i.e. 1 >");
+            System.out.print("\nSelect which category do you want to include model i.e. 1 > ");
             response = scanner.nextInt();
 
             // TODO: include validation for once then just copy paste the tempalte for the subsequent ones
@@ -218,7 +218,7 @@ public class ModelApp {
                 integerInput = scanner.nextInt();
                 if (integerInput > 0 && integerInput <= models.size()) {
 
-                    m = models.get(integerInput);
+                    m = models.get(integerInput - 1);
                     break;
 
                 } else {
@@ -252,7 +252,6 @@ public class ModelApp {
 
         System.out.print("\nCurrent category: \033[0;1m" + model.getCategory().getCategoryName());
         System.out.print("\nUpdate the number (corresponding to the category) you want to update to i.e. 1 > ");
-        scanner.nextLine();
         String categoryNumber = scanner.nextLine(); // why scanner.nextLine() is used instead of scanner.next() - we should allow the user to input empty blank spaces if don't want to update that particular field
 
         if (categoryNumber.isEmpty()) {
@@ -338,7 +337,7 @@ public class ModelApp {
                 integerInput = scanner.nextInt();
                 if (integerInput > 0 && integerInput <= models.size()) {
 
-                    m = models.get(integerInput);
+                    m = models.get(integerInput - 1);
                     break;
 
                 } else {
@@ -402,7 +401,7 @@ public class ModelApp {
 
         for (int i = 0; i < outlets.size(); i++) {
 
-            System.out.println((i + 1) + ". " + outlets.get(i).getOutletId());
+            System.out.println((i + 1) + ". " + outlets.get(i).getOutletId() + " " + outlets.get(i).getAddress());
         }
 
         while (true) {
@@ -450,9 +449,9 @@ public class ModelApp {
         String licensePlateNumber = scanner.nextLine();
         newCar.setLicensePlateNumber(licensePlateNumber);
 
-        System.out.print("\nInput colour > ");
-        String colour = scanner.nextLine();
-        newCar.setColour(colour);
+//        System.out.print("\nInput colour > ");
+//        String colour = scanner.nextLine();
+//        newCar.setColour(colour);
 
         newCar.setStatus(CarStatusEnum.AVAILABLE);
         newCar.setLocation(LocationEnum.OUTLET);
@@ -470,13 +469,13 @@ public class ModelApp {
             return;
         }
 
-        System.out.println("\nID ----- Category ----- Make ----- Model ----- License Plate Number ");
+        System.out.println("\nID ----- Category ----- Make ----- Model ----- License Plate Number ----- Colour ");
         for (Car car : cars) {
 
             System.out.println(car.getCarId() + " ----- " + car.getModel().getCategory().getCategoryName() + " ----- " + car.getModel().getMake() + " ----- " + car.getModel().getModel() + " ----- " + car.getLicensePlateNumber());
 
         }
-        System.out.println("\n----------------------------------------");
+        System.out.println("\n-----------------------------------------------------------------------------------");
 
     }
 
@@ -542,13 +541,13 @@ public class ModelApp {
             car.setLicensePlateNumber(input);
         }
 
-        System.out.print("Enter Car Colour (blank if no change) > ");
-        input = scanner.nextLine().trim();
-
-        if (input.length() > 0) {
-
-            car.setColour(input);
-        }
+//        System.out.print("Enter Car Colour (blank if no change) > ");
+//        input = scanner.nextLine().trim();
+//
+//        if (input.length() > 0) {
+//
+//            car.setColour(input);
+//        }
 
         while (true) {
 
@@ -560,15 +559,13 @@ public class ModelApp {
                 car.setStatus(CarStatusEnum.values()[integerInput - 1]);
                 break;
 
-            } else {
+            } else if (integerInput > 0) {
 
                 System.out.println("Invalid option, please try again!\n");
-            }
-
-            if (integerInput < 0) {
+            
+            } else {
 
                 break;
-
             }
 
         }
@@ -583,12 +580,11 @@ public class ModelApp {
                 car.setLocation(LocationEnum.values()[integerInput - 1]);
                 break;
 
-            } else {
+            } else if (integerInput > 0) {
 
                 System.out.println("Invalid option, please try again!\n");
-            }
-
-            if (integerInput < 0) {
+                
+            } else {
 
                 break;
 

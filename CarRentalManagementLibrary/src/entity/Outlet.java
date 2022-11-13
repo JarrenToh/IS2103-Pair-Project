@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -27,22 +28,23 @@ public class Outlet implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long outletId;
-    
-    @Column(nullable = false)
+
+    @Column(nullable = false, length = 32)
+    @NotNull
     private String address;
-    
+
     @Column(nullable = true)
     private LocalTime openingTime;
-    
+
     @Column(nullable = true)
     private LocalTime closingTime;
-    
-    @OneToMany(mappedBy="outlet")
+
+    @OneToMany(mappedBy = "outlet")
     private List<Car> cars = new ArrayList<>();
-    
-    @OneToMany(mappedBy="outlet")
+
+    @OneToMany(mappedBy = "outlet")
     private List<Employee> employees = new ArrayList<>();
-    
+
     public Outlet() {
         this.cars = new ArrayList<>();
         this.employees = new ArrayList<>();
@@ -54,8 +56,7 @@ public class Outlet implements Serializable {
         this.openingTime = openingTime;
         this.closingTime = closingTime;
     }
-    
-    
+
     public Long getOutletId() {
         return outletId;
     }
@@ -158,5 +159,5 @@ public class Outlet implements Serializable {
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
     }
-    
+
 }

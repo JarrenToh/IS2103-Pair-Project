@@ -25,6 +25,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -32,6 +34,9 @@ import javax.ejb.LocalBean;
 import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import util.exception.EmployeeUsernameExistException;
+import util.exception.InputDataValidationException;
+import util.exception.UnknownPersistenceException;
 
 /**
  *
@@ -77,11 +82,19 @@ public class DataInitialisation {
     @PostConstruct
     public void postConstruct() {
         if (em.find(Outlet.class, 1L) == null) {
-            initializeData();
+            try {
+                initializeData();
+            } catch (EmployeeUsernameExistException ex) {
+                Logger.getLogger(DataInitialisation.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnknownPersistenceException ex) {
+                Logger.getLogger(DataInitialisation.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InputDataValidationException ex) {
+                Logger.getLogger(DataInitialisation.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
-    private void initializeData() {
+    private void initializeData() throws EmployeeUsernameExistException, UnknownPersistenceException, InputDataValidationException {
         Outlet o1 = new Outlet("Outlet A", null, null);
         Outlet o2 = new Outlet("Outlet B", null, null);
         Outlet o3 = new Outlet("Outlet C", LocalTime.parse("08:00"), LocalTime.parse("22:00"));

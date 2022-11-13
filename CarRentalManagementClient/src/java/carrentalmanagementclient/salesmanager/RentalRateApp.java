@@ -157,9 +157,6 @@ public class RentalRateApp {
 
             }
 
-            boolean enabled = false;
-            rr.setEnabled(enabled);
-
             long id = this.rentalRateSessionBeanRemote.createRentalRate(rr, c);
 
             System.out.println(String.format("\nYou have created rental rate with the id of %d", id));
@@ -261,13 +258,11 @@ public class RentalRateApp {
                 rentalRate.setRentalRateType(RentalRateType.values()[integerInput - 1]);
                 break;
 
-            } else {
+            } else if (integerInput > 0) {
 
                 System.out.println("Invalid option, please try again!\n");
 
-            }
-
-            if (integerInput < 0) {
+            } else {
 
                 break;
 

@@ -18,6 +18,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
 import util.enumeration.PaidStatus;
 
 /**
@@ -34,21 +37,29 @@ public class Reserved implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NotNull
     private PaidStatus paid;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 11, scale = 2)
+    @NotNull
+    @DecimalMin("0.00")
+    @Digits(integer = 9, fraction = 2)
     private BigDecimal totalCost;
 
     @Column(nullable = false)
+    @NotNull
     private String pickUpOutlet;
 
     @Column(nullable = false)
+    @NotNull
     private String returnOutlet;
 
     @Column(nullable = false)
+    @NotNull
     private LocalDateTime rentalStartDate;
 
     @Column(nullable = false)
+    @NotNull
     private LocalDateTime rentalEndDate;
 
     @ManyToOne(optional = false)

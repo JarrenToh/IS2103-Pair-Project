@@ -18,6 +18,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -31,10 +33,12 @@ public class Model implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 32)
+    @NotNull
     private String make;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 32)
+    @NotNull
     private String model;
 
     @Column(nullable = false)

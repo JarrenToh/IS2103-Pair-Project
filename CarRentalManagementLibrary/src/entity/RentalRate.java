@@ -17,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 import util.enumeration.RentalRateType;
 
 /**
@@ -31,22 +32,25 @@ public class RentalRate implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false) // TODO: include unique to be true
+    @Column(nullable = false, length = 32, unique = true)
+    @NotNull
     private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NotNull
     private RentalRateType rentalRateType;
 
     @Column(nullable = false)
+    @NotNull
     private BigDecimal ratePerDay;
 
     @Column(nullable = true)
     private LocalDateTime startDateTime;
-    
+
     @Column(nullable = true)
     private LocalDateTime endDateTime;
-    
+
     @Column(nullable = false) // if is being rented, the enabled will be true. by default, it is false
     private Boolean enabled;
 
@@ -55,11 +59,11 @@ public class RentalRate implements Serializable {
     private Category category;
 
     public RentalRate() {
-        
+
         this.enabled = true;
-        
+
     }
-        
+
     public RentalRate(String name, String rentalRateType, Category category, BigDecimal ratePerDay, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this();
         this.name = name;
@@ -68,9 +72,9 @@ public class RentalRate implements Serializable {
         this.ratePerDay = ratePerDay;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
-        
+
     }
-    
+
     private RentalRateType getRentalRateType(String rentalRateType) {
         switch (rentalRateType) {
             case "Default":
@@ -91,8 +95,6 @@ public class RentalRate implements Serializable {
         this.enabled = enabled;
         this.category = category;
     }
-
-
 
     public Long getId() {
         return id;

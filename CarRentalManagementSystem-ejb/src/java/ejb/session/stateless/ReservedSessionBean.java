@@ -54,7 +54,7 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
         query.setParameter("carId", carId);
         query.setParameter("customerId", customerId);
 
-        return (Reserved) query.getSingleResult();
+        return query.getSingleResult() == null ? null : (Reserved) query.getSingleResult();
     }
 
     @Override
@@ -62,14 +62,16 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
 
         Reserved reserved = findReservation(carId, customerId);
 
-        if (reserved.getPaid() == PaidStatus.UNPAID) {
-
-            reserved.setPaid(PaidStatus.PAID);
+        if (reserved != null) {
+            if (reserved.getPaid() == PaidStatus.UNPAID) {
+                
+                reserved.setPaid(PaidStatus.PAID);
+            }
+            
+            Car car = em.find(Car.class, reserved.getCar().getCarId());
+            car.setLocation(LocationEnum.SPECIFIC_CUSTOMER);
+            car.setStatus(CarStatusEnum.UNAVAILABLE);
         }
-
-        Car car = em.find(Car.class, reserved.getCar().getCarId());
-        car.setLocation(LocationEnum.SPECIFIC_CUSTOMER);
-        car.setStatus(CarStatusEnum.UNAVAILABLE);
 
         return reserved == null ? null : reserved.getReservedId();
     }
@@ -79,20 +81,21 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
 
         Reserved reserved = findReservation(carId, customerId);
 
-        Car car = em.find(Car.class, reserved.getCar().getCarId());
-        Outlet previousOutlet = em.find(Outlet.class, car.getOutlet().getOutletId());
-        Outlet returnOutlet = em.find(Outlet.class, outletId);
+        if (reserved != null) {
+            Car car = em.find(Car.class, reserved.getCar().getCarId());
+            Outlet previousOutlet = em.find(Outlet.class, car.getOutlet().getOutletId());
+            Outlet returnOutlet = em.find(Outlet.class, outletId);
 
-        //remove car from previous Outlet
-        previousOutlet.getCars().remove(car);
+            //remove car from previous Outlet
+            previousOutlet.getCars().remove(car);
 
-        //add car to return Outlet
-        returnOutlet.getCars().add(car);
-        car.setOutlet(returnOutlet);
-
-        car.setLocation(LocationEnum.OUTLET);
-        car.setStatus(CarStatusEnum.AVAILABLE);
-
+            //add car to return Outlet
+            returnOutlet.getCars().add(car);
+            car.setOutlet(returnOutlet);
+            
+            car.setLocation(LocationEnum.OUTLET);
+            car.setStatus(CarStatusEnum.AVAILABLE);
+        }
         return reserved == null ? null : reserved.getReservedId();
 
     }

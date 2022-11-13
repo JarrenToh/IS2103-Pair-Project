@@ -16,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import util.enumeration.DispatchStatusEnum;
 import util.enumeration.EmployeeAccessRightEnum;
 
@@ -33,16 +35,22 @@ public class Employee implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NotNull
     private EmployeeAccessRightEnum userRole;
 
     @Column(nullable = false, length = 32, unique = true) // TODO: remember to set unique = true later
+    @NotNull
+    @Size(min = 8, max = 32)
     private String userName;
 
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(min = 8, max = 32)
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = true)
+    @NotNull
     private DispatchStatusEnum dispatchStatus; // this value will be set only when the employee is assigned to a rented car to drive it back to the initial outlet
 
     @ManyToOne(optional = false)
