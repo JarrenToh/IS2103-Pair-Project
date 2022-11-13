@@ -79,7 +79,7 @@ public class DataInitialisation {
     private void initializeData() {
         Outlet o1 = new Outlet("Outlet A", null, null);
         Outlet o2 = new Outlet("Outlet B", null, null);
-        Outlet o3 = new Outlet("Outlet C", LocalTime.parse("10:00"), LocalTime.parse("22:00"));
+        Outlet o3 = new Outlet("Outlet C", LocalTime.parse("08:00"), LocalTime.parse("22:00"));
         outletSessionBean.createNewOutlet(o1);
         outletSessionBean.createNewOutlet(o2);
         outletSessionBean.createNewOutlet(o3);
