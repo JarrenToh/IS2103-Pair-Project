@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -45,6 +46,9 @@ public class Model implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Category category;
+    
+    @OneToOne(optional = false)
+    private Reserved reserved;
 
     public Model() {
 
@@ -144,6 +148,20 @@ public class Model implements Serializable {
      */
     public void setModel(String model) {
         this.model = model;
+    }
+
+    /**
+     * @return the reserved
+     */
+    public Reserved getReserved() {
+        return reserved;
+    }
+
+    /**
+     * @param reserved the reserved to set
+     */
+    public void setReserved(Reserved reserved) {
+        this.reserved = reserved;
     }
 
 }

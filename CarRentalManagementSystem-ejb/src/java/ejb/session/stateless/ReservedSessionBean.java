@@ -33,23 +33,17 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
     public ReservedSessionBean() {
     }
 
+    //Allocate current reservation to car and customer
     @Override
-    public long createNewReservation(Reserved reserved, long carId, long customerId) {
+    public long allocateReservedToCar(Reserved reserved, long carId) {
 
-        em.persist(reserved);
-
+        Reserved r = em.find(Reserved.class, reserved.getReservedId());
+        
         Car car = em.find(Car.class, carId);
-        Customer customer = em.find(Customer.class, customerId);
 
         //associate Car and reserved
-        reserved.setCar(car);
-        car.setReserved(reserved);
-
-        //associate customer and reserved
-        reserved.setCustomer(customer);
-        customer.getReserveds().add(reserved);
-
-        em.flush();
+        r.setCar(car);
+        car.setReserved(r);
 
         return reserved.getReservedId();
     }

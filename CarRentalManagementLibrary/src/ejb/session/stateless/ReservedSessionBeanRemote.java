@@ -17,7 +17,7 @@ import javax.ejb.Remote;
 @Remote
 public interface ReservedSessionBeanRemote {
 
-    long createNewReservation(Reserved reserved, long carId, long customerId);
+    long allocateReservedToCar(Reserved reserved, long carId);
 
     Reserved findReservation(long carId, long customerId);
 

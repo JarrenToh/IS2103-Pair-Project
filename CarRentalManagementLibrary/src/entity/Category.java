@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -36,7 +37,10 @@ public class Category implements Serializable {
     
     @OneToMany(mappedBy="category", cascade = CascadeType.ALL)
     private List<RentalRate> rentalRates;
-
+    
+    @OneToOne(optional = true)
+    private Reserved reserved;
+    
     public Category() {
         this.models = new ArrayList<Model>();
         this.rentalRates = new ArrayList<RentalRate>();
@@ -102,6 +106,20 @@ public class Category implements Serializable {
     @Override
     public String toString() {
         return "entity.Category[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the reserved
+     */
+    public Reserved getReserved() {
+        return reserved;
+    }
+
+    /**
+     * @param reserved the reserved to set
+     */
+    public void setReserved(Reserved reserved) {
+        this.reserved = reserved;
     }
     
 }

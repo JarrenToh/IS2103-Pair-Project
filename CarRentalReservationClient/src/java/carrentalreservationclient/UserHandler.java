@@ -74,6 +74,6 @@ public class UserHandler {
     
     public static void reserveCar(CarSessionBeanRemote carSessionBeanRemote, ReservedSessionBeanRemote reservedSessionBeanRemote, Car car, long customerId, LocalDateTime pickupDateTime, LocalDateTime returnDateTime, Reserved reserved) {
         carSessionBeanRemote.reserveCar(car, pickupDateTime, returnDateTime);
-        reservedSessionBeanRemote.createNewReservation(reserved, car.getCarId(), customerId);
+//        reservedSessionBeanRemote.createNewReservation(reserved, car.getCarId(), customerId);
     }
 }

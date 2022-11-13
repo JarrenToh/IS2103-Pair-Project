@@ -26,7 +26,6 @@ import util.enumeration.PaidStatus;
 @Entity
 public class Reserved implements Serializable {
 
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,19 +37,25 @@ public class Reserved implements Serializable {
 
     @Column(nullable = false)
     private BigDecimal totalCost;
-    
+
     @Column(nullable = false)
     private String pickUpOutlet;
-    
+
     @Column(nullable = false)
     private String returnOutlet;
-    
+
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Customer customer;
 
-    @OneToOne(optional = false)
+    @OneToOne(optional = true)
     private Car car;
+
+    @OneToOne(mappedBy = "reserved", optional = true)
+    private Model model;
+
+    @OneToOne(mappedBy = "reserved", optional = true)
+    private Category category;
 
     public Reserved() {
         this.paid = PaidStatus.UNPAID;
@@ -130,8 +135,8 @@ public class Reserved implements Serializable {
     public void setTotalCost(BigDecimal totalCost) {
         this.totalCost = totalCost;
     }
-    
-       /**
+
+    /**
      * @return the pickUpOutlet
      */
     public String getPickUpOutlet() {
@@ -172,6 +177,33 @@ public class Reserved implements Serializable {
     public void setPaid(PaidStatus paid) {
         this.paid = paid;
     }
-    
+
+    /**
+     * @return the model
+     */
+    public Model getModel() {
+        return model;
+    }
+
+    /**
+     * @param model the model to set
+     */
+    public void setModel(Model model) {
+        this.model = model;
+    }
+
+    /**
+     * @return the category
+     */
+    public Category getCategory() {
+        return category;
+    }
+
+    /**
+     * @param category the category to set
+     */
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
 }

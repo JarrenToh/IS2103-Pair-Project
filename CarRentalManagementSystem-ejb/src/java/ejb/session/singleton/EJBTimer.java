@@ -11,7 +11,10 @@ import java.time.LocalDate;
 import java.util.List;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Schedule;
+import javax.ejb.Timeout;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -27,15 +30,21 @@ public class EJBTimer {
     @PersistenceContext(unitName = "CarRentalManagementSystem-ejbPU")
     private EntityManager em;
 
+    @Timeout
+    @Schedule(hour = "*", minute = "*", second = "*/1")
     public void AllocateCarsToCurrentDayReservations() {
         
+        System.out.println("********** AllocateCarsToCurrentDayReservations()");
         
-        
+//        Query query = em.createQuery("SELECT r FROM Reserved r WHERE r.car")
+//        
     }
 
-    @Schedule(dayOfWeek = "*")
+    @Schedule(hour = "*", minute = "*", second = "*/1")
     public void GenerateTransitDriverDispatchRecordsForCurrentDayReservation() {
 
+        
+        System.out.println("********** GenerateTransitDriverDispatchRecordsForCurrentDayReservation()");
         Query query = em.createQuery("SELECT c FROM Car c WHERE c.reserved.pickUpOutlet <> c.outlet.address");;
 
         List<Car> cars = query.getResultList();
