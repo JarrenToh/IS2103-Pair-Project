@@ -8,6 +8,8 @@ package ejb.session.stateless;
 import entity.Employee;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.EmployeeNotFoundException;
+import util.exception.InvalidLoginCredentialException;
 
 /**
  *
@@ -18,4 +20,8 @@ public interface TEmployeeSessionBeanLocal {
     void createNewEmployee(Employee newEmployee, Long outletId);
 
     Employee retrieveAvailableEmployeeByOutlet(long OutletId);
+
+    Employee employeeLogin(String username, String password) throws InvalidLoginCredentialException;
+
+    Employee retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException;
 }
