@@ -20,6 +20,9 @@ import ejb.session.stateless.TEmployeeSessionBeanRemote;
 import ejb.session.stateless.TransitDriverRecordSessionBeanRemote;
 import entity.Employee;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import util.exception.InvalidAccessRightException;
 import util.exception.InvalidLoginCredentialException;
 
 /**
@@ -48,8 +51,7 @@ public class MainApp {
 
     //CustomerServiceModule
     private CustomerServiceModule customerServiceModule;
-    
-    
+
     private Employee employee;
 
     public MainApp() {
@@ -72,18 +74,59 @@ public class MainApp {
     }
 
     public void run() {
-        // login page
-        // allow user to login and exit
 
-        // set the necessary modules here after login
-        rentalRateModule = new RentalRateModule(rentalRateSessionBeanRemote, categorySessionBeanRemote);
-        modelModule = new ModelModule(modelSessionBeanRemote, categorySessionBeanRemote, transitDriverRecordSessionBeanRemote, carSessionBeanRemote, outletSessionBeanRemote, tCustomerSessionBeanRemote, tEmployeeSessionBeanRemote);
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
 
-        // set the sub-apps/pages here
-        rentalRateApp = new RentalRateApp(rentalRateModule);
-        modelApp = new ModelApp(modelModule);
+        while (true) {
 
-        menuMain();
+            System.out.println("1: Login");
+            System.out.println("2: Exit\n");
+            response = 0;
+
+            while (response < 1 || response > 2) {
+
+                
+                System.out.print("> ");
+
+                response = scanner.nextInt();
+                
+                if (response == 1) {
+                    // set the necessary modules here after login
+                    try {
+
+                        doLogin();
+                        rentalRateModule = new RentalRateModule(rentalRateSessionBeanRemote, categorySessionBeanRemote);
+                        modelModule = new ModelModule(modelSessionBeanRemote, categorySessionBeanRemote, transitDriverRecordSessionBeanRemote, carSessionBeanRemote, outletSessionBeanRemote, tCustomerSessionBeanRemote, tEmployeeSessionBeanRemote);
+
+                        // set the sub-apps/pages here
+                        rentalRateApp = new RentalRateApp(rentalRateModule, employee);
+                        modelApp = new ModelApp(modelModule, employee);
+                        customerServiceModule = new CustomerServiceModule(carSessionBeanRemote, tCustomerSessionBeanRemote, reservedSessionBeanRemote, employee);
+
+                        menuMain();
+
+                    } catch (InvalidLoginCredentialException ex) {
+
+                        System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
+
+                    }
+
+                } else if (response == 2) {
+
+                    break;
+
+                } else {
+
+                    System.out.println("Invalid option, please try again!\n");
+
+                }
+            }
+
+            if (response == 2) {
+                break;
+            }
+        }
     }
 
     private void menuMain() {
@@ -91,7 +134,7 @@ public class MainApp {
         Integer response = 0;
 
         while (true) {
-            System.out.println("*** Hello! Car Rental Management Client Terminal ***\n");
+            System.out.println("\n*** Hello! Car Rental Management Client Terminal ***\n");
 //            System.out.println("Hello " + currentATMCard.getNameOnCard()+ "\n"); - TODO: need to modify this for employee
             // TODO: maybe can show current date and time via system.out.println() ?
             System.out.println("Select which platform you would like to navigate");
@@ -108,16 +151,37 @@ public class MainApp {
 
                 if (response == 1) {
 
-                    rentalRateApp.runRentalRateApp();
+                    try {
+                        
+                        rentalRateApp.runRentalRateApp();
+                        
+                    } catch (InvalidAccessRightException ex) {
+                        
+                         System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
+                         
+                    }
 
                 } else if (response == 2) {
 
-                    modelApp.runModelApp();
+                    try {
+                        
+                        modelApp.runModelApp();
+                        
+                    } catch (InvalidAccessRightException ex) {
+                        
+                         System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
+                         
+                    }
 
                 } else if (response == 3) {
 
-                    customerServiceModule = new CustomerServiceModule(carSessionBeanRemote, tCustomerSessionBeanRemote, reservedSessionBeanRemote);
-                    customerServiceModule.runCustomerServiceModule();
+                    try {
+                        customerServiceModule.runCustomerServiceModule();
+                        
+                    } catch (InvalidAccessRightException ex) {
+                        
+                         System.out.println("Invalid option, please try again!: " + ex.getMessage() + "\n");
+                    }
 
                 } else if (response == 4) {
 
@@ -147,13 +211,12 @@ public class MainApp {
         username = scanner.nextLine().trim();
         System.out.print("Enter password> ");
         password = scanner.nextLine().trim();
-        
-        if(username.length() > 0 && password.length() > 0)
-        {
+
+        if (username.length() > 0 && password.length() > 0) {
+
             employee = tEmployeeSessionBeanRemote.employeeLogin(username, password);
-        }
-        else
-        {
+
+        } else {
             throw new InvalidLoginCredentialException("Missing login credential!");
         }
     }

@@ -20,7 +20,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 import util.enumeration.CarStatusEnum;
+import util.enumeration.EmployeeAccessRightEnum;
 import util.enumeration.LocationEnum;
+import util.exception.InvalidAccessRightException;
 import util.regex.GlobalRegex;
 
 /**
@@ -38,11 +40,13 @@ public class ModelApp {
     private TCustomerSessionBeanRemote tCustomerSessionBeanRemote;
     private TEmployeeSessionBeanRemote tEmployeeSessionBeanRemote;
 
+    private Employee employee;
+
     public ModelApp() {
 
     }
 
-    public ModelApp(ModelModule modelModule) {
+    public ModelApp(ModelModule modelModule, Employee employee) {
         this.modelModule = modelModule;
         this.categorySessionBeanRemote = this.modelModule.getCategorySessionBeanRemote();
         this.modelSessionBeanRemote = this.modelModule.getModelSessionBeanRemote();
@@ -51,9 +55,16 @@ public class ModelApp {
         this.outletSessionBeanRemote = this.modelModule.getOutletSessionBeanRemote();
         this.tCustomerSessionBeanRemote = this.modelModule.gettCustomerSessionBeanRemote();
         this.tEmployeeSessionBeanRemote = this.modelModule.gettEmployeeSessionBeanRemote();
+        this.employee = employee;
     }
 
-    public void runModelApp() {
+    public void runModelApp() throws InvalidAccessRightException {
+
+        if (employee.getUserRole() != EmployeeAccessRightEnum.OPERATIONSMANAGER) {
+
+            throw new InvalidAccessRightException("You don't have OPERATIONSMANAGER Right to access Sales Management Module.");
+        }
+        
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 
@@ -452,7 +463,6 @@ public class ModelApp {
 //        System.out.print("\nInput colour > ");
 //        String colour = scanner.nextLine();
 //        newCar.setColour(colour);
-
         newCar.setStatus(CarStatusEnum.AVAILABLE);
         newCar.setLocation(LocationEnum.OUTLET);
 
@@ -548,7 +558,6 @@ public class ModelApp {
 //
 //            car.setColour(input);
 //        }
-
         while (true) {
 
             System.out.print("\nSelect Car Status (1: Available, 2: Unavailable, 3: Transit, 4: Repair) (negative number if no change) > ");
@@ -562,7 +571,7 @@ public class ModelApp {
             } else if (integerInput > 0) {
 
                 System.out.println("Invalid option, please try again!\n");
-            
+
             } else {
 
                 break;
@@ -583,7 +592,7 @@ public class ModelApp {
             } else if (integerInput > 0) {
 
                 System.out.println("Invalid option, please try again!\n");
-                
+
             } else {
 
                 break;
@@ -666,7 +675,7 @@ public class ModelApp {
 
             System.out.println(td.getTransitDriverId() + " ----- " + td.getCar().getCarId()
                     + " ----- " + td.getCar().getLicensePlateNumber() + " ----- " + (td.getEmployee() != null ? td.getEmployee().getEmployeeId() : null)
-                    + " ----- " + (td.getEmployee() != null ? td.getEmployee().getUserName(): null));
+                    + " ----- " + (td.getEmployee() != null ? td.getEmployee().getUserName() : null));
 
         }
 
@@ -698,9 +707,9 @@ public class ModelApp {
         System.out.print("Enter Transit Driver Record ID To Be Completed >");
         long transitDriverId = scanner.nextLong();
         scanner.nextLine();
-        
+
         transitDriverRecordSessionBeanRemote.updateTransitDriverRecordAsCompleted(transitDriverId);
-        
+
         System.out.println("Updated Transit Record ID: " + transitDriverId + " Successfully");
     }
 }

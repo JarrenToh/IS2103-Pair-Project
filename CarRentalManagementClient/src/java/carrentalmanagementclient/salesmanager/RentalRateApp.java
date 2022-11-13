@@ -6,6 +6,7 @@ package carrentalmanagementclient.salesmanager;
 import ejb.session.stateless.CategorySessionBeanRemote;
 import ejb.session.stateless.RentalRateSessionBeanRemote;
 import entity.Category;
+import entity.Employee;
 import entity.RentalRate;
 import java.math.BigDecimal;
 import java.time.DateTimeException;
@@ -13,7 +14,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
+import util.enumeration.EmployeeAccessRightEnum;
 import util.enumeration.RentalRateType;
+import util.exception.InvalidAccessRightException;
 import util.regex.GlobalRegex;
 
 /**
@@ -25,18 +28,26 @@ public class RentalRateApp {
     private RentalRateModule rentalRateModule;
     private CategorySessionBeanRemote categorySessionBeanRemote;
     private RentalRateSessionBeanRemote rentalRateSessionBeanRemote;
+    private Employee employee;
 
     public RentalRateApp() {
 
     }
 
-    public RentalRateApp(RentalRateModule rentalRateModule) {
+    public RentalRateApp(RentalRateModule rentalRateModule, Employee employee) {
         this.rentalRateModule = rentalRateModule;
         this.categorySessionBeanRemote = this.rentalRateModule.getCategorySessionBeanRemote();
         this.rentalRateSessionBeanRemote = this.rentalRateModule.getRentalRateSessionBeanRemote();
+        this.employee = employee;
     }
 
-    public void runRentalRateApp() {
+    public void runRentalRateApp() throws InvalidAccessRightException {
+        
+        if(employee.getUserRole() != EmployeeAccessRightEnum.SALESMANAGER) {
+        
+            throw new InvalidAccessRightException("You don't have SALESMANAGER Right to access Sales Management Module.");
+        }
+        
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
 

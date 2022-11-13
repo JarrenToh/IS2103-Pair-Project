@@ -10,7 +10,10 @@ import ejb.session.stateless.ReservedSessionBeanRemote;
 import ejb.session.stateless.TCustomerSessionBeanRemote;
 import entity.Car;
 import entity.Customer;
+import entity.Employee;
 import java.util.Scanner;
+import util.enumeration.EmployeeAccessRightEnum;
+import util.exception.InvalidAccessRightException;
 
 /**
  *
@@ -21,17 +24,24 @@ public class CustomerServiceModule {
     private CarSessionBeanRemote carSessionBeanRemote;
     private TCustomerSessionBeanRemote tCustomerSessionBeanRemote;
     private ReservedSessionBeanRemote reservedSessionBeanRemote;
+    private Employee employee;
 
     public CustomerServiceModule() {
     }
 
-    public CustomerServiceModule(CarSessionBeanRemote carSessionBeanRemote, TCustomerSessionBeanRemote tCustomerSessionBeanRemote, ReservedSessionBeanRemote reservedSessionBeanRemote) {
+    public CustomerServiceModule(CarSessionBeanRemote carSessionBeanRemote, TCustomerSessionBeanRemote tCustomerSessionBeanRemote, ReservedSessionBeanRemote reservedSessionBeanRemote, Employee employee) {
         this.carSessionBeanRemote = carSessionBeanRemote;
         this.tCustomerSessionBeanRemote = tCustomerSessionBeanRemote;
         this.reservedSessionBeanRemote = reservedSessionBeanRemote;
+        this.employee = employee;
     }
 
-    public void runCustomerServiceModule() {
+    public void runCustomerServiceModule() throws InvalidAccessRightException{
+        
+        if (employee.getUserRole() != EmployeeAccessRightEnum.CUSTOMERSERVICEEXECUTIVE) {
+
+            throw new InvalidAccessRightException("\nYou don't have CUSTOMERSERVICEEXECUTIVE Right to access Customer Service Module.");
+        }
 
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
