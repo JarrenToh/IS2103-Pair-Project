@@ -15,7 +15,7 @@ import javax.ejb.Remote;
 @Remote
 public interface TCustomerSessionBeanRemote {
 
-    Long createCustomer(Customer newCustomer, long OutletId);
+    Long createCustomer(Customer newCustomer);
 
     Customer retrieveCustomer(long customerId);
  

@@ -151,10 +151,11 @@ public class MainApp {
             if (role.equals("visitor")) {
                 break;
             } else {
-                System.out.print("\nDo you want to proceed reservation (n for no, y for yes) > ");
+                System.out.print("\nDo you want to proceed reservation (Y for yes) > ");
                 String proceedWithReservation = scanner.nextLine();
-                if (proceedWithReservation.equals("y")) {
+                if (proceedWithReservation.equals("Y")) {
                     reserveCar(carsRentalFeesFromInputs, pickupDateTime, returnDateTime, pickupOutlet, returnOutlet);    
+                    break;
                 }
             }
         }

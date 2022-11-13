@@ -43,14 +43,9 @@ public class Outlet implements Serializable {
     @OneToMany(mappedBy="outlet")
     private List<Employee> employees = new ArrayList<>();
     
-    //Changed
-    @OneToMany(mappedBy = "outlet")
-    private List<Customer> customers;
-
     public Outlet() {
         this.cars = new ArrayList<>();
         this.employees = new ArrayList<>();
-        this.customers = new ArrayList<>();
     }
 
     public Outlet(String address, LocalTime openingTime, LocalTime closingTime) {
@@ -162,20 +157,6 @@ public class Outlet implements Serializable {
      */
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
-    }
-
-    /**
-     * @return the customers
-     */
-    public List<Customer> getCustomers() {
-        return customers;
-    }
-
-    /**
-     * @param customers the customers to set
-     */
-    public void setCustomers(List<Customer> customers) {
-        this.customers = customers;
     }
     
 }
