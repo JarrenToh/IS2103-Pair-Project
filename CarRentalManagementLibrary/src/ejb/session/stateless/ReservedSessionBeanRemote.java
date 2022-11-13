@@ -27,5 +27,7 @@ public interface ReservedSessionBeanRemote {
     Reserved viewSpecificReservation(long reservedId);
 
     List<Reserved> viewAllReservationOfCustomer(long customerId);
+
+    Long CancelReservation(long reservationId);
     
 }

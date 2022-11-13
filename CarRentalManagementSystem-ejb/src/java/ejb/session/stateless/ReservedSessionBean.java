@@ -9,6 +9,7 @@ import entity.Car;
 import entity.Customer;
 import entity.Outlet;
 import entity.Reserved;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -16,6 +17,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.enumeration.CarStatusEnum;
 import util.enumeration.LocationEnum;
+import util.enumeration.PaidStatus;
 
 /**
  *
@@ -66,9 +68,9 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
 
         Reserved reserved = findReservation(carId, customerId);
 
-        if (!reserved.isPaid()) {
+        if (reserved.getPaid() == PaidStatus.UNPAID) {
 
-            reserved.setPaid(true);
+            reserved.setPaid(PaidStatus.PAID);
         }
 
         Car car = em.find(Car.class, reserved.getCar().getCarId());
@@ -117,6 +119,36 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
         
         return query.getResultList();
     }
+
+    @Override
+    public Long CancelReservation(long reservationId) {
+        
+        Reserved reserved = em.find(Reserved.class, reservationId);
+        Car car = em.find(Car.class, reserved.getCar().getCarId());
+        double penaltyFactor = 0;
+        
+        int daysBeforePickUp = car.getRentalStartDate().compareTo(LocalDateTime.now());
+        
+        if(daysBeforePickUp < 14 && daysBeforePickUp >= 7) {
+        
+            penaltyFactor = 0.2;
+            
+        } else if (daysBeforePickUp < 7 && daysBeforePickUp >= 3) {
+        
+            penaltyFactor = 0.5;
+            
+        } else if (daysBeforePickUp < 3) {
+            
+            penaltyFactor = 0.7;
+        
+        } 
+        
+        
+        
+        return null;
+    }
+    
+    
 
     
     

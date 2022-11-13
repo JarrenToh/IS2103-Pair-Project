@@ -28,5 +28,7 @@ public interface ReservedSessionBeanLocal {
 
     List<Reserved> viewAllReservationOfCustomer(long customerId);
 
+    Long CancelReservation(long reservationId);
+
 
 }
