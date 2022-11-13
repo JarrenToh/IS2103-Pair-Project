@@ -425,7 +425,7 @@ public class MainApp {
     }
 
     private void viewAllMyReservations() {
-        List<Reserved> reservations = reservedSessionBeanRemote.viewAllReservationOfCustomer(1L);
+        List<Reserved> reservations = reservedSessionBeanRemote.viewAllReservationOfCustomer(customer.getCustomerId());
         for (Reserved r : reservations) {
             System.out.println("ID : " + r.getReservedId());
             System.out.println("Make : " + r.getModel().getMake());
