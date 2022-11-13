@@ -169,7 +169,7 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
     @Override
     public boolean carInUse(long carId) {
 
-        Query query = em.createQuery("SELECT c FROM Car c WHERE c.status = :carStatus and c.id = :carId");
+        Query query = em.createQuery("SELECT c FROM Car c WHERE c.status = :carStatus and c.carId = :carId");
         query.setParameter("carStatus", CarStatusEnum.UNAVAILABLE);
         query.setParameter("carId", carId);
         return !query.getResultList().isEmpty();
