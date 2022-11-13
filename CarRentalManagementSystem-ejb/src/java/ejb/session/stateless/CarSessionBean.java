@@ -246,9 +246,7 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
 
     }
 
-    
-
-     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Car>>constraintViolations) {
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Car>> constraintViolations) {
         String msg = "Input data validation error!:";
 
         for (ConstraintViolation constraintViolation : constraintViolations) {
@@ -256,6 +254,35 @@ public class CarSessionBean implements CarSessionBeanRemote, CarSessionBeanLocal
         }
 
         return msg;
+    }
+
+    @Override
+    public List<Car> getAvailableCarsByOutlet(Model m, String pickupOutlet) {
+        Query query = em.createQuery("SELECT c FROM Car c WHERE c.status = :inStatus AND (c.model.make = :make AND c.model.model = :model) AND c.outlet.address = :pickupOutlet");
+        query.setParameter("inStatus", CarStatusEnum.AVAILABLE);
+        query.setParameter("make", m.getMake());
+        query.setParameter("model", m.getModel());
+        query.setParameter("pickupOutlet", pickupOutlet);
+        return query.getResultList();
+    }
+    
+     @Override
+    public List<Car> getUnavailableCarsByOutlet(Model m, String pickupOutlet, LocalDateTime pickupDateTime) {
+        List<Car> unavailableCars = new ArrayList<>();
+
+        Query query = em.createQuery("SELECT c FROM Car c WHERE c.status = :inStatus AND (c.model.make = :make AND c.model.model = :model) AND c.outlet.address = :pickupOutlet");
+        query.setParameter("inStatus", CarStatusEnum.UNAVAILABLE);
+        query.setParameter("make", m.getMake());
+        query.setParameter("model", m.getModel());
+        query.setParameter("pickupOutlet", pickupOutlet);
+        unavailableCars = query.getResultList();
+
+        unavailableCars = unavailableCars.stream()
+                .filter(c -> c.getOutlet().getAddress().equals(pickupOutlet) && pickupDateTime.isBefore(c.getReserved().getRentalEndDate())) // same outlet
+                .filter(c -> !c.getOutlet().getAddress().equals(pickupOutlet) && Math.abs(ChronoUnit.HOURS.between(c.getReserved().getRentalEndDate(), pickupDateTime)) >= 2) // differemt outlet
+                .collect(Collectors.toList());
+
+        return unavailableCars;
     }
 
 }

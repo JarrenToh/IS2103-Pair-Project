@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.Model;
 import entity.Reserved;
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,5 +33,9 @@ public interface ReservedSessionBeanRemote {
     BigDecimal CancelReservation(long reservationId);
     
     List<Reserved> getReservedRecords();
+    
+    List<Reserved> getNumberOfMReservedByOutlet(Model m, String pickupOutlet);
+    
+    long createReservation(Reserved reserved, long customerId);
     
 }

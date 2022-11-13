@@ -7,6 +7,7 @@ package ejb.session.stateless;
 
 import entity.Car;
 import entity.Customer;
+import entity.Model;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -29,15 +30,15 @@ public interface CarSessionBeanRemote {
     List<Car> getCars();
 
     Car getSpecificCar(long carId);
-    
+
     Car getFirstAvailableCarBasedOnMakeAndModel(Car updatedCar) throws CarNotFoundException, UnknownPersistenceException, InputDataValidationException;
-    
+
     List<Car> getAvailableCars(LocalDateTime pickupDateTime, List<Long> carsReservedIds);
-    
+
     List<Car> getUnavailableCars(LocalDateTime pickupDateTime, String pickupOutlet);
 
     Long UpdateCar(Car updatedCar);
-    
+
     void updateCarOutlet(Car updatedCar, long outletId);
 
     void deleteCar(long carId);
@@ -45,8 +46,12 @@ public interface CarSessionBeanRemote {
     List<Car> retrieveReservedCar();
 
     boolean carInUse(long carId);
-    
+
     long getNumOfCarsBasedOnMakeAndModel(String make, String model);
 
     Long reserveCar(Car updatedCar, LocalDateTime pickupDateTime, LocalDateTime returnDateTime);
+
+    List<Car> getAvailableCarsByOutlet(Model m, String pickupOutlet);
+
+    List<Car> getUnavailableCarsByOutlet(Model m, String pickupOutlet, LocalDateTime pickupDateTime);
 }

@@ -7,6 +7,8 @@ package ejb.session.stateless;
 
 import entity.Customer;
 import javax.ejb.Local;
+import util.exception.CustomerNotFoundException;
+import util.exception.InvalidLoginCredentialException;
 
 /**
  *
@@ -18,6 +20,10 @@ public interface TCustomerSessionBeanLocal {
     Long createCustomer(Customer newCustomer);
 
     Customer retrieveCustomer(long customerId);
+    
+    Customer retrieveCustomerByUsername(String username) throws CustomerNotFoundException;
+    
+    Customer customerLogin(String username, String password) throws InvalidLoginCredentialException;
 
 
 }

@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Car;
+import entity.Model;
 import entity.Outlet;
 import entity.Reserved;
 import java.math.BigDecimal;
@@ -37,7 +38,7 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
     public long allocateReservedToCar(Reserved reserved, long carId) {
 
         Reserved r = em.find(Reserved.class, reserved.getReservedId());
-        
+
         Car car = em.find(Car.class, carId);
 
         //associate Car and reserved
@@ -64,10 +65,10 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
 
         if (reserved != null) {
             if (reserved.getPaid() == PaidStatus.UNPAID) {
-                
+
                 reserved.setPaid(PaidStatus.PAID);
             }
-            
+
             Car car = em.find(Car.class, reserved.getCar().getCarId());
             car.setLocation(LocationEnum.SPECIFIC_CUSTOMER);
             car.setStatus(CarStatusEnum.UNAVAILABLE);
@@ -92,78 +93,84 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
             //add car to return Outlet
             returnOutlet.getCars().add(car);
             car.setOutlet(returnOutlet);
-            
+
             car.setLocation(LocationEnum.OUTLET);
             car.setStatus(CarStatusEnum.AVAILABLE);
         }
         return reserved == null ? null : reserved.getReservedId();
 
     }
-    
+
     @Override
     public List<Reserved> getReservedRecords() {
-       Query query = em.createQuery("SELECT r FROM Reserved r");
-       return query.getResultList();
+        Query query = em.createQuery("SELECT r FROM Reserved r");
+        return query.getResultList();
     }
 
     @Override
     public Reserved viewSpecificReservation(long reservedId) {
-        
+
         Reserved reserved = em.find(Reserved.class, reservedId);
-        
+
         return reserved;
     }
 
     @Override
     public List<Reserved> viewAllReservationOfCustomer(long customerId) {
-        
+
         Query query = em.createQuery("SELECT r FROM Reserved r WHERE r.customer.CustomerId = :customerId");
         query.setParameter("customerId", customerId);
-        
+
         return query.getResultList();
     }
 
     @Override
     public BigDecimal CancelReservation(long reservationId) {
-        
+
         Reserved reserved = em.find(Reserved.class, reservationId);
         BigDecimal penaltyFactor = new BigDecimal("0.00");
         BigDecimal refundAmount = new BigDecimal("0.00");
-        
+
         int daysBeforePickUp = reserved.getRentalStartDate().compareTo(LocalDateTime.now());
-        
-        if(daysBeforePickUp < 14 && daysBeforePickUp >= 7) {
-        
+
+        if (daysBeforePickUp < 14 && daysBeforePickUp >= 7) {
+
             penaltyFactor = new BigDecimal("0.20");
-            
+
         } else if (daysBeforePickUp < 7 && daysBeforePickUp >= 3) {
-        
+
             penaltyFactor = new BigDecimal("0.50");
-            
+
         } else if (daysBeforePickUp < 3) {
-            
+
             penaltyFactor = new BigDecimal("0.70");
-        
-        } 
-        
-        if(reserved.getPaid() == PaidStatus.PAID) {
-            
+
+        }
+
+        if (reserved.getPaid() == PaidStatus.PAID) {
+
             //If refundAmount is positive we refund customer
             refundAmount = reserved.getTotalCost().multiply(BigDecimal.ONE.subtract(penaltyFactor));
-        
+
         } else {
-            
+
             //If refundAmount is negative we need to charge it to customer
             refundAmount = reserved.getTotalCost().multiply(penaltyFactor).negate();
-            
+
         }
-        
+
         reserved.setPaid(PaidStatus.REFUND);
-        
-        
+
         return refundAmount;
     }
-    
-    
-    
+
+    @Override
+    public List<Reserved> getNumberOfMReservedByOutlet(Model m, String pickupOutlet) {
+        Query query = em.createQuery("SELECT r FROM Reserved r WHERE r.model.id = :modelId AND r.returnOutlet = :pickupOutlet");
+        query.setParameter("modelId", m.getId());
+        query.setParameter("pickupOutlet", pickupOutlet);
+
+        return query.getResultList();
+    }
+
 }
