@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.Car;
+import entity.Customer;
 import entity.Model;
 import entity.Outlet;
 import entity.Reserved;
@@ -171,6 +172,23 @@ public class ReservedSessionBean implements ReservedSessionBeanRemote, ReservedS
         query.setParameter("pickupOutlet", pickupOutlet);
 
         return query.getResultList();
+    }
+    
+    @Override
+    public long createReservation(Reserved reserved, long customerId) {
+
+        em.persist(reserved);
+        
+        Customer c = em.find(Customer.class, customerId);
+        List<Reserved> reserveds = c.getReserveds();
+        reserveds.add(reserved);
+
+        reserved.setCustomer(c);
+        c.setReserveds(reserveds);
+        
+        em.flush();
+        
+        return reserved.getReservedId();
     }
 
 }
