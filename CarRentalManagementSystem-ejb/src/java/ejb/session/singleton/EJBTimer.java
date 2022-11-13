@@ -32,7 +32,7 @@ public class EJBTimer {
     private EntityManager em;
 
     @Timeout
-    @Schedule(hour = "*", minute = "*", second = "*/1")
+    @Schedule(dayOfWeek= "*")
     public void AllocateCarsToCurrentDayReservations() {
 
         System.out.println("********** AllocateCarsToCurrentDayReservations()");
@@ -164,7 +164,7 @@ public class EJBTimer {
 
     }
 
-    @Schedule(hour = "*", minute = "*", second = "*/1")
+    @Schedule(dayOfWeek= "*")
     public void GenerateTransitDriverDispatchRecordsForCurrentDayReservation() {
 
         System.out.println("********** GenerateTransitDriverDispatchRecordsForCurrentDayReservation()");
