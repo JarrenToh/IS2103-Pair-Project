@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -43,6 +44,12 @@ public class Reserved implements Serializable {
 
     @Column(nullable = false)
     private String returnOutlet;
+
+    @Column(nullable = true)
+    private LocalDateTime rentalStartDate;
+
+    @Column(nullable = true)
+    private LocalDateTime rentalEndDate;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -204,6 +211,34 @@ public class Reserved implements Serializable {
      */
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    /**
+     * @return the rentalStartDate
+     */
+    public LocalDateTime getRentalStartDate() {
+        return rentalStartDate;
+    }
+
+    /**
+     * @param rentalStartDate the rentalStartDate to set
+     */
+    public void setRentalStartDate(LocalDateTime rentalStartDate) {
+        this.rentalStartDate = rentalStartDate;
+    }
+
+    /**
+     * @return the rentalEndDate
+     */
+    public LocalDateTime getRentalEndDate() {
+        return rentalEndDate;
+    }
+
+    /**
+     * @param rentalEndDate the rentalEndDate to set
+     */
+    public void setRentalEndDate(LocalDateTime rentalEndDate) {
+        this.rentalEndDate = rentalEndDate;
     }
 
 }

@@ -6,9 +6,6 @@
 package entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -18,7 +15,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import util.enumeration.CarStatusEnum;
 import util.enumeration.LocationEnum;
@@ -52,11 +48,6 @@ public class Car implements Serializable {
     @Column(nullable = false)
     private boolean enabled;
 
-    @Column(nullable = true)
-    private LocalDateTime rentalStartDate;
-
-    @Column(nullable = true)
-    private LocalDateTime rentalEndDate;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -95,19 +86,6 @@ public class Car implements Serializable {
             default:
                 return CarStatusEnum.TRANSIT;
         }
-    }
-
-    public Car(String licensePlateNumber, String colour, CarStatusEnum status, LocationEnum location, boolean enabled, LocalDateTime rentalStartDate, LocalDateTime rentalEndDate, Outlet outlet, Model model, TransitDriverRecord transitDriverRecord) {
-        this.licensePlateNumber = licensePlateNumber;
-        this.colour = colour;
-        this.status = status;
-        this.location = location;
-        this.enabled = enabled;
-        this.rentalStartDate = rentalStartDate;
-        this.rentalEndDate = rentalEndDate;
-        this.outlet = outlet;
-        this.model = model;
-        this.transitDriverRecord = transitDriverRecord;
     }
     
     
@@ -213,34 +191,6 @@ public class Car implements Serializable {
      */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    /**
-     * @return the rentalStartDate
-     */
-    public LocalDateTime getRentalStartDate() {
-        return rentalStartDate;
-    }
-
-    /**
-     * @param rentalStartDate the rentalStartDate to set
-     */
-    public void setRentalStartDate(LocalDateTime rentalStartDate) {
-        this.rentalStartDate = rentalStartDate;
-    }
-
-    /**
-     * @return the rentalEndDate
-     */
-    public LocalDateTime getRentalEndDate() {
-        return rentalEndDate;
-    }
-
-    /**
-     * @param rentalEndDate the rentalEndDate to set
-     */
-    public void setRentalEndDate(LocalDateTime rentalEndDate) {
-        this.rentalEndDate = rentalEndDate;
     }
 
     /**
