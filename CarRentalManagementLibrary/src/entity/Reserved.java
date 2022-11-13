@@ -45,10 +45,10 @@ public class Reserved implements Serializable {
     @Column(nullable = false)
     private String returnOutlet;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private LocalDateTime rentalStartDate;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private LocalDateTime rentalEndDate;
 
     @ManyToOne(optional = false)
