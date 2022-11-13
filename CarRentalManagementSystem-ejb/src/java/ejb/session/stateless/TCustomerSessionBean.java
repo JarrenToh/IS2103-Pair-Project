@@ -44,7 +44,7 @@ public class TCustomerSessionBean implements TCustomerSessionBeanRemote, TCustom
     @Override
     public Customer retrieveCustomerByUsername(String username) throws CustomerNotFoundException {
 
-        Query query = em.createQuery("SELECT c FROM Customer c WHERE c.userName = :username");
+        Query query = em.createQuery("SELECT c FROM Customer c WHERE c.MobilePhoneNo = :username");
         query.setParameter("username", username);
 
         try {

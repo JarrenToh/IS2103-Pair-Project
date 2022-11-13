@@ -38,19 +38,15 @@ public class Employee implements Serializable {
     @NotNull
     private EmployeeAccessRightEnum userRole;
 
-    @Column(nullable = false, length = 32, unique = true) // TODO: remember to set unique = true later
+    @Column(nullable = false) // TODO: remember to set unique = true later
     @NotNull
-    @Size(min = 8, max = 32)
     private String userName;
 
-    @Column(nullable = false, length = 32)
-    @NotNull
-    @Size(min = 8, max = 32)
+    @Column(nullable = true)
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = true)
-    @NotNull
     private DispatchStatusEnum dispatchStatus; // this value will be set only when the employee is assigned to a rented car to drive it back to the initial outlet
 
     @ManyToOne(optional = false)

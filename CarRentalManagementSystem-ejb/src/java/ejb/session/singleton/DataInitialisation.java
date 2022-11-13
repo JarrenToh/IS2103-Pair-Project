@@ -84,11 +84,7 @@ public class DataInitialisation {
         if (em.find(Outlet.class, 1L) == null) {
             try {
                 initializeData();
-            } catch (EmployeeUsernameExistException ex) {
-                Logger.getLogger(DataInitialisation.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (UnknownPersistenceException ex) {
-                Logger.getLogger(DataInitialisation.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InputDataValidationException ex) {
+            } catch (EmployeeUsernameExistException | UnknownPersistenceException | InputDataValidationException ex) {
                 Logger.getLogger(DataInitialisation.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -196,8 +192,8 @@ public class DataInitialisation {
         Partner p1 = new Partner("Holiday.com");
         partnerSessionBean.createNewPartner(p1);
         
-        Customer cust1 = new Customer("91234567", "Mary", "S1234567A", "password", "1234 5678 9012 3456");
-        customerSessionBean.createCustomer(cust1);
+//        Customer cust1 = new Customer("91234567", "Mary", "S1234567A", "password", "1234 5678 9012 3456");
+//        customerSessionBean.createCustomer(cust1);
 
     }
 

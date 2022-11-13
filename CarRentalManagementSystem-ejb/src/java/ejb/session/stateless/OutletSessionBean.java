@@ -39,9 +39,14 @@ public class OutletSessionBean implements OutletSessionBeanRemote, OutletSession
 
     @Override
     public Outlet getOutlet(String outletName) {
-        Query query = em.createQuery("SELECT o FROM Outlet o WHERE o.address = :inOutletAddress");
-        query.setParameter("inOutletAddress", outletName);
-        return (Outlet) query.getSingleResult();
+        try {
+            Query query = em.createQuery("SELECT o FROM Outlet o WHERE o.address = :inOutletAddress");
+            query.setParameter("inOutletAddress", outletName);
+            return (Outlet) query.getSingleResult();
+        } catch (NoResultException e) {
+            
+            return null;
+        }
     }
 
     @Override

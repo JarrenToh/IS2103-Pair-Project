@@ -47,13 +47,14 @@ public class MainApp {
     private ReservedSessionBeanRemote reservedSessionBeanRemote;
     private LocalDateTime currentLocalDateTime;
 
+    
     private Customer customer;
 
     public MainApp() {
 
     }
 
-    public MainApp(CarSessionBeanRemote carSessionBeanRemote, CategorySessionBeanRemote categorySessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, OutletSessionBeanRemote outletSessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ReservedSessionBeanRemote reservedSessionBeanRemote) {
+    public MainApp(CarSessionBeanRemote carSessionBeanRemote, CategorySessionBeanRemote categorySessionBeanRemote, ModelSessionBeanRemote modelSessionBeanRemote, OutletSessionBeanRemote outletSessionBeanRemote, RentalRateSessionBeanRemote rentalRateSessionBeanRemote, ReservedSessionBeanRemote reservedSessionBeanRemote, TCustomerSessionBeanRemote customerSessionBeanRemote) {
         this.carSessionBeanRemote = carSessionBeanRemote;
         this.categorySessionBeanRemote = categorySessionBeanRemote;
         this.modelSessionBeanRemote = modelSessionBeanRemote;
@@ -61,6 +62,7 @@ public class MainApp {
         this.rentalRateSessionBeanRemote = rentalRateSessionBeanRemote;
         this.reservedSessionBeanRemote = reservedSessionBeanRemote;
 
+        this.customerSessionBeanRemote = customerSessionBeanRemote;
         this.currentLocalDateTime = LocalDateTime.now();
     }
 
@@ -445,7 +447,7 @@ public class MainApp {
         String password = "";
 
         System.out.println("*** POS System :: Login ***\n");
-        System.out.print("Enter email> ");
+        System.out.print("Enter Name> ");
         username = scanner.nextLine().trim();
         System.out.print("Enter password> ");
         password = scanner.nextLine().trim();
